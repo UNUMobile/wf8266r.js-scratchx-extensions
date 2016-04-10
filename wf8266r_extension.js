@@ -1,7 +1,7 @@
 /* Extension using the JavaScript Speech API for text to speech */
 /* Union U Inc. WF8266R.js 2016*/
 
-new (function() {
+(function(ext) {
     var ext = this;
     var ip = "192.168.4.1";
     var connection;
@@ -26,31 +26,20 @@ new (function() {
     }
 
     ext.set_ip = function(text){
+        console.log(text);
         ip = text;
         socketConnection(text);
-    };
-    
-    ext.speak_text = function (text, callback) {
-        var u = new SpeechSynthesisUtterance(text.toString());
-        u.onend = function(event) {
-            if (typeof callback=="function") callback();
-        };
-        
-        speechSynthesis.speak(u);
     };
 
     ext._shutdown = function() {};
 
     ext._getStatus = function() {
-        if (window.SpeechSynthesisUtterance === undefined) {
-            return {status: 1, msg: 'Your browser does not support text to speech. Try using Google Chrome or Safari.'};
-        }
         return {status: 2, msg: 'Ready'};
     };
 
     var descriptor = {
         blocks: [
-            [" ", "WF8266R IP %s", "set_ip","mywfxxxx.local"],
+            [" ", "WF8266R IP %s", "set_ip","mywf9441.local"],
             [" ", "腳位 %d.gpio 模式設為 %m.mode", "pinmode",5,"OUTPUT"],
             [" ", "腳位 %d.gpio 數位輸出 %m.level", "gpio",5,1],
             [" ", "腳位 %d.gpio 類比輸出 %n", "pwm", 5, 1023],
@@ -85,4 +74,4 @@ new (function() {
     };
 
     ScratchExtensions.register('WF8266R.js', descriptor, ext);
-})();
+})({});
