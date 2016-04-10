@@ -27,7 +27,7 @@
     // Block and block menu descriptions
     var descriptor = {
         blocks: [
-            ['', 'WF8266R IP %s', 'set_ip', 'mywf9441.local'],
+            ['R', 'WF8266R IP %s', 'set_ip', 'mywf9441.local'],
         ]
     };
 
