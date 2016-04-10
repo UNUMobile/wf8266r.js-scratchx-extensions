@@ -1,5 +1,5 @@
 (function(ext) {
-    ext.ip = "";
+
     // Cleanup function when the extension is unloaded
     ext._shutdown = function() {};
 
@@ -10,11 +10,10 @@
     };
 
     ext.set_ip = function(_ip, callback) {
-        console.log(_ip);
-        ext.ip = _ip;
+console.log(_ip);
         // Make an AJAX call to the Open Weather Maps API
         $.ajax({
-              url: 'http://api.openweathermap.org/data/2.5/weather?q=&units=imperial',
+              url: 'http://api.openweathermap.org/data/2.5/weather?q='+_ip+'&units=imperial',
               dataType: 'jsonp',
               success: function( weather_data ) {
                   // Got the data - parse it and return the temperature
