@@ -6,7 +6,7 @@ new (function() {
     var ip = "192.168.4.1";
     var connection;
     
-    function socketConnection(){
+    function socketConnection(ip){
         connection = new WebSocket('ws://'+ ip +':81/api', ['wf8266r']);
         connection.onopen = function (e) {
             //連線成功        
@@ -27,6 +27,7 @@ new (function() {
 
     ext.set_ip = function(text){
         ip = text;
+        socketConnection(text);
     };
     
     ext.speak_text = function (text, callback) {
