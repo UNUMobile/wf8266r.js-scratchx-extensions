@@ -29,5 +29,5 @@
     };
 
     // Register the extension
-    ScratchExtensions.register('WF8266R.js', descriptor, ext);
+    ScratchExtensions.register('WF8266R', descriptor, ext);
 })({});
