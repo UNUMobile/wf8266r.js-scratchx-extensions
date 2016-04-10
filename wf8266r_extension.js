@@ -2,7 +2,6 @@
 /* Union U Inc. WF8266R.js 2016*/
 
 (function(ext) {
-    var ext = this;
     var ip = "192.168.4.1";
     var connection;
     
