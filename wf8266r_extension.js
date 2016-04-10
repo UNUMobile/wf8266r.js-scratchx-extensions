@@ -3,22 +3,32 @@
 
 new (function() {
     var ext = this;
-
-    /*function _get_voices() {
-        var ret = [];
-        var voices = speechSynthesis.getVoices();
-        
-        for(var i = 0; i < voices.length; i++ ) {
-            ret.push(voices[i].name);
-            console.log(voices.toString());
-        }
-
-        return ret;
+    var ip = "192.168.4.1";
+    var connection;
+    
+    function socketConnection(){
+        connection = new WebSocket('ws://'+ ip +':81/api', ['wf8266r']);
+        connection.onopen = function (e) {
+            //連線成功        
+            console.log("ok");
+            connection.send("gpio/adc");
+        };
+        connection.onclose = function (e) {
+            //連線關閉
+        };
+        connection.onmessage = function (e) {
+            //收到來自 WF8266R 的訊息
+            console.log(e.data);
+        };
+        connection.onerror = function (e) {
+            //不明的錯誤
+        };
     }
 
-    ext.set_voice = function() {
-    };*/
-
+    ext.set_ip = function(text){
+        ip = text;
+    };
+    
     ext.speak_text = function (text, callback) {
         var u = new SpeechSynthesisUtterance(text.toString());
         u.onend = function(event) {
@@ -39,6 +49,7 @@ new (function() {
 
     var descriptor = {
         blocks: [
+            [" ", "WF8266R IP %s", "set_ip","mywfxxxx.local"],
             [" ", "腳位 %d.gpio 模式設為 %m.mode", "pinmode",5,"OUTPUT"],
             [" ", "腳位 %d.gpio 數位輸出 %m.level", "gpio",5,1],
             [" ", "腳位 %d.gpio 類比輸出 %n", "pwm", 5, 1023],
@@ -72,5 +83,5 @@ new (function() {
         },
     };
 
-    ScratchExtensions.register('Text to Speech', descriptor, ext);
+    ScratchExtensions.register('WF8266R.js', descriptor, ext);
 })();
