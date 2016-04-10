@@ -10,7 +10,7 @@
     };
 
     ext.set_ip = function(_ip, callback) {
-console.log(_ip);
+
         // Make an AJAX call to the Open Weather Maps API
         $.ajax({
               url: 'http://api.openweathermap.org/data/2.5/weather?q='+_ip+'&units=imperial',
