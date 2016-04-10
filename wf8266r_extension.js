@@ -1,5 +1,4 @@
 (function(ext) {
-
     // Cleanup function when the extension is unloaded
     ext._shutdown = function() {};
 
@@ -9,11 +8,10 @@
         return {status: 2, msg: 'Ready'};
     };
 
-    ext.set_ip = function(_ip, callback) {
-
+    ext.get_temp = function(location, callback) {
         // Make an AJAX call to the Open Weather Maps API
         $.ajax({
-              url: 'http://api.openweathermap.org/data/2.5/weather?q='+_ip+'&units=imperial',
+              url: 'http://api.openweathermap.org/data/2.5/weather?q='+location+'&units=imperial',
               dataType: 'jsonp',
               success: function( weather_data ) {
                   // Got the data - parse it and return the temperature
@@ -26,10 +24,10 @@
     // Block and block menu descriptions
     var descriptor = {
         blocks: [
-            ['R', 'WF8266R IP %s', 'set_ip', 'mywf9441, local'],
+            ['R', 'current temperature in city %s', 'get_temp', 'Boston, MA'],
         ]
     };
 
     // Register the extension
-    ScratchExtensions.register('WF8266R.js', descriptor, ext);
+    ScratchExtensions.register('Weather extension', descriptor, ext);
 })({});
