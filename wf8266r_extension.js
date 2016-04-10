@@ -10,14 +10,14 @@
     // Use this to report missing hardware, plugin or unsupported browser
     ext._getStatus = function() {
         if(isConnected) return {status: 2, msg: 'Ready'};
-        else if(!isConnected) return {status: 0, msg: 'Address error'};
+        if(!isConnected) return {status: 0, msg: 'Address error'};
         return {status: 1, msg: 'Waitting'};
     };
     
     ext.gpio = function(pin,value){
         console.log(pin + " " + value);
         connection.send("gpio,"+pin+","+value);
-    }
+    };
 
     function socketConnection(ip){
         connection = new WebSocket('ws://'+ ip +':81/api', ['wf8266r']);
