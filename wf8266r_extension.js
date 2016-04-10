@@ -24,10 +24,10 @@
     // Block and block menu descriptions
     var descriptor = {
         blocks: [
-            ['R', 'current temperature in city %s', 'get_temp', 'Boston, MA'],
+            ['R', 'w current temperature in city %s', 'get_temp', 'Boston, MA'],
         ]
     };
 
     // Register the extension
-    ScratchExtensions.register('Weather extension', descriptor, ext);
+    ScratchExtensions.register('WF8266R.js', descriptor, ext);
 })({});
