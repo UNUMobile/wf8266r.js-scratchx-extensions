@@ -10,13 +10,12 @@
     // Use this to report missing hardware, plugin or unsupported browser
     ext._getStatus = function() {
         if(isConnected) return {status: 2, msg: 'Ready'};
-        if(!isConnected) return {status: 0, msg: 'Address error'};
-        return {status: 1, msg: 'Waitting'};
+        if(!isConnected) return {status: 1, msg: '請設定開發皮位址'};
     };
     
     ext.gpio = function(pin,value){
         console.log(pin + " " + value);
-        connection.send("gpio,"+pin+","+value);
+        connection.send("gpio,"+pin+"="+value);
     };
 
     function socketConnection(ip){
