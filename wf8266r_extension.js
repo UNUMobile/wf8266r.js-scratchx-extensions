@@ -124,6 +124,7 @@ console.log(currentCallback);
                 case "ds1" : currentCallback.event(parseFloat(eval('jsonObj.'+currentCallback.index))); break;
                 case "distance" : currentCallback.event(parseInt(eval('jsonObj.'+currentCallback.index))); break;
                 case "pm25" : currentCallback.event(parseInt(eval('jsonObj.'+currentCallback.index))); break;
+                case "pm25G" : currentCallback.event(parseInt(eval('jsonObj.'+currentCallback.index))); break;
                 default : break;
             }
             
