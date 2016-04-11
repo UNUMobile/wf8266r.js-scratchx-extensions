@@ -71,6 +71,11 @@
             sendCommand("pm25,pin="+pin);
             currentCallback = {action:'pm25', index:'PM25', event:callback};
         }
+        else if(type == "G3" || type == "G5")
+        {
+            sendCommand("pm25g");
+            currentCallback = {action:'pm25G', index:'PMAT25', event:callback};
+        }
         
         callbackEvent.push(currentCallback);
     };
