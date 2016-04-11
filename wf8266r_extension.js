@@ -40,6 +40,12 @@
         callbackEvent.push(currentCallback);
     };
     
+    ext.dht = function(type, param, pin, callback){
+        connection.send("dht,"+pin+"="+pin+"&type="+type);
+        var currentCallback = {action:'dht', index:param, event:callback};
+        callbackEvent.push(currentCallback);
+    };
+    
     ext.set_ip = function(_ip){
         if(connection != null)
             connection.close(); 
@@ -79,6 +85,7 @@ console.log(currentCallback);
             {
                 case "gpio/adc" : currentCallback.event(parseInt(jsonObj.ADC)); break;
                 case "gpio/read" : currentCallback.event(parseInt(eval('jsonObj.D'+currentCallback.index))); break;
+                case "dht" : currentCallback.event(parseInt(eval('jsonObj.'+currentCallback.index))); break;
                 default : break;
             }
             
@@ -96,8 +103,8 @@ console.log(currentCallback);
             [' ', '腳位 %d.gpio 模式設為 %m.mode', 'pinmode',5,'OUTPUT'],
             [' ', '腳位 %d.gpio 數位輸出 %m.level', 'gpio',5,1],
             [' ', '腳位 %d.gpio 類比輸出 %n', 'pwm', 5, 1023],
-            [' ', 'DHT%m.dhtType 溫濕度感測器，接在腳位 %d.gpio' ,'dht', 11,12],
-            [' ', 'DS18B20 溫度感測器，接在腳位 %d.gpio' ,'ds', 4],
+            ['R', 'DHT%m.dhtType 溫濕度感測器的 %m.dhtParam，接在腳位 %d.gpio' ,'dht', 11,'C', 12],
+            ['R', 'DS18B20 溫度感測器，接在腳位 %d.gpio' ,'ds', 4],
             [' ', 'UART 速率 %m.uartBaud' ,'baud', '115200'],
             [' ', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio' ,'distance', 5,4],
             [' ', '紅外線接收器，接在腳位 %d.gpio' ,'irrecv', 14],
@@ -108,13 +115,13 @@ console.log(currentCallback);
             [' ', 'HTTP %m.restfulType 資料 %s 到 %s %s' ,'http', 'POST', 'key=xxxxxx&field1=1&field2=2','api.thingspeak.com', 'update'],
             [' ', 'HTTP %m.restfulType 資料 %s 從 %s %s' ,'http', 'GET', 'api_key=EM18B52PSHXZB4DD', 'api.thingspeak.com', 'apps/thinghttp/send_request'],
             ['R', '讀取數位腳位 %d.gpio' ,'read', 5],
-            ['R', '讀取感測器 %m.sensor 參數 %m.sensorParam' ,'sensor', 'DHT', 'C'],
+            //['R', '讀取感測器 %m.sensor 參數 %m.sensorParam' ,'sensor', 'DHT', 'C'],
             ['R', '讀取類比腳位 ADC','adc'],
         ],
         menus: {
             'mode':['INPUT','OUTPUT'],
             'sensor':['DHT','DS','HCSR','IR','Rx','RESTfulGET'],
-            'sensorParam':['Value','C','F','H'],
+            'dhtParam':['C','F','Humidity'],
             'dhtType':['11','22','21'],
             'restfulType':['GET','POST'],
             'flushType':['UART','RESTful','IR'],
