@@ -3,7 +3,7 @@
     var isConnected = false;
     var connection;
     //var gpio = {ADC:0, D5:0, D4:0, D12:0, D13:0, D14:0, D15:0, D16:0, D0:0, D1:0, D2:0, D3:0};
-    var callbackEvent = {};
+    var callbackEvent = [];
     // Cleanup function when the extension is unloaded
     ext._shutdown = function() {};
 
@@ -40,7 +40,9 @@
             
             var index = callbackEvent.length;
             var currentCallback = callbackEvent[0];
-            console.log(index + " " + currentCallback.action);
+            console.log(index);
+            console.log(currentCallback);
+            console.log(currentCallback.action);
             callbackEvent.splice(0, 1);
 
             switch(jsonObj.Action)
