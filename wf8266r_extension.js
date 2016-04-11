@@ -5,6 +5,7 @@
     var callbackEvent = [];
     var isUARTData = false;
     var uartData = "";
+    var lass = {C:0, H:0, PM25:0};
     
     function sendCommand(cmd)
     {
@@ -138,6 +139,35 @@
         });
     };
     
+    ext.lass = function(device, callback){
+        $.ajax({
+              url: 'http://nrl.iis.sinica.edu.tw/LASS/last.php?device_id='+device,
+              success: function( data ) {
+                  var jsonObj = JSON.parse(data);
+                  console.log(jsonObj);
+                  lassC = jsonObj.s_t0;
+                  lassH = jsonObj.s_h0;
+                  lassPM25 = jsonObj.s_d0;
+                  callback(true);
+              },
+              error: function(e){
+                  callback(e);
+              }
+        });
+    };
+    
+    ext.lassC = function(){
+        return lass.C;
+    };
+    
+    ext.lassH = function(){
+        return lass.H;
+    };
+    
+    ext.lassPM25 = function(){
+        return lass.PM25;
+    };
+    
     ext.set_ip = function(_ip){
         if(connection != null)
             connection.close(); 
@@ -216,6 +246,10 @@ console.log(currentCallback);
             [' ', '腳位 %d.gpio 模式設為 %m.mode', 'pinmode',5,'OUTPUT'],
             [' ', '腳位 %d.gpio 數位輸出 %m.level', 'gpio',5,1],
             [' ', '腳位 %d.gpio 類比輸出 %n', 'pwm', 5, 1023],
+            [' ', 'UART 速率 %m.uartBaud' ,'baud', '115200'],
+            [' ', 'UART to Socket %m.boolType' ,'socketUART', 'true'],
+            [' ', 'UART Tx 送出 %m.uartCode %s 結尾換行 %m.boolType' ,'tx', 'text', 'Hi', 'true'],
+            [' ', '%m.flushType 清空', 'flush', 'UART'], 
             ['R', 'DHT%m.dhtType 溫濕度感測器 %m.dhtSensorParam 在腳位 %d.gpio' ,'dht', 11,'C', 12],
             ['R', 'DS18B20 溫度感測器 %m.dsSensorParam 在腳位 %d.gpio' ,'ds', 'C', 4],
             ['R', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio' ,'distance', 5,4],
@@ -223,15 +257,15 @@ console.log(currentCallback);
             ['R', '讀取紅外線接收器，接在腳位 %d.gpio' ,'irrecv', 14],
             ['R', '紅外線發射器，接在腳位 %d.gpio 發送位址 %n 的資料' ,'irsend', 15, 0],
             ['R', '停止紅外線接收' ,'irstop'],
-            [' ', 'UART 速率 %m.uartBaud' ,'baud', '115200'],
-            [' ', 'UART to Socket %m.boolType' ,'socketUART', 'true'],
-            [' ', 'UART Tx 送出 %m.uartCode %s 結尾換行 %m.boolType' ,'tx', 'text', 'Hi', 'true'],
-            [' ', '%m.flushType 清空', 'flush', 'UART'],
             ['R', 'HTTP %m.restfulType 到 %s' ,'http', 'POST', 'http://api.thingspeak.com/update?key=xxxxxx&field1=1&field2=2'],
             ['R', 'HTTP %m.restfulType 從 %s' ,'http', 'GET', 'http://api.thingspeak.com/apps/thinghttp/send_request?api_key=EM18B52PSHXZB4DD'],
+            ['R', 'LASS 設備 %s' ,'lass', ''],
             ['R', '讀取數位腳位 %d.gpio' ,'read', 5],
             ['R', '讀取類比腳位 ADC','adc'],
             ['r', '讀取 UART','rx'],
+            ['r', 'LASS PM25','lassPM25'],
+            ['r', 'LASS 溫度','lassC'],
+            ['r', 'LASS 濕度','lassH'],
         ],
         menus: {
             'mode':['INPUT','OUTPUT'],
