@@ -103,6 +103,10 @@
         sendCommand("baud,"+rate+"=");    
     };
     
+    ext.tx = function(type, text, ln) {
+        sendCommand("uart/tx,type="+type+"&text="+text+"&ln="+ln);    
+    };
+    
     ext.set_ip = function(_ip){
         if(connection != null)
             connection.close(); 
