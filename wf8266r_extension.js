@@ -5,7 +5,10 @@
     //var gpio = {ADC:0, D5:0, D4:0, D12:0, D13:0, D14:0, D15:0, D16:0, D0:0, D1:0, D2:0, D3:0};
     var callbackEvent = [];
     // Cleanup function when the extension is unloaded
-    ext._shutdown = function() {};
+    ext._shutdown = function() {
+        console.log("shutdown");
+        connection.close();
+    };
 
     // Status reporting code
     // Use this to report missing hardware, plugin or unsupported browser
@@ -54,7 +57,6 @@ console.log(jsonObj);
             else
                 return;
 console.log(currentCallback);                
-console.log(eval('jsonObj.D'+currentCallback.index));
             switch(jsonObj.Action)
             {
                 case "gpio/adc" : currentCallback.event(parseInt(jsonObj.ADC)); break;
