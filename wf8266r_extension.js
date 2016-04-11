@@ -111,11 +111,30 @@
     
     ext.rx = function(){
         return uartData;
-    }
+    };
     
     ext.socketUART = function(state){
         sendCommand("socketUART,state="+state);
-    }
+    };
+    
+    ext.flush = function(type){
+        switch (type) {
+            case "UART": uartData = ""; isUARTData = false; break;
+            default:
+                break;
+        }
+    };
+    
+    ext.http = function(_type, uri, callback){
+        $.ajax({
+              url: uri,
+              type: _type,
+              dataType: 'jsonp',
+              success: function( data ) {
+                  callback(data);
+              }
+        });
+    };
     
     ext.set_ip = function(_ip){
         if(connection != null)
@@ -206,8 +225,8 @@ console.log(currentCallback);
             [' ', 'UART to Socket %m.boolType' ,'socketUART', 'true'],
             [' ', 'UART Tx 送出 %m.uartCode %s 結尾換行 %m.boolType' ,'tx', 'text', 'Hi', 'true'],
             [' ', '%m.flushType 清空', 'flush', 'UART'],
-            [' ', 'HTTP %m.restfulType 資料 %s 到 %s %s' ,'http', 'POST', 'key=xxxxxx&field1=1&field2=2','api.thingspeak.com', 'update'],
-            [' ', 'HTTP %m.restfulType 資料 %s 從 %s %s' ,'http', 'GET', 'api_key=EM18B52PSHXZB4DD', 'api.thingspeak.com', 'apps/thinghttp/send_request'],
+            ['R', 'HTTP %m.restfulType 到 %s' ,'http', 'POST', 'http://api.thingspeak.com/update?key=xxxxxx&field1=1&field2=2'],
+            ['R', 'HTTP %m.restfulType 從 %s' ,'http', 'GET', 'http://api.thingspeak.com/apps/thinghttp/send_request?api_key=EM18B52PSHXZB4DD'],
             ['R', '讀取數位腳位 %d.gpio' ,'read', 5],
             ['R', '讀取類比腳位 ADC','adc'],
             ['r', '讀取 UART','rx'],
@@ -220,7 +239,7 @@ console.log(currentCallback);
             'pm25SensorParam':['G3','G5','GP2Y1010AU0F'],
             'dhtType':['11','22','21'],
             'restfulType':['GET','POST'],
-            'flushType':['UART','RESTful','IR'],
+            'flushType':['UART'],
             'level':['0','1'],
             'uartCode':['text','hex'],
             'uartBaud':['9600','19200','38400','57600','115200'],
