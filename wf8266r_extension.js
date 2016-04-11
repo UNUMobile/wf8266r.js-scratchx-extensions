@@ -3,6 +3,8 @@
     var isConnected = false;
     var connection;
     var callbackEvent = [];
+    var isUARTData = false;
+    var uartData = "";
     
     function sendCommand(cmd)
     {
@@ -121,6 +123,10 @@
     ext.when_connected = function(){
       return isConnected;  
     };
+    
+    ext.when_uart = function(){
+      return isUARTData;  
+    };
 
     function socketConnection(ip){
         connection = new WebSocket('ws://'+ ip +':81/api', ['wf8266r']);
@@ -133,6 +139,14 @@
         };
         connection.onmessage = function (e) {
             isConnected = true;
+            
+            if(e.data.length == 1) // socket uart
+            {
+                isUARTData = true;
+                uartData += e.data;
+                break;
+            }
+            
 console.log( e.data);
             var jsonObj = JSON.parse(e.data.substring(0, e.data.length - 1));
 console.log(jsonObj);            
@@ -173,6 +187,7 @@ console.log(currentCallback);
         blocks: [
             [' ', '開發板位址 %s', 'set_ip', 'mywf9441.local'],
             ['h', '當連線建立時', 'when_connected'],
+            ['h', '當UART有資料時', 'when_uart'],
             [' ', '腳位 %d.gpio 模式設為 %m.mode', 'pinmode',5,'OUTPUT'],
             [' ', '腳位 %d.gpio 數位輸出 %m.level', 'gpio',5,1],
             [' ', '腳位 %d.gpio 類比輸出 %n', 'pwm', 5, 1023],
