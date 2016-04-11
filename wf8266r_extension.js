@@ -2,7 +2,7 @@
     var ip = "";
     var isConnected = false;
     var connection;
-    var gpio = {ADC:0, D5:0, D4:0, D12:0, D13:0, D14:0, D15:0, D16:0, D0:0, D1:0, D2:0, D3:0};
+    //var gpio = {ADC:0, D5:0, D4:0, D12:0, D13:0, D14:0, D15:0, D16:0, D0:0, D1:0, D2:0, D3:0};
     var currentCallback;
     // Cleanup function when the extension is unloaded
     ext._shutdown = function() {};
@@ -20,7 +20,7 @@
     };
     
     ext.adc = function(callback){
-        callback(gpio.ADC);
+        currentCallback = callback;
     }
 
     function socketConnection(ip){
@@ -38,7 +38,7 @@
             
             switch(jsonObj.Action)
             {
-                case "gpio/adc" : gpio.ADC = currentCallback(parseInt(jsonObj.ADC));
+                case "gpio/adc" : currentCallback(parseInt(jsonObj.ADC));
                 default : break;
             }
             
