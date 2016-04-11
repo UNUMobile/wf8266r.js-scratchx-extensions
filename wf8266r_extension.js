@@ -34,12 +34,13 @@
         };
         connection.onmessage = function (e) {
             isConnected = true;
-            var jsonObj = JSON.parse(e.data);
+            console.log(e.data);
+            var jsonObj = JSON.parse(e.data.substring(0, e.data.length - 1));
             console.log(jsonObj);
             console.log(currentCallback);
             switch(jsonObj.Action)
             {
-                //case "gpio/adc" : currentCallback(parseInt(jsonObj.ADC));
+                case "gpio/adc" : currentCallback(parseInt(jsonObj.ADC));
                 default : break;
             }
             
