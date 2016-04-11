@@ -280,7 +280,7 @@
             'boolType':['true','false'],
             'gpio':['5','4','12','13','14','15','16','0','1','2','3']
         },
-        url: 'http://wf8266.com/wf8266r'
+        url: 'http://unumobile.github.io/wf8266r.js-scratchx-extensions'
     };
 
     // Register the extension
