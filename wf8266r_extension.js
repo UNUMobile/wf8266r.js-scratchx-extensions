@@ -86,6 +86,12 @@
         callbackEvent.push(currentCallback);
     };
     
+    ext.irsend = function(pin, index, callback) {
+        sendCommand("ir/send,pin="+pin+"&index="+index);
+        var currentCallback = {action:'ir/send', index:'index', event:callback};
+        callbackEvent.push(currentCallback);
+    };
+    
     ext.set_ip = function(_ip){
         if(connection != null)
             connection.close(); 
@@ -132,6 +138,7 @@ console.log(currentCallback);
                 case "pm25" : currentCallback.event(parseInt(eval('jsonObj.'+currentCallback.index))); break;
                 case "pm25g" : currentCallback.event(parseInt(eval('jsonObj.'+currentCallback.index))); break;
                 case "ir/code" : currentCallback.event(eval('jsonObj.'+currentCallback.index)); break;
+                case "ir/send" : currentCallback.event(eval('jsonObj.'+currentCallback.index)); break;
                 default : break;
             }
             
@@ -154,7 +161,7 @@ console.log(currentCallback);
             ['R', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio' ,'distance', 5,4],
             ['R', 'PM25粉塵感測器 %m.pm25SensorParam 在腳位 %d.gpio' ,'pm25', 'G3', 14],
             ['R', '讀取紅外線接收器，接在腳位 %d.gpio' ,'irrecv', 14],
-            ['W', '紅外線發射器，接在腳位 %d.gpio 發送資料 %s' ,'irsend', 15, '0'],
+            ['R', '紅外線發射器，接在腳位 %d.gpio 發送位址 %n 的資料' ,'irsend', 15, n],
             ['W', '停止紅外線接收' ,'irstop'],
             [' ', 'UART 速率 %m.uartBaud' ,'baud', '115200'],
             [' ', 'UART Tx 送出 %m.uartCode %s 結尾換行 %m.boolType' ,'tx', 'text', 'Hi', 'true'],
