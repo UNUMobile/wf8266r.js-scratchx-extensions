@@ -148,7 +148,7 @@
             {
                 isUARTData = true;
                 uartData += e.data;
-                break;
+                return;
             }
             
 console.log( e.data);
