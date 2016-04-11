@@ -109,6 +109,10 @@
         sendCommand("uart/tx,type="+type+"&text="+text+"&ln="+ln);    
     };
     
+    ext.rx = function(){
+        return uartData;
+    }
+    
     ext.socketUART = function(state){
         sendCommand("socketUART,state="+state);
     }
@@ -206,6 +210,7 @@ console.log(currentCallback);
             [' ', 'HTTP %m.restfulType 資料 %s 從 %s %s' ,'http', 'GET', 'api_key=EM18B52PSHXZB4DD', 'api.thingspeak.com', 'apps/thinghttp/send_request'],
             ['R', '讀取數位腳位 %d.gpio' ,'read', 5],
             ['R', '讀取類比腳位 ADC','adc'],
+            ['R', '讀取 UART','rx'],
         ],
         menus: {
             'mode':['INPUT','OUTPUT'],
