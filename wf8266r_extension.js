@@ -33,6 +33,12 @@
         callbackEvent.push(currentCallback);
     };
     
+    ext.pinmode = function(pin, mode, callback){
+        connection.send("pinmode,"+pin+"="+mode);
+        var currentCallback = {action:'pinmode', index:pin, event:callback};
+        callbackEvent.push(currentCallback);
+    };
+    
     ext.set_ip = function(_ip){
         if(connection != null)
             connection.close(); 
@@ -71,6 +77,7 @@ console.log(currentCallback);
             {
                 case "gpio/adc" : currentCallback.event(parseInt(jsonObj.ADC)); break;
                 case "gpio/read" : currentCallback.event(parseInt(eval('jsonObj.D'+currentCallback.index))); break;
+                case "pinmode" : currentCallback.event(parseInt(eval('jsonObj.D'+currentCallback.index))); break;
                 default : break;
             }
             
