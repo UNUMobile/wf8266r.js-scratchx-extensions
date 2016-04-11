@@ -3,6 +3,12 @@
     var isConnected = false;
     var connection;
     var callbackEvent = [];
+    
+    function sendCommand(cmd)
+    {
+        if(isConnected)
+            connection.send(cmd);
+    }
 
     // Cleanup function when the extension is unloaded
     ext._shutdown = function() {
@@ -17,37 +23,37 @@
     };
     
     ext.gpio = function(pin,value){
-        connection.send("gpio,"+pin+"="+value);
+        sendCommand("gpio,"+pin+"="+value);
     };
     
     ext.pwm = function(pin,value){
-        connection.send("gpio/pwm,"+pin+"="+value);
+        sendCommand("gpio/pwm,"+pin+"="+value);
     };
     
     ext.pinmode = function(pin, mode){
-        connection.send("pinmode,"+pin+"="+mode);
+        sendCommand("pinmode,"+pin+"="+mode);
     };
     
     ext.adc = function(callback){
-        connection.send("gpio/adc");
+        sendCommand("gpio/adc");
         var currentCallback = {action:'gpio/adc', index:'20', event:callback};
         callbackEvent.push(currentCallback);
     };
     
     ext.read = function(pin, callback){
-        connection.send("gpio/read,"+pin+"=2");
+        sendCommand("gpio/read,"+pin+"=2");
         var currentCallback = {action:'gpio/read', index:pin, event:callback};
         callbackEvent.push(currentCallback);
     };
     
     ext.dht = function(type, param, pin, callback){
-        connection.send("dht,pin="+pin+"&type="+type);
+        sendCommand("dht,pin="+pin+"&type="+type);
         var currentCallback = {action:'dht', index:param, event:callback};
         callbackEvent.push(currentCallback);
     };
     
     ext.ds = function(param, pin, callback){
-        connection.send("ds,pin="+pin+"&index=1");
+        sendCommand("ds,pin="+pin+"&index=1");
         var currentCallback = {action:'ds', index:param, event:callback};
         callbackEvent.push(currentCallback);
     };
@@ -92,7 +98,7 @@ console.log(currentCallback);
                 case "gpio/adc" : currentCallback.event(parseInt(jsonObj.ADC)); break;
                 case "gpio/read" : currentCallback.event(parseInt(eval('jsonObj.D'+currentCallback.index))); break;
                 case "dht" : currentCallback.event(parseFloat(eval('jsonObj.'+currentCallback.index))); break;
-                case "ds" : currentCallback.event(parseFloat(eval('jsonObj.'+currentCallback.index))); break;
+                case "ds1" : currentCallback.event(parseFloat(eval('jsonObj.'+currentCallback.index))); break;
                 default : break;
             }
             
