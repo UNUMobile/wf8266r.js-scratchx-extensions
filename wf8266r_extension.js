@@ -21,9 +21,15 @@
     
     ext.adc = function(callback){
         connection.send("gpio/adc");
-        var currentCallback = {action:'gpio/adc', event:callback};
+        var currentCallback = {action:'gpio/adc', index:20, event:callback};
         callbackEvent.push(currentCallback);
-    }
+    };
+    
+    ext.read = function(pin, callback){
+        connection.send("gpio/read,"+pin+"=2");
+        var currentCallback = {action:'gpio/read', index:pin, event:callback};
+        callbackEvent.push(currentCallback);
+    };
 
     function socketConnection(ip){
         connection = new WebSocket('ws://'+ ip +':81/api', ['wf8266r']);
@@ -39,15 +45,17 @@
             var jsonObj = JSON.parse(e.data.substring(0, e.data.length - 1));
             
             var index = callbackEvent.length;
-            var currentCallback = callbackEvent[0];
-            console.log(index);
-            console.log(currentCallback);
-            console.log(currentCallback.action);
-            callbackEvent.splice(0, 1);
-            console.log(callbackEvent.length);
+            var currentCallback;
+            if(index > 0)
+            {
+                currentCallback = callbackEvent[0];
+                callbackEvent.splice(0, 1);
+            }
+console.log(eval('jsonObj.'+currentCallback.index));
             switch(jsonObj.Action)
             {
-                case "gpio/adc" : currentCallback.event(parseInt(jsonObj.ADC));
+                case "gpio/adc" : currentCallback.event(parseInt(jsonObj.ADC)); break;
+                case "gpio/read" : currentCallback.event(parseInt(eval('jsonObj.'+currentCallback.index))); break;
                 default : break;
             }
             
@@ -80,7 +88,7 @@
             [' ', '%m.flushType 清空', 'flush', 'UART'],
             [' ', 'HTTP %m.restfulType 資料 %s 到 %s %s' ,'http', 'POST', 'key=xxxxxx&field1=1&field2=2','api.thingspeak.com', 'update'],
             [' ', 'HTTP %m.restfulType 資料 %s 從 %s %s' ,'http', 'GET', 'api_key=EM18B52PSHXZB4DD', 'api.thingspeak.com', 'apps/thinghttp/send_request'],
-            ['r', '讀取數位腳位 %d.gpio' ,'read', 5],
+            ['R', '讀取數位腳位 %d.gpio' ,'read', 5],
             ['r', '讀取感測器 %m.sensor 參數 %m.sensorParam' ,'sensor', 'DHT', 'C'],
             ['R', '讀取類比腳位 ADC','adc'],
         ],
