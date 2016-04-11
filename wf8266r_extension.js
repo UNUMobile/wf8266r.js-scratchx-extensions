@@ -6,6 +6,7 @@
     
     function sendCommand(cmd)
     {
+        console.log(cmd);
         if(isConnected)
             connection.send(cmd);
     }
