@@ -22,6 +22,12 @@
         callbackEvent.push(currentCallback);
     };
     
+    ext.pwm = function(pin,value,callback){
+        connection.send("pwm,"+pin+"="+value);
+        var currentCallback = {action:'pwm', index:pin, event:callback};
+        callbackEvent.push(currentCallback);
+    };
+    
     ext.adc = function(callback){
         connection.send("gpio/adc");
         var currentCallback = {action:'gpio/adc', index:'20', event:callback};
@@ -77,9 +83,10 @@ console.log(currentCallback);
             switch(jsonObj.Action)
             {
                 case "gpio" : currentCallback.event(parseInt(eval('jsonObj.D'+currentCallback.index))); break;
+                case "gpio/pwm" : currentCallback.event(parseInt(eval('jsonObj.D'+currentCallback.index))); break;
                 case "gpio/adc" : currentCallback.event(parseInt(jsonObj.ADC)); break;
                 case "gpio/read" : currentCallback.event(parseInt(eval('jsonObj.D'+currentCallback.index))); break;
-                case "pinmode" : currentCallback.event(parseInt(eval('jsonObj.D'+currentCallback.index))); break;
+                case "pinmode" : currentCallback.event(eval('jsonObj.D'+currentCallback.index)); break;
                 default : break;
             }
             
