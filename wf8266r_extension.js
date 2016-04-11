@@ -202,9 +202,7 @@
                 return;
             }
             
-console.log( e.data);
             var jsonObj = JSON.parse(e.data.substring(0, e.data.length - 1));
-console.log(jsonObj);            
             var index = callbackEvent.length;
             var currentCallback;
             if(index > 0)
@@ -215,7 +213,7 @@ console.log(jsonObj);
             }
             else
                 return;
-console.log(currentCallback);                
+              
             switch(jsonObj.Action)
             {
                 case "gpio/adc" : currentCallback.event(parseInt(jsonObj.ADC)); break;
@@ -240,7 +238,7 @@ console.log(currentCallback);
     // Block and block menu descriptions
     var descriptor = {
         blocks: [
-            [' ', '開發板位址 %s', 'set_ip', 'mywf9441.local'],
+            [' ', '開發板位址 %s', 'set_ip', 'mywfxxxx.local'],
             ['h', '當連線建立時', 'when_connected'],
             ['h', '當UART有資料時', 'when_uart'],
             [' ', '腳位 %d.gpio 模式設為 %m.mode', 'pinmode',5,'OUTPUT'],
@@ -259,7 +257,7 @@ console.log(currentCallback);
             ['R', '停止紅外線接收' ,'irstop'],
             ['R', 'HTTP %m.restfulType 到 %s' ,'http', 'POST', 'http://api.thingspeak.com/update?key=xxxxxx&field1=1&field2=2'],
             ['R', 'HTTP %m.restfulType 從 %s' ,'http', 'GET', 'http://api.thingspeak.com/apps/thinghttp/send_request?api_key=EM18B52PSHXZB4DD'],
-            ['R', 'LASS 設備 %s' ,'lass', ''],
+            ['R', 'LASS 設備編號 %s' ,'lass', ''],
             ['R', '讀取數位腳位 %d.gpio' ,'read', 5],
             ['R', '讀取類比腳位 ADC','adc'],
             ['r', '讀取 UART','rx'],
