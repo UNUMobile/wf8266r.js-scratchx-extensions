@@ -91,7 +91,8 @@ console.log(currentCallback);
             {
                 case "gpio/adc" : currentCallback.event(parseInt(jsonObj.ADC)); break;
                 case "gpio/read" : currentCallback.event(parseInt(eval('jsonObj.D'+currentCallback.index))); break;
-                case "dht" : currentCallback.event(parseInt(eval('jsonObj.'+currentCallback.index))); break;
+                case "dht" : currentCallback.event(parseFloat(eval('jsonObj.'+currentCallback.index))); break;
+                case "ds" : currentCallback.event(parseFloat(eval('jsonObj.'+currentCallback.index))); break;
                 default : break;
             }
             
@@ -128,7 +129,7 @@ console.log(currentCallback);
             'mode':['INPUT','OUTPUT'],
             'sensor':['DHT','DS','HCSR','IR','Rx','RESTfulGET'],
             'dhtSensorParam':['C','F','Humidity'],
-            'dsSensorParam':['C','F','Humidity'],
+            'dsSensorParam':['C','F'],
             'dhtType':['11','22','21'],
             'restfulType':['GET','POST'],
             'flushType':['UART','RESTful','IR'],
