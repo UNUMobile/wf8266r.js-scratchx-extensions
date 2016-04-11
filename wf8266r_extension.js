@@ -161,7 +161,7 @@ console.log(currentCallback);
             ['R', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio' ,'distance', 5,4],
             ['R', 'PM25粉塵感測器 %m.pm25SensorParam 在腳位 %d.gpio' ,'pm25', 'G3', 14],
             ['R', '讀取紅外線接收器，接在腳位 %d.gpio' ,'irrecv', 14],
-            ['R', '紅外線發射器，接在腳位 %d.gpio 發送位址 %n 的資料' ,'irsend', 15, n],
+            ['R', '紅外線發射器，接在腳位 %d.gpio 發送位址 %n 的資料' ,'irsend', 15, 0],
             ['W', '停止紅外線接收' ,'irstop'],
             [' ', 'UART 速率 %m.uartBaud' ,'baud', '115200'],
             [' ', 'UART Tx 送出 %m.uartCode %s 結尾換行 %m.boolType' ,'tx', 'text', 'Hi', 'true'],
