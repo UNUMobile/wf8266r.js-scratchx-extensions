@@ -54,7 +54,7 @@
     
     ext.ds = function(param, pin, callback){
         sendCommand("ds,pin="+pin+"&index=1");
-        var currentCallback = {action:'ds', index:param, event:callback};
+        var currentCallback = {action:'ds1', index:param, event:callback};
         callbackEvent.push(currentCallback);
     };
     
