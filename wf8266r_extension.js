@@ -16,16 +16,16 @@
         if(!isConnected) return {status: 1, msg: '請設定開發板位址'};
     };
     
-    ext.gpio = function(pin,value,callback){
+    ext.gpio = function(pin,value){
         connection.send("gpio,"+pin+"="+value);
-        var currentCallback = {action:'gpio', index:pin, event:callback};
-        callbackEvent.push(currentCallback);
     };
     
-    ext.pwm = function(pin,value,callback){
+    ext.pwm = function(pin,value){
         connection.send("gpio/pwm,"+pin+"="+value);
-        var currentCallback = {action:'gpio/pwm', index:pin, event:callback};
-        callbackEvent.push(currentCallback);
+    };
+    
+    ext.pinmode = function(pin, mode){
+        connection.send("pinmode,"+pin+"="+mode);
     };
     
     ext.adc = function(callback){
@@ -37,12 +37,6 @@
     ext.read = function(pin, callback){
         connection.send("gpio/read,"+pin+"=2");
         var currentCallback = {action:'gpio/read', index:pin, event:callback};
-        callbackEvent.push(currentCallback);
-    };
-    
-    ext.pinmode = function(pin, mode, callback){
-        connection.send("pinmode,"+pin+"="+mode);
-        var currentCallback = {action:'pinmode', index:pin, event:callback};
         callbackEvent.push(currentCallback);
     };
     
@@ -75,18 +69,16 @@ console.log(jsonObj);
             if(index > 0)
             {
                 currentCallback = callbackEvent[0];
-                callbackEvent.splice(0, 1);
+                if(currentCallback.action == jsonObj.Action)
+                    callbackEvent.splice(0, 1);
             }
             else
                 return;
 console.log(currentCallback);                
             switch(jsonObj.Action)
             {
-                case "gpio" : currentCallback.event(parseInt(eval('jsonObj.D'+currentCallback.index))); break;
-                case "gpio/pwm" : currentCallback.event(parseInt(eval('jsonObj.D'+currentCallback.index))); break;
                 case "gpio/adc" : currentCallback.event(parseInt(jsonObj.ADC)); break;
                 case "gpio/read" : currentCallback.event(parseInt(eval('jsonObj.D'+currentCallback.index))); break;
-                case "pinmode" : currentCallback.event(eval('jsonObj.D'+currentCallback.index)); break;
                 default : break;
             }
             
@@ -101,20 +93,20 @@ console.log(currentCallback);
         blocks: [
             [' ', '開發板位址 %s', 'set_ip', 'mywf9441.local'],
             ['h', '當連線建立時', 'when_connected'],
-            ['W', '腳位 %d.gpio 模式設為 %m.mode', 'pinmode',5,'OUTPUT'],
-            ['W', '腳位 %d.gpio 數位輸出 %m.level', 'gpio',5,1],
-            ['W', '腳位 %d.gpio 類比輸出 %n', 'pwm', 5, 1023],
-            ['W', 'DHT%m.dhtType 溫濕度感測器，接在腳位 %d.gpio' ,'dht', 11,12],
-            ['W', 'DS18B20 溫度感測器，接在腳位 %d.gpio' ,'ds', 4],
-            ['W', 'UART 速率 %m.uartBaud' ,'baud', '115200'],
-            ['W', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio' ,'distance', 5,4],
-            ['W', '紅外線接收器，接在腳位 %d.gpio' ,'irrecv', 14],
-            ['W', '紅外線發射器，接在腳位 %d.gpio 發送資料 %s' ,'irsend', 15, '0'],
-            ['W', '停止紅外線接收' ,'irstop'],
-            ['W', 'UART Tx 送出 %m.uartCode %s 結尾換行 %m.boolType' ,'tx', 'text', 'Hi', 'true'],
-            ['W', '%m.flushType 清空', 'flush', 'UART'],
-            ['W', 'HTTP %m.restfulType 資料 %s 到 %s %s' ,'http', 'POST', 'key=xxxxxx&field1=1&field2=2','api.thingspeak.com', 'update'],
-            ['W', 'HTTP %m.restfulType 資料 %s 從 %s %s' ,'http', 'GET', 'api_key=EM18B52PSHXZB4DD', 'api.thingspeak.com', 'apps/thinghttp/send_request'],
+            [' ', '腳位 %d.gpio 模式設為 %m.mode', 'pinmode',5,'OUTPUT'],
+            [' ', '腳位 %d.gpio 數位輸出 %m.level', 'gpio',5,1],
+            [' ', '腳位 %d.gpio 類比輸出 %n', 'pwm', 5, 1023],
+            [' ', 'DHT%m.dhtType 溫濕度感測器，接在腳位 %d.gpio' ,'dht', 11,12],
+            [' ', 'DS18B20 溫度感測器，接在腳位 %d.gpio' ,'ds', 4],
+            [' ', 'UART 速率 %m.uartBaud' ,'baud', '115200'],
+            [' ', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio' ,'distance', 5,4],
+            [' ', '紅外線接收器，接在腳位 %d.gpio' ,'irrecv', 14],
+            [' ', '紅外線發射器，接在腳位 %d.gpio 發送資料 %s' ,'irsend', 15, '0'],
+            [' ', '停止紅外線接收' ,'irstop'],
+            [' ', 'UART Tx 送出 %m.uartCode %s 結尾換行 %m.boolType' ,'tx', 'text', 'Hi', 'true'],
+            [' ', '%m.flushType 清空', 'flush', 'UART'],
+            [' ', 'HTTP %m.restfulType 資料 %s 到 %s %s' ,'http', 'POST', 'key=xxxxxx&field1=1&field2=2','api.thingspeak.com', 'update'],
+            [' ', 'HTTP %m.restfulType 資料 %s 從 %s %s' ,'http', 'GET', 'api_key=EM18B52PSHXZB4DD', 'api.thingspeak.com', 'apps/thinghttp/send_request'],
             ['R', '讀取數位腳位 %d.gpio' ,'read', 5],
             ['R', '讀取感測器 %m.sensor 參數 %m.sensorParam' ,'sensor', 'DHT', 'C'],
             ['R', '讀取類比腳位 ADC','adc'],
