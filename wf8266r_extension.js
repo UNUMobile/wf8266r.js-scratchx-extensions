@@ -64,6 +64,17 @@
         callbackEvent.push(currentCallback);
     };
     
+    ext.distance = function(type, pin, callback){
+        var currentCallback;
+        if(type == "GP2Y1010AU0F")
+        {
+            sendCommand("pm25,pin="+pin);
+            currentCallback = {action:'pm25', index:'PM25', event:callback};
+        }
+        
+        callbackEvent.push(currentCallback);
+    };
+    
     ext.set_ip = function(_ip){
         if(connection != null)
             connection.close(); 
@@ -106,6 +117,7 @@ console.log(currentCallback);
                 case "dht" : currentCallback.event(parseFloat(eval('jsonObj.'+currentCallback.index))); break;
                 case "ds1" : currentCallback.event(parseFloat(eval('jsonObj.'+currentCallback.index))); break;
                 case "distance" : currentCallback.event(parseInt(eval('jsonObj.'+currentCallback.index))); break;
+                case "pm25" : currentCallback.event(parseInt(eval('jsonObj.'+currentCallback.index))); break;
                 default : break;
             }
             
@@ -124,8 +136,9 @@ console.log(currentCallback);
             [' ', '腳位 %d.gpio 數位輸出 %m.level', 'gpio',5,1],
             [' ', '腳位 %d.gpio 類比輸出 %n', 'pwm', 5, 1023],
             ['R', 'DHT%m.dhtType 溫濕度感測器 %m.dhtSensorParam 在腳位 %d.gpio' ,'dht', 11,'C', 12],
-            ['R', 'DS18B20 溫度感測器 %m.dsSensorParam ，接在腳位 %d.gpio' ,'ds', 'C', 4],
+            ['R', 'DS18B20 溫度感測器 %m.dsSensorParam 在腳位 %d.gpio' ,'ds', 'C', 4],
             ['R', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio' ,'distance', 5,4],
+            ['R', 'PM25粉塵感測器 %m.pm25SensorParam 在腳位 %d.gpio' ,'pm25', 'G3', 14],
             [' ', '紅外線接收器，接在腳位 %d.gpio' ,'irrecv', 14],
             [' ', '紅外線發射器，接在腳位 %d.gpio 發送資料 %s' ,'irsend', 15, '0'],
             [' ', '停止紅外線接收' ,'irstop'],
@@ -143,6 +156,7 @@ console.log(currentCallback);
             'sensor':['DHT','DS','HCSR','IR','Rx','RESTfulGET'],
             'dhtSensorParam':['C','F','Humidity'],
             'dsSensorParam':['C','F'],
+            'pm25SensorParam':['G3','G5','GP2Y1010AU0F'],
             'dhtType':['11','22','21'],
             'restfulType':['GET','POST'],
             'flushType':['UART','RESTful','IR'],
