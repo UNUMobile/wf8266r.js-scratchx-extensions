@@ -23,7 +23,7 @@
     };
     
     ext.pwm = function(pin,value,callback){
-        connection.send("pwm,"+pin+"="+value);
+        connection.send("gpio/pwm,"+pin+"="+value);
         var currentCallback = {action:'pwm', index:pin, event:callback};
         callbackEvent.push(currentCallback);
     };
