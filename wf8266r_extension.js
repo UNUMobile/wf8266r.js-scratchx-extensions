@@ -3,7 +3,7 @@
     var isConnected = false;
     var connection;
     //var gpio = {ADC:0, D5:0, D4:0, D12:0, D13:0, D14:0, D15:0, D16:0, D0:0, D1:0, D2:0, D3:0};
-    var currentCallback;
+    var callbackEvent = {};
     // Cleanup function when the extension is unloaded
     ext._shutdown = function() {};
 
@@ -21,7 +21,8 @@
     
     ext.adc = function(callback){
         connection.send("gpio/adc");
-        currentCallback = callback;
+        var currentCallback = {action:'gpio/adc', event:callback};
+        callbackEvent.push(currentCallback);
     }
 
     function socketConnection(ip){
@@ -35,10 +36,12 @@
         };
         connection.onmessage = function (e) {
             isConnected = true;
-            console.log(e.data);
             var jsonObj = JSON.parse(e.data.substring(0, e.data.length - 1));
-            console.log(jsonObj);
-            console.log(currentCallback);
+            
+            var index = callbackEvent.length;
+            var currentCallback = callbackEvent[0];
+            callbackEvent.splice(0, 1);
+
             switch(jsonObj.Action)
             {
                 case "gpio/adc" : currentCallback(parseInt(jsonObj.ADC));
