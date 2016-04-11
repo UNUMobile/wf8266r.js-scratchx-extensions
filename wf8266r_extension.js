@@ -58,6 +58,12 @@
         callbackEvent.push(currentCallback);
     };
     
+    ext.distance = function(echo, trig, callback){
+        sendCommand("distance,echo="+echo+"&trig="+trig);
+        var currentCallback = {action:'distance', index:'distance', event:callback};
+        callbackEvent.push(currentCallback);
+    };
+    
     ext.set_ip = function(_ip){
         if(connection != null)
             connection.close(); 
@@ -99,6 +105,7 @@ console.log(currentCallback);
                 case "gpio/read" : currentCallback.event(parseInt(eval('jsonObj.D'+currentCallback.index))); break;
                 case "dht" : currentCallback.event(parseFloat(eval('jsonObj.'+currentCallback.index))); break;
                 case "ds1" : currentCallback.event(parseFloat(eval('jsonObj.'+currentCallback.index))); break;
+                case "distance" : currentCallback.event(parseInt(eval('jsonObj.'+currentCallback.index))); break;
                 default : break;
             }
             
@@ -118,11 +125,11 @@ console.log(currentCallback);
             [' ', '腳位 %d.gpio 類比輸出 %n', 'pwm', 5, 1023],
             ['R', 'DHT%m.dhtType 溫濕度感測器 %m.dhtSensorParam 在腳位 %d.gpio' ,'dht', 11,'C', 12],
             ['R', 'DS18B20 溫度感測器 %m.dsSensorParam ，接在腳位 %d.gpio' ,'ds', 'C', 4],
-            [' ', 'UART 速率 %m.uartBaud' ,'baud', '115200'],
-            [' ', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio' ,'distance', 5,4],
+            ['R', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio' ,'distance', 5,4],
             [' ', '紅外線接收器，接在腳位 %d.gpio' ,'irrecv', 14],
             [' ', '紅外線發射器，接在腳位 %d.gpio 發送資料 %s' ,'irsend', 15, '0'],
             [' ', '停止紅外線接收' ,'irstop'],
+            [' ', 'UART 速率 %m.uartBaud' ,'baud', '115200'],
             [' ', 'UART Tx 送出 %m.uartCode %s 結尾換行 %m.boolType' ,'tx', 'text', 'Hi', 'true'],
             [' ', '%m.flushType 清空', 'flush', 'UART'],
             [' ', 'HTTP %m.restfulType 資料 %s 到 %s %s' ,'http', 'POST', 'key=xxxxxx&field1=1&field2=2','api.thingspeak.com', 'update'],
