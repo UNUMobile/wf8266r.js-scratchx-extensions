@@ -40,7 +40,7 @@
             
             var index = callbackEvent.length;
             var currentCallback = callbackEvent[0];
-            console.log(currentCallback.Action);
+            console.log(index + " " + currentCallback.action);
             callbackEvent.splice(0, 1);
 
             switch(jsonObj.Action)
