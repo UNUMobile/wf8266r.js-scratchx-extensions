@@ -43,7 +43,7 @@
         connection.onmessage = function (e) {
             isConnected = true;
             var jsonObj = JSON.parse(e.data.substring(0, e.data.length - 1));
-            
+console.log(jsonObj);            
             var index = callbackEvent.length;
             var currentCallback;
             if(index > 0)
@@ -51,7 +51,7 @@
                 currentCallback = callbackEvent[0];
                 callbackEvent.splice(0, 1);
             }
-console.log(eval('jsonObj.'+currentCallback.index));
+//console.log(eval('jsonObj.'+currentCallback.index));
             switch(jsonObj.Action)
             {
                 case "gpio/adc" : currentCallback.event(parseInt(jsonObj.ADC)); break;
