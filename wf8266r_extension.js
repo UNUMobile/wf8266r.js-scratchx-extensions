@@ -64,7 +64,7 @@
         callbackEvent.push(currentCallback);
     };
     
-    ext.distance = function(type, pin, callback){
+    ext.pm25 = function(type, pin, callback){
         var currentCallback;
         if(type == "GP2Y1010AU0F")
         {
