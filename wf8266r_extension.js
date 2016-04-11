@@ -40,11 +40,12 @@
             
             var index = callbackEvent.length;
             var currentCallback = callbackEvent[0];
+            console.log(currentCallback.Action);
             callbackEvent.splice(0, 1);
 
             switch(jsonObj.Action)
             {
-                case "gpio/adc" : currentCallback(parseInt(jsonObj.ADC));
+                case "gpio/adc" : currentCallback.callback(parseInt(jsonObj.ADC));
                 default : break;
             }
             
