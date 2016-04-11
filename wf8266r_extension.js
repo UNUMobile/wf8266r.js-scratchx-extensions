@@ -51,11 +51,13 @@ console.log(jsonObj);
                 currentCallback = callbackEvent[0];
                 callbackEvent.splice(0, 1);
             }
-//console.log(eval('jsonObj.'+currentCallback.index));
+            else
+                return;
+console.log(eval('jsonObj.D'+currentCallback.index));
             switch(jsonObj.Action)
             {
                 case "gpio/adc" : currentCallback.event(parseInt(jsonObj.ADC)); break;
-                case "gpio/read" : currentCallback.event(parseInt(eval('jsonObj.'+currentCallback.index))); break;
+                case "gpio/read" : currentCallback.event(parseInt(eval('jsonObj.D'+currentCallback.index))); break;
                 default : break;
             }
             
