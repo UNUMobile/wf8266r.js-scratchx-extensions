@@ -145,9 +145,9 @@
               success: function( data ) {
                   var jsonObj = JSON.parse(data);
                   console.log(jsonObj);
-                  lassC = jsonObj.s_t0;
-                  lassH = jsonObj.s_h0;
-                  lassPM25 = jsonObj.s_d0;
+                  lass.C = jsonObj.s_t0;
+                  lass.H = jsonObj.s_h0;
+                  lass.PM25 = jsonObj.s_d0;
                   callback(true);
               },
               error: function(e){
