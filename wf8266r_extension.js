@@ -99,6 +99,10 @@
         callbackEvent.push(currentCallback);
     };
     
+    ext.baud = function(rate) {
+        sendCommand("baud,"+rate+"=");    
+    };
+    
     ext.set_ip = function(_ip){
         if(connection != null)
             connection.close(); 
@@ -177,7 +181,6 @@ console.log(currentCallback);
             [' ', 'HTTP %m.restfulType 資料 %s 到 %s %s' ,'http', 'POST', 'key=xxxxxx&field1=1&field2=2','api.thingspeak.com', 'update'],
             [' ', 'HTTP %m.restfulType 資料 %s 從 %s %s' ,'http', 'GET', 'api_key=EM18B52PSHXZB4DD', 'api.thingspeak.com', 'apps/thinghttp/send_request'],
             ['R', '讀取數位腳位 %d.gpio' ,'read', 5],
-            //['R', '讀取感測器 %m.sensor 參數 %m.sensorParam' ,'sensor', 'DHT', 'C'],
             ['R', '讀取類比腳位 ADC','adc'],
         ],
         menus: {
