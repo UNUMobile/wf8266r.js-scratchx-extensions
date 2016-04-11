@@ -4,10 +4,10 @@
     var connection;
     //var gpio = {ADC:0, D5:0, D4:0, D12:0, D13:0, D14:0, D15:0, D16:0, D0:0, D1:0, D2:0, D3:0};
     var callbackEvent = [];
+    var connectionCallback;
     // Cleanup function when the extension is unloaded
     ext._shutdown = function() {
         console.log("shutdown");
-        connection.close();
     };
 
     // Status reporting code
@@ -33,11 +33,20 @@
         var currentCallback = {action:'gpio/read', index:pin, event:callback};
         callbackEvent.push(currentCallback);
     };
+    
+    ext.set_ip = function(_ip, callback){
+        if(connection != null)
+            connection.close();
+        connectionCallback = callback;    
+        ip = _ip;
+        socketConnection(_ip);
+    };
 
     function socketConnection(ip){
         connection = new WebSocket('ws://'+ ip +':81/api', ['wf8266r']);
         connection.onopen = function (e) {
             isConnected = true;  
+            connectionCallback(1);
             connection.send("gpio/adc");
         };
         connection.onclose = function (e) {
@@ -69,16 +78,11 @@ console.log(currentCallback);
             isConnected = false;
         };
     }
-
-    ext.set_ip = function(text){
-        ip = text;
-        socketConnection(text);
-    };
-
+    
     // Block and block menu descriptions
     var descriptor = {
         blocks: [
-            [' ', '開發板位址 %s', 'set_ip', 'mywf9441.local'],
+            ['R', '開發板位址 %s', 'set_ip', 'mywf9441.local'],
             [' ', '腳位 %d.gpio 模式設為 %m.mode', 'pinmode',5,'OUTPUT'],
             [' ', '腳位 %d.gpio 數位輸出 %m.level', 'gpio',5,1],
             [' ', '腳位 %d.gpio 類比輸出 %n', 'pwm', 5, 1023],
