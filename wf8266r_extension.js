@@ -20,6 +20,7 @@
     };
     
     ext.adc = function(callback){
+        connection.send("gpio/adc");
         currentCallback = callback;
     }
 
