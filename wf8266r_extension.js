@@ -107,6 +107,10 @@
         sendCommand("uart/tx,type="+type+"&text="+text+"&ln="+ln);    
     };
     
+    ext.socketUART = function(state){
+        sendCommand("socketUART,state="+state);
+    }
+    
     ext.set_ip = function(_ip){
         if(connection != null)
             connection.close(); 
