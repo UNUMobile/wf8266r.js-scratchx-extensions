@@ -129,9 +129,11 @@
         $.ajax({
               url: uri,
               type: _type,
-              dataType: 'jsonp',
               success: function( data ) {
                   callback(data);
+              },
+              error: function(e){
+                  callback(e);
               }
         });
     };
