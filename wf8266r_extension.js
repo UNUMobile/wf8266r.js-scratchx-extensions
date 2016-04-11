@@ -9,7 +9,7 @@
         if(isConnected)
             connection.send(cmd);
     }
-
+    
     // Cleanup function when the extension is unloaded
     ext._shutdown = function() {
         console.log("shutdown");
@@ -80,6 +80,12 @@
         callbackEvent.push(currentCallback);
     };
     
+    ext.irrecv = function(pin, callback) {
+        sendCommand("ir/code,pin="+pin);
+        var currentCallback = {action:'ir/code', index:'code', event:callback};
+        callbackEvent.push(currentCallback);
+    };
+    
     ext.set_ip = function(_ip){
         if(connection != null)
             connection.close(); 
@@ -125,6 +131,7 @@ console.log(currentCallback);
                 case "distance" : currentCallback.event(parseInt(eval('jsonObj.'+currentCallback.index))); break;
                 case "pm25" : currentCallback.event(parseInt(eval('jsonObj.'+currentCallback.index))); break;
                 case "pm25g" : currentCallback.event(parseInt(eval('jsonObj.'+currentCallback.index))); break;
+                case "ir/code" : currentCallback.event(eval('jsonObj.'+currentCallback.index)); break;
                 default : break;
             }
             
@@ -146,9 +153,9 @@ console.log(currentCallback);
             ['R', 'DS18B20 溫度感測器 %m.dsSensorParam 在腳位 %d.gpio' ,'ds', 'C', 4],
             ['R', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio' ,'distance', 5,4],
             ['R', 'PM25粉塵感測器 %m.pm25SensorParam 在腳位 %d.gpio' ,'pm25', 'G3', 14],
-            [' ', '紅外線接收器，接在腳位 %d.gpio' ,'irrecv', 14],
-            [' ', '紅外線發射器，接在腳位 %d.gpio 發送資料 %s' ,'irsend', 15, '0'],
-            [' ', '停止紅外線接收' ,'irstop'],
+            ['R', '讀取紅外線接收器，接在腳位 %d.gpio' ,'irrecv', 14],
+            ['W', '紅外線發射器，接在腳位 %d.gpio 發送資料 %s' ,'irsend', 15, '0'],
+            ['W', '停止紅外線接收' ,'irstop'],
             [' ', 'UART 速率 %m.uartBaud' ,'baud', '115200'],
             [' ', 'UART Tx 送出 %m.uartCode %s 結尾換行 %m.boolType' ,'tx', 'text', 'Hi', 'true'],
             [' ', '%m.flushType 清空', 'flush', 'UART'],
