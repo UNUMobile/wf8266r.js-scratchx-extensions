@@ -74,7 +74,7 @@
         else if(type == "G3" || type == "G5")
         {
             sendCommand("pm25g");
-            currentCallback = {action:'pm25', index:'PMAT25', event:callback};
+            currentCallback = {action:'pm25g', index:'PMAT25', event:callback};
         }
         
         callbackEvent.push(currentCallback);
@@ -124,6 +124,7 @@ console.log(currentCallback);
                 case "ds1" : currentCallback.event(parseFloat(eval('jsonObj.'+currentCallback.index))); break;
                 case "distance" : currentCallback.event(parseInt(eval('jsonObj.'+currentCallback.index))); break;
                 case "pm25" : currentCallback.event(parseInt(eval('jsonObj.'+currentCallback.index))); break;
+                case "pm25g" : currentCallback.event(parseInt(eval('jsonObj.'+currentCallback.index))); break;
                 default : break;
             }
             
