@@ -184,6 +184,7 @@ console.log(currentCallback);
             ['R', '紅外線發射器，接在腳位 %d.gpio 發送位址 %n 的資料' ,'irsend', 15, 0],
             ['R', '停止紅外線接收' ,'irstop'],
             [' ', 'UART 速率 %m.uartBaud' ,'baud', '115200'],
+            [' ', 'UART to Socket %m.boolType' ,'socketUART', 'true'],
             [' ', 'UART Tx 送出 %m.uartCode %s 結尾換行 %m.boolType' ,'tx', 'text', 'Hi', 'true'],
             [' ', '%m.flushType 清空', 'flush', 'UART'],
             [' ', 'HTTP %m.restfulType 資料 %s 到 %s %s' ,'http', 'POST', 'key=xxxxxx&field1=1&field2=2','api.thingspeak.com', 'update'],
