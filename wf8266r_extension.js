@@ -2,9 +2,8 @@
     var ip = "";
     var isConnected = false;
     var connection;
-    //var gpio = {ADC:0, D5:0, D4:0, D12:0, D13:0, D14:0, D15:0, D16:0, D0:0, D1:0, D2:0, D3:0};
     var callbackEvent = [];
-    var connectionCallback;
+
     // Cleanup function when the extension is unloaded
     ext._shutdown = function() {
         console.log("shutdown");
@@ -34,10 +33,9 @@
         callbackEvent.push(currentCallback);
     };
     
-    ext.set_ip = function(_ip, callback){
+    ext.set_ip = function(_ip){
         if(connection != null)
-            connection.close();
-        connectionCallback = callback;    
+            connection.close(); 
         ip = _ip;
         socketConnection(_ip);
     };
@@ -49,8 +47,7 @@
     function socketConnection(ip){
         connection = new WebSocket('ws://'+ ip +':81/api', ['wf8266r']);
         connection.onopen = function (e) {
-            isConnected = true;  
-            connectionCallback(1);
+            isConnected = true; 
             connection.send("gpio/adc");
         };
         connection.onclose = function (e) {
