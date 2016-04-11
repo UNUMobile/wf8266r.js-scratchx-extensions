@@ -35,7 +35,7 @@
         connection.onmessage = function (e) {
             isConnected = true;
             var jsonObj = JSON.parse(e.data);
-            
+            console.log(currentCallback);
             switch(jsonObj.Action)
             {
                 case "gpio/adc" : currentCallback(parseInt(jsonObj.ADC));
