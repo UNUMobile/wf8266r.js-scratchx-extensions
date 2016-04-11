@@ -21,13 +21,13 @@
     
     ext.adc = function(callback){
         connection.send("gpio/adc");
-        var currentCallback = {action:'gpio/adc', index:20, event:callback};
+        var currentCallback = {action:'gpio/adc', index:'20', event:callback};
         callbackEvent.push(currentCallback);
     };
     
     ext.read = function(pin, callback){
         connection.send("gpio/read,"+pin+"=2");
-        var currentCallback = {action:'gpio/read', index:pin, event:callback};
+        var currentCallback = {action:'gpio/read', index:"'"+pin+"'", event:callback};
         callbackEvent.push(currentCallback);
     };
 
