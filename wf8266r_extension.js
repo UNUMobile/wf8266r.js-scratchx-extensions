@@ -103,7 +103,7 @@ console.log(currentCallback);
             [' ', '腳位 %d.gpio 模式設為 %m.mode', 'pinmode',5,'OUTPUT'],
             [' ', '腳位 %d.gpio 數位輸出 %m.level', 'gpio',5,1],
             [' ', '腳位 %d.gpio 類比輸出 %n', 'pwm', 5, 1023],
-            ['R', 'DHT%m.dhtType 溫濕度感測器的 %m.dhtParam，接在腳位 %d.gpio' ,'dht', 11,'C', 12],
+            ['R', 'DHT%m.dhtType 溫濕度感測器的 %m.dhtSensorParam 在腳位 %d.gpio' ,'dht', 11,'C', 12],
             ['R', 'DS18B20 溫度感測器，接在腳位 %d.gpio' ,'ds', 4],
             [' ', 'UART 速率 %m.uartBaud' ,'baud', '115200'],
             [' ', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio' ,'distance', 5,4],
@@ -121,7 +121,7 @@ console.log(currentCallback);
         menus: {
             'mode':['INPUT','OUTPUT'],
             'sensor':['DHT','DS','HCSR','IR','Rx','RESTfulGET'],
-            'dhtParam':['C','F','Humidity'],
+            'dhtSensorParam':['C','F','Humidity'],
             'dhtType':['11','22','21'],
             'restfulType':['GET','POST'],
             'flushType':['UART','RESTful','IR'],
