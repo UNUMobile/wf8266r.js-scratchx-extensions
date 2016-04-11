@@ -53,6 +53,7 @@ console.log(jsonObj);
             }
             else
                 return;
+console.log(currentCallback);                
 console.log(eval('jsonObj.D'+currentCallback.index));
             switch(jsonObj.Action)
             {
