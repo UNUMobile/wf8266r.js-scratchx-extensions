@@ -41,6 +41,10 @@
         ip = _ip;
         socketConnection(_ip);
     };
+    
+    ext.when_connected = function(){
+      return isConnected;  
+    };
 
     function socketConnection(ip){
         connection = new WebSocket('ws://'+ ip +':81/api', ['wf8266r']);
@@ -82,7 +86,8 @@ console.log(currentCallback);
     // Block and block menu descriptions
     var descriptor = {
         blocks: [
-            ['R', '開發板位址 %s', 'set_ip', 'mywf9441.local'],
+            [' ', '開發板位址 %s', 'set_ip', 'mywf9441.local'],
+            ['h', '當連線建立時', 'when_connected'],
             [' ', '腳位 %d.gpio 模式設為 %m.mode', 'pinmode',5,'OUTPUT'],
             [' ', '腳位 %d.gpio 數位輸出 %m.level', 'gpio',5,1],
             [' ', '腳位 %d.gpio 類比輸出 %n', 'pwm', 5, 1023],
