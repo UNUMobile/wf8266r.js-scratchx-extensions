@@ -68,7 +68,7 @@
         var currentCallback;
         if(type == "GP2Y1010AU0F")
         {
-            sendCommand("pm25,pin="+pin);
+            sendCommand("pm25,"+pin+"=");
             currentCallback = {action:'pm25', index:'PM25', event:callback};
         }
         else if(type == "G3" || type == "G5")
