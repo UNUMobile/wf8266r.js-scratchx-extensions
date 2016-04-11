@@ -102,6 +102,7 @@
         };
         connection.onmessage = function (e) {
             isConnected = true;
+console.log( e.data);
             var jsonObj = JSON.parse(e.data.substring(0, e.data.length - 1));
 console.log(jsonObj);            
             var index = callbackEvent.length;
