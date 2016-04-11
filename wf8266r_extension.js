@@ -41,8 +41,14 @@
     };
     
     ext.dht = function(type, param, pin, callback){
-        connection.send("dht,"+pin+"="+pin+"&type="+type);
+        connection.send("dht,pin="+pin+"&type="+type);
         var currentCallback = {action:'dht', index:param, event:callback};
+        callbackEvent.push(currentCallback);
+    };
+    
+    ext.ds = function(param, pin, callback){
+        connection.send("ds,pin="+pin+"&index=1");
+        var currentCallback = {action:'ds', index:param, event:callback};
         callbackEvent.push(currentCallback);
     };
     
@@ -103,8 +109,8 @@ console.log(currentCallback);
             [' ', '腳位 %d.gpio 模式設為 %m.mode', 'pinmode',5,'OUTPUT'],
             [' ', '腳位 %d.gpio 數位輸出 %m.level', 'gpio',5,1],
             [' ', '腳位 %d.gpio 類比輸出 %n', 'pwm', 5, 1023],
-            ['R', 'DHT%m.dhtType 溫濕度感測器的 %m.dhtSensorParam 在腳位 %d.gpio' ,'dht', 11,'C', 12],
-            ['R', 'DS18B20 溫度感測器，接在腳位 %d.gpio' ,'ds', 4],
+            ['R', 'DHT%m.dhtType 溫濕度感測器 %m.dhtSensorParam 在腳位 %d.gpio' ,'dht', 11,'C', 12],
+            ['R', 'DS18B20 溫度感測器 %m.dsSensorParam ，接在腳位 %d.gpio' ,'ds', 'C', 4],
             [' ', 'UART 速率 %m.uartBaud' ,'baud', '115200'],
             [' ', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio' ,'distance', 5,4],
             [' ', '紅外線接收器，接在腳位 %d.gpio' ,'irrecv', 14],
@@ -122,6 +128,7 @@ console.log(currentCallback);
             'mode':['INPUT','OUTPUT'],
             'sensor':['DHT','DS','HCSR','IR','Rx','RESTfulGET'],
             'dhtSensorParam':['C','F','Humidity'],
+            'dsSensorParam':['C','F','Humidity'],
             'dhtType':['11','22','21'],
             'restfulType':['GET','POST'],
             'flushType':['UART','RESTful','IR'],
