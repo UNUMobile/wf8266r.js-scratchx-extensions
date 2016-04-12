@@ -10,7 +10,8 @@
     
     function sendCommand(cmd)
     {
-        console.log(cmd);
+        console.log(cmd + " " + socketCounter);
+        
         if(isConnected && socketCounter == 0)
         {
             socketCounter++;
