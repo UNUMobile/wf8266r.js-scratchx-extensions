@@ -192,7 +192,7 @@
         connection = new WebSocket('ws://'+ ip +':81/api', ['wf8266r']);
         connection.onopen = function (e) {
             isConnected = true; 
-            connection.send("gpio/adc");
+            sendCommand("gpio/adc");
         };
         connection.onclose = function (e) {
             isConnected = false;
