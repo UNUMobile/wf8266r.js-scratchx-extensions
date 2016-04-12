@@ -6,12 +6,16 @@
     var isUARTData = false;
     var uartData = "";
     var lass = {C:0, H:0, PM25:0};
+    var socketCounter = 0;
     
     function sendCommand(cmd)
     {
         console.log(cmd);
-        if(isConnected)
+        if(isConnected && socketCounter == 0)
+        {
+            socketCounter++;
             connection.send(cmd);
+        }
     }
     
     // Cleanup function when the extension is unloaded
@@ -193,6 +197,7 @@
             isConnected = false;
         };
         connection.onmessage = function (e) {
+            socketCounter--;
             isConnected = true;
             
             if(e.data.length == 1) // socket uart
