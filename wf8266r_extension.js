@@ -14,7 +14,7 @@
     
     function sendCommand(cmd)
     {
-        console.log(cmd + " " + socketCounter);
+        //console.log(cmd + " " + socketCounter);
         
         if(isConnected && socketCounter == 0)
         {
@@ -25,7 +25,7 @@
     
     // Cleanup function when the extension is unloaded
     ext._shutdown = function() {
-        console.log("shutdown");
+        //console.log("shutdown");
     };
 
     // Status reporting code
@@ -153,7 +153,7 @@
               url: 'http://nrl.iis.sinica.edu.tw/LASS/last.php?device_id='+device,
               success: function( data ) {
                   var jsonObj = JSON.parse(data);
-                  console.log(jsonObj);
+                  //console.log(jsonObj);
                   lassData.C = jsonObj.s_t0;
                   lassData.H = jsonObj.s_h0;
                   lassData.PM25 = jsonObj.s_d0;
@@ -236,7 +236,7 @@
             else
                 return;
               
-console.log(jsonObj);
+//console.log(jsonObj);
             switch(jsonObj.Action)
             {
                 case "gpio/adc" : currentCallback.event(parseInt(jsonObj.ADC)); break;
@@ -244,7 +244,7 @@ console.log(jsonObj);
                 case "dht" : currentCallback.event(parseFloat(eval('jsonObj.'+currentCallback.index))); 
                     dhtData.C = parseFloat(jsonObj.C); dhtData.H = parseFloat(jsonObj.Humidity); dhtData.F = parseFloat(jsonObj.F); break;
                 case "ds1" : currentCallback.event(parseFloat(eval('jsonObj.'+currentCallback.index))); 
-                    dsData.C = parseFloat(jsonObj.C); dstData.F = parseFloat(jsonObj.F); break;
+                    dsData.C = parseFloat(jsonObj.C); dsData.F = parseFloat(jsonObj.F); break;
                 case "distance" : currentCallback.event(parseInt(eval('jsonObj.'+currentCallback.index))); 
                     distance = parseInt(jsonObj.distance); break;
                 case "pm25" : currentCallback.event(parseInt(eval('jsonObj.'+currentCallback.index))); break;
@@ -310,5 +310,5 @@ console.log(jsonObj);
     };
 
     // Register the extension
-    ScratchExtensions.register('WF8266R JS', descriptor, ext);
+    ScratchExtensions.register('WF8266R(2016.04.13)', descriptor, ext);
 })({});
