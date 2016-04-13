@@ -59,15 +59,15 @@
         callbackEvent.push(currentCallback);
     };
     
-    ext.dht = function(type, param, pin, callback){
+    ext.dht = function(type, pin, callback){
         sendCommand("dht,pin="+pin+"&type="+type);
-        var currentCallback = {action:'dht', index:param, event:callback};
+        var currentCallback = {action:'dht', index:'C', event:callback};
         callbackEvent.push(currentCallback);
     };
     
-    ext.ds = function(param, pin, callback){
+    ext.ds = function(pin, callback){
         sendCommand("ds,pin="+pin+"&index=1");
-        var currentCallback = {action:'ds1', index:param, event:callback};
+        var currentCallback = {action:'ds1', index:'C', event:callback};
         callbackEvent.push(currentCallback);
     };
     
