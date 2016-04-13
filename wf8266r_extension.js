@@ -60,15 +60,15 @@
         callbackEvent.push(currentCallback);
     };
     
-    ext.dht = function(type, pin, callback){
+    ext.dht = function(type, param, pin, callback){
         sendCommand("dht,pin="+pin+"&type="+type);
-        var currentCallback = {action:'dht', index:'C', event:callback};
+        var currentCallback = {action:'dht', index:param, event:callback};
         callbackEvent.push(currentCallback);
     };
     
-    ext.ds = function(pin, callback){
+    ext.ds = function(param, pin, callback){
         sendCommand("ds,pin="+pin+"&index=1");
-        var currentCallback = {action:'ds1', index:'C', event:callback};
+        var currentCallback = {action:'ds1', index:param, event:callback};
         callbackEvent.push(currentCallback);
     };
     
@@ -118,10 +118,6 @@
     
     ext.tx = function(type, text, ln) {
         sendCommand("uart/tx,type="+type+"&text="+text+"&ln="+ln);    
-    };
-    
-    ext.rx = function(){
-        return uartData;
     };
     
     ext.socketUART = function(state){
@@ -184,6 +180,7 @@
             case "HCSR" : return distance;
             case "RESTfulGET" : return restfullGet;
             case "IR" : return irCode;
+            case "Rx" : return uartData;
             case "LASS" : 
                 if(param=='Value')
                     return lassData.PM25;
@@ -279,20 +276,19 @@ console.log(jsonObj);
             [' ', 'UART to Socket %m.boolType' ,'socketUART', 'true'],
             [' ', 'UART Tx 送出 %m.uartCode %s 結尾換行 %m.boolType' ,'tx', 'text', 'Hi', 'true'],
             [' ', '%m.flushType 清空', 'flush', 'UART'], 
-            ['w', 'DHT%m.dhtType 溫濕度感測器 在腳位 %d.gpio' ,'dht', 11,'C', 12],
-            ['w', 'DS18B20 溫度感測器 在腳位 %d.gpio' ,'ds', 'C', 4],
-            ['w', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio' ,'distance', 5,4],
-            ['w', 'PM25粉塵感測器 %m.pm25SensorParam 在腳位 %d.gpio' ,'pm25', 'G3', 14],
-            ['R', '讀取紅外線接收器，接在腳位 %d.gpio' ,'irrecv', 14],
             ['w', '紅外線發射器，接在腳位 %d.gpio 發送位址 %n 的資料' ,'irsend', 15, 0],
             ['w', '停止紅外線接收' ,'irstop'],
             ['w', 'HTTP %m.restfulType 到 %s' ,'http', 'POST', 'http://api.thingspeak.com/update?key=xxxxxx&field1=1&field2=2'],
             ['w', 'HTTP %m.restfulType 從 %s' ,'http', 'GET', 'http://api.thingspeak.com/apps/thinghttp/send_request?api_key=EM18B52PSHXZB4DD'],
             ['w', 'LASS 設備編號 %s' ,'lass', ''],
+            ['R', 'DHT%m.dhtType 溫濕度感測器 %m.dhtSensorParam 在腳位 %d.gpio' ,'dht', 11, 'C', 12],
+            ['R', 'DS18B20 溫度感測器 %m.dsSensorParam 在腳位 %d.gpio' ,'ds', 'C', 4],
+            ['R', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio' ,'distance', 5,4],
+            ['R', 'PM25粉塵感測器 %m.pm25SensorParam 在腳位 %d.gpio' ,'pm25', 'G3', 14],
+            ['R', '讀取紅外線接收器，接在腳位 %d.gpio' ,'irrecv', 14],            
             ['R', '讀取數位腳位 %d.gpio' ,'read', 5],
             ['R', '讀取類比腳位 ADC','adc'],
             ['r', '讀取感測器 %m.sensor 參數 %m.sensorParam', 'readSensor', 'DHT','Value'],
-            ['r', '讀取 UART','rx'],
             
         ],
         menus: {
