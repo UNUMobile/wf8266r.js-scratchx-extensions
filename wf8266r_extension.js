@@ -63,15 +63,15 @@
         callbackEvent.push(currentCallback);
     };
     
-    ext.dht = function(type, param, pin, callback){
+    ext.dht = function(type, pin, callback){
         sendCommand("dht,pin="+pin+"&type="+type);
-        var currentCallback = {action:'dht', index:param, event:callback};
+        var currentCallback = {action:'dht', index:'C', event:callback};
         callbackEvent.push(currentCallback);
     };
     
-    ext.ds = function(param, pin, callback){
+    ext.ds = function(pin, callback){
         sendCommand("ds,pin="+pin+"&index=1");
-        var currentCallback = {action:'ds1', index:param, event:callback};
+        var currentCallback = {action:'ds1', index:'C', event:callback};
         callbackEvent.push(currentCallback);
     };
     
@@ -284,8 +284,8 @@ console.log(jsonObj);
             ['w', 'HTTP %m.restfulType 到 %s' ,'http', 'POST', 'http://api.thingspeak.com/update?key=xxxxxx&field1=1&field2=2'],
             ['w', 'HTTP %m.restfulType 從 %s' ,'http', 'GET', 'http://api.thingspeak.com/apps/thinghttp/send_request?api_key=EM18B52PSHXZB4DD'],
             ['w', 'LASS 設備編號 %s' ,'lass', ''],
-            ['R', 'DHT%m.dhtType 溫濕度感測器 %m.dhtSensorParam 在腳位 %d.gpio' ,'dht', 11, 'C', 12],
-            ['R', 'DS18B20 溫度感測器 %m.dsSensorParam 在腳位 %d.gpio' ,'ds', 'C', 4],
+            [' ', 'DHT%m.dhtType 溫濕度感測器 在腳位 %d.gpio' ,'dht', 11, 12],
+            [' ', 'DS18B20 溫度感測器 在腳位 %d.gpio' ,'ds', 4],
             ['R', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio' ,'distance', 5,4],
             ['R', 'PM25粉塵感測器 %m.pm25SensorParam 在腳位 %d.gpio' ,'pm25', 'G3', 14],
             ['R', '讀取紅外線接收器，接在腳位 %d.gpio' ,'irrecv', 14],            
