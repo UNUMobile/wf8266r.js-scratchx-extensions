@@ -5,7 +5,11 @@
     var callbackEvent = [];
     var isUARTData = false;
     var uartData = "";
-    var lass = {C:0, H:0, PM25:0};
+    var dhtData = {C:0, F:0, H:0}; 
+    var dsData = {C:0,F:0};
+    var distance = 0;
+    var restfullGet = "";
+    var lassData = {C:0, H:0, PM25:0};
     var socketCounter = 0;
     
     function sendCommand(cmd)
@@ -161,16 +165,16 @@
         });
     };
     
-    ext.lassC = function(){
-        return lass.C;
-    };
-    
-    ext.lassH = function(){
-        return lass.H;
-    };
-    
-    ext.lassPM25 = function(){
-        return lass.PM25;
+    ext.readSensor = function(type, param){
+        switch(type)
+        {
+            case "DHT" : return eval('dhtData.'+param);
+            case "DS" : return eval('dsData.'+param);
+            case "HCSR" : return distance;
+            case "RESTfulGET" : return restfullGet;
+            case "LASS" : return eval('lassData.'+param);
+            default : break;
+        }
     };
     
     ext.set_ip = function(_ip){
@@ -220,11 +224,13 @@
             else
                 return;
               
+console.log(jsonObj);
             switch(jsonObj.Action)
             {
                 case "gpio/adc" : currentCallback.event(parseInt(jsonObj.ADC)); break;
                 case "gpio/read" : currentCallback.event(parseInt(eval('jsonObj.D'+currentCallback.index))); break;
-                case "dht" : currentCallback.event(parseFloat(eval('jsonObj.'+currentCallback.index))); break;
+                case "dht" : currentCallback.event(parseFloat(eval('jsonObj.'+currentCallback.index))); 
+                    param.C = jsonObj.C; param.H = jsonObj.H; param.F = jsonObj.F; break;
                 case "ds1" : currentCallback.event(parseFloat(eval('jsonObj.'+currentCallback.index))); break;
                 case "distance" : currentCallback.event(parseInt(eval('jsonObj.'+currentCallback.index))); break;
                 case "pm25" : currentCallback.event(parseInt(eval('jsonObj.'+currentCallback.index))); break;
@@ -254,18 +260,19 @@
             [' ', 'UART to Socket %m.boolType' ,'socketUART', 'true'],
             [' ', 'UART Tx 送出 %m.uartCode %s 結尾換行 %m.boolType' ,'tx', 'text', 'Hi', 'true'],
             [' ', '%m.flushType 清空', 'flush', 'UART'], 
-            ['R', 'DHT%m.dhtType 溫濕度感測器 %m.dhtSensorParam 在腳位 %d.gpio' ,'dht', 11,'C', 12],
-            ['R', 'DS18B20 溫度感測器 %m.dsSensorParam 在腳位 %d.gpio' ,'ds', 'C', 4],
-            ['R', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio' ,'distance', 5,4],
-            ['R', 'PM25粉塵感測器 %m.pm25SensorParam 在腳位 %d.gpio' ,'pm25', 'G3', 14],
-            ['R', '讀取紅外線接收器，接在腳位 %d.gpio' ,'irrecv', 14],
-            ['R', '紅外線發射器，接在腳位 %d.gpio 發送位址 %n 的資料' ,'irsend', 15, 0],
-            ['R', '停止紅外線接收' ,'irstop'],
-            ['R', 'HTTP %m.restfulType 到 %s' ,'http', 'POST', 'http://api.thingspeak.com/update?key=xxxxxx&field1=1&field2=2'],
-            ['R', 'HTTP %m.restfulType 從 %s' ,'http', 'GET', 'http://api.thingspeak.com/apps/thinghttp/send_request?api_key=EM18B52PSHXZB4DD'],
-            ['R', 'LASS 設備編號 %s' ,'lass', ''],
+            ['w', 'DHT%m.dhtType 溫濕度感測器 %m.dhtSensorParam 在腳位 %d.gpio' ,'dht', 11,'C', 12],
+            ['w', 'DS18B20 溫度感測器 %m.dsSensorParam 在腳位 %d.gpio' ,'ds', 'C', 4],
+            ['w', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio' ,'distance', 5,4],
+            ['w', 'PM25粉塵感測器 %m.pm25SensorParam 在腳位 %d.gpio' ,'pm25', 'G3', 14],
+            ['w', '讀取紅外線接收器，接在腳位 %d.gpio' ,'irrecv', 14],
+            ['w', '紅外線發射器，接在腳位 %d.gpio 發送位址 %n 的資料' ,'irsend', 15, 0],
+            ['w', '停止紅外線接收' ,'irstop'],
+            ['w', 'HTTP %m.restfulType 到 %s' ,'http', 'POST', 'http://api.thingspeak.com/update?key=xxxxxx&field1=1&field2=2'],
+            ['w', 'HTTP %m.restfulType 從 %s' ,'http', 'GET', 'http://api.thingspeak.com/apps/thinghttp/send_request?api_key=EM18B52PSHXZB4DD'],
+            ['w', 'LASS 設備編號 %s' ,'lass', ''],
             ['R', '讀取數位腳位 %d.gpio' ,'read', 5],
             ['R', '讀取類比腳位 ADC','adc'],
+            ['R', '讀取感測器 %m.sensor 參數 %m.sensorParam', 'readSensor', 'DHT','C'],
             ['r', '讀取 UART','rx'],
             ['r', 'LASS PM25','lassPM25'],
             ['r', 'LASS 溫度','lassC'],
@@ -273,7 +280,8 @@
         ],
         menus: {
             'mode':['INPUT','OUTPUT'],
-            'sensor':['DHT','DS','HCSR','IR','Rx','RESTfulGET'],
+            'sensor':['DHT','DS','HCSR','IR','Rx','RESTfulGET','LASS'],
+            'sensorParam':['Value','C','F','H','PM25'],
             'dhtSensorParam':['C','F','Humidity'],
             'dsSensorParam':['C','F'],
             'pm25SensorParam':['G3','G5','GP2Y1010AU0F'],
