@@ -310,5 +310,5 @@
     };
 
     // Register the extension
-    ScratchExtensions.register('WF8266R(2016.04.13)', descriptor, ext);
+    ScratchExtensions.register('WF8266R 20160413)', descriptor, ext);
 })({});
