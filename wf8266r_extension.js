@@ -54,6 +54,7 @@
     
     ext.adc = function(){
         sendCommand("gpio/adc");
+        return gpio.ADC;
     };
     
     ext.read = function(pin){
@@ -258,11 +259,11 @@ console.log(jsonObj);
             [' ', 'LASS 設備編號 %s' ,'lass', ''],
             [' ', 'DHT%m.dhtType 溫濕度感測器 在腳位 %d.gpio' ,'dht', 11, 12],
             [' ', 'DS18B20 溫度感測器 在腳位 %d.gpio' ,'ds', 4],
-            ['R', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio' ,'distance', 5,4],
-            ['R', 'PM25粉塵感測器 %m.pm25SensorParam 在腳位 %d.gpio' ,'pm25', 'G3', 14],
-            ['R', '讀取紅外線接收器，接在腳位 %d.gpio' ,'irrecv', 14],            
-            ['R', '讀取數位腳位 %d.gpio' ,'read', 5],
-            ['R', '讀取類比腳位 ADC','adc'],
+            [' ', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio' ,'distance', 5,4],
+            [' ', 'PM25粉塵感測器 %m.pm25SensorParam 在腳位 %d.gpio' ,'pm25', 'G3', 14],
+            ['r', '讀取紅外線接收器，接在腳位 %d.gpio' ,'irrecv', 14],            
+            ['r', '讀取數位腳位 %d.gpio' ,'read', 5],
+            ['r', '讀取類比腳位 ADC','adc'],
             ['r', '讀取感測器 %m.sensor 參數 %m.sensorParam', 'readSensor', 'DHT','Value'],
             
         ],
