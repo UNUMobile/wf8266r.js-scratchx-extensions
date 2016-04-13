@@ -8,6 +8,7 @@
     var dhtData = {C:0, F:0, H:0}; 
     var dsData = {C:0,F:0};
     var distance = 0;
+    var irCode = "";
     var restfullGet = "";
     var lassData = {C:0, H:0, PM25:0};
     var socketCounter = 0;
@@ -182,6 +183,7 @@
                     return eval('dsData.'+param);
             case "HCSR" : return distance;
             case "RESTfulGET" : return restfullGet;
+            case "IR" : return irCode;
             case "LASS" : 
                 if(param=='Value')
                     return lassData.PM25;
@@ -238,7 +240,7 @@
             else
                 return;
               
-//console.log(jsonObj);
+console.log(jsonObj);
             switch(jsonObj.Action)
             {
                 case "gpio/adc" : currentCallback.event(parseInt(jsonObj.ADC)); break;
@@ -251,7 +253,8 @@
                     distance = parseInt(jsonObj.distance); break;
                 case "pm25" : currentCallback.event(parseInt(eval('jsonObj.'+currentCallback.index))); break;
                 case "pm25g" : currentCallback.event(parseInt(eval('jsonObj.'+currentCallback.index))); break;
-                case "ir/code" : currentCallback.event(eval('jsonObj.'+currentCallback.index)); break;
+                case "ir/code" : currentCallback.event(eval('jsonObj.'+currentCallback.index)); 
+                    irCode = jsonObj.code; break;
                 case "ir/send" : currentCallback.event(eval('jsonObj.'+currentCallback.index)); break;
                 case "ir/stop" : currentCallback.event(eval('jsonObj.'+currentCallback.index)); break;
                 default : break;
@@ -288,7 +291,7 @@
             ['w', 'LASS 設備編號 %s' ,'lass', ''],
             ['R', '讀取數位腳位 %d.gpio' ,'read', 5],
             ['R', '讀取類比腳位 ADC','adc'],
-            ['r', '讀取感測器 %m.sensor 參數 %m.sensorParam', 'readSensor', 'DHT','C'],
+            ['r', '讀取感測器 %m.sensor 參數 %m.sensorParam', 'readSensor', 'DHT','Value'],
             ['r', '讀取 UART','rx'],
             
         ],
