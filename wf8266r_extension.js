@@ -168,11 +168,23 @@
     ext.readSensor = function(type, param){
         switch(type)
         {
-            case "DHT" : return eval('dhtData.'+param);
-            case "DS" : return eval('dsData.'+param);
+            case "DHT" : 
+                if(param=='Value')
+                    return dhtData.C;
+                else
+                    return eval('dhtData.'+param);
+            case "DS" : 
+                if(param=='Value')
+                    return dsData.C;
+                else
+                    return eval('dsData.'+param);
             case "HCSR" : return distance;
             case "RESTfulGET" : return restfullGet;
-            case "LASS" : return eval('lassData.'+param);
+            case "LASS" : 
+                if(param=='Value')
+                    return lassData.PM25;
+                else
+                    return eval('lassData.'+param);
             default : break;
         }
     };
@@ -276,9 +288,7 @@ console.log(jsonObj);
             ['R', '讀取類比腳位 ADC','adc'],
             ['r', '讀取感測器 %m.sensor 參數 %m.sensorParam', 'readSensor', 'DHT','C'],
             ['r', '讀取 UART','rx'],
-            ['r', 'LASS PM25','lassPM25'],
-            ['r', 'LASS 溫度','lassC'],
-            ['r', 'LASS 濕度','lassH'],
+            
         ],
         menus: {
             'mode':['INPUT','OUTPUT'],
