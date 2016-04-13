@@ -244,7 +244,7 @@ console.log(jsonObj);
     // Block and block menu descriptions
     var descriptor = {
         blocks: [
-            [' ', '開發板位址 %s', 'set_ip', 'mywf9441.local'],
+            [' ', '開發板位址 %s', 'set_ip', 'mywfXXXX.local'],
             ['h', '當連線建立時', 'when_connected'],
             ['h', '當UART有資料時', 'when_uart'],
             [' ', '腳位 %d.gpio 模式設為 %m.mode', 'pinmode',5,'OUTPUT'],
