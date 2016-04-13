@@ -141,9 +141,11 @@
               type: _type,
               success: function( data ) {
                   callback(data);
+                  restfullGet = data;
               },
               error: function(e){
                   callback(e);
+                  restfullGet = JSON.stringify(e);
               }
         });
     };
