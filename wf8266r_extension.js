@@ -15,7 +15,7 @@
     
     function sendCommand(cmd)
     {
-        //console.log(cmd + " " + socketCounter);
+        console.log(cmd + " " + socketCounter);
         
         if(isConnected && socketCounter == 0)
         {
@@ -27,6 +27,9 @@
     // Cleanup function when the extension is unloaded
     ext._shutdown = function() {
         //console.log("shutdown");
+        socketCounter = 0;
+        if(conncetion != null)
+            connection.close();
     };
 
     // Status reporting code
