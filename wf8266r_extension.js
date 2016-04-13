@@ -5,6 +5,7 @@
     var callbackEvent = [];
     var isUARTData = false;
     var uartData = "";
+    var gpio = {D0:0,D1:0,D2:0,D3:0,D4:0,D5:0,D12:0,D13:0,D14:0,D15:0,D16:0,ADC:0};
     var dhtData = {C:0, F:0, H:0}; 
     var dsData = {C:0,F:0};
     var distance = 0;
@@ -51,68 +52,49 @@
         sendCommand("pinmode,"+pin+"="+mode);
     };
     
-    ext.adc = function(callback){
+    ext.adc = function(){
         sendCommand("gpio/adc");
-        var currentCallback = {action:'gpio/adc', index:'20', event:callback};
-        callbackEvent.push(currentCallback);
     };
     
-    ext.read = function(pin, callback){
+    ext.read = function(pin){
         sendCommand("gpio/read,"+pin+"=2");
-        var currentCallback = {action:'gpio/read', index:pin, event:callback};
-        callbackEvent.push(currentCallback);
     };
     
     ext.dht = function(type, pin, callback){
         sendCommand("dht,pin="+pin+"&type="+type);
-        var currentCallback = {action:'dht', index:'C', event:callback};
-        callbackEvent.push(currentCallback);
     };
     
-    ext.ds = function(pin, callback){
+    ext.ds = function(pin){
         sendCommand("ds,pin="+pin+"&index=1");
-        var currentCallback = {action:'ds1', index:'C', event:callback};
-        callbackEvent.push(currentCallback);
     };
     
-    ext.distance = function(echo, trig, callback){
+    ext.distance = function(echo, trig){
         sendCommand("distance,echo="+echo+"&trig="+trig);
-        var currentCallback = {action:'distance', index:'distance', event:callback};
-        callbackEvent.push(currentCallback);
     };
     
-    ext.pm25 = function(type, pin, callback){
-        var currentCallback;
+    ext.pm25 = function(type, pin){
+
         if(type == "GP2Y1010AU0F")
         {
             sendCommand("pm25,pin="+pin);
-            currentCallback = {action:'pm25', index:'PM25', event:callback};
         }
         else if(type == "G3" || type == "G5")
         {
             sendCommand("pm25g");
-            currentCallback = {action:'pm25g', index:'PMAT25', event:callback};
         }
         
-        callbackEvent.push(currentCallback);
     };
     
-    ext.irrecv = function(pin, callback) {
+    ext.irrecv = function(pin) {
         sendCommand("ir/code,pin="+pin);
-        var currentCallback = {action:'ir/code', index:'code', event:callback};
-        callbackEvent.push(currentCallback);
     };
     
-    ext.irsend = function(pin, index, callback) {
+    ext.irsend = function(pin, index) {
         sendCommand("ir/send,pin="+pin+"&index="+index);
-        var currentCallback = {action:'ir/send', index:'index', event:callback};
-        callbackEvent.push(currentCallback);
     };
     
-    ext.irstop = function(callback) {
+    ext.irstop = function() {
         sendCommand("ir/stop");
-        var currentCallback = {action:'ir/stop', index:'state', event:callback};
-        callbackEvent.push(currentCallback);
     };
     
     ext.baud = function(rate) {
@@ -229,34 +211,24 @@
             }
             
             var jsonObj = JSON.parse(e.data.substring(0, e.data.length - 1));
-            var index = callbackEvent.length;
-            var currentCallback;
-            if(index > 0)
-            {
-                currentCallback = callbackEvent[0];
-                if(currentCallback.action == jsonObj.Action)
-                    callbackEvent.splice(0, 1);
-            }
-            else
-                return;
-              
+                        
 console.log(jsonObj);
             switch(jsonObj.Action)
             {
-                case "gpio/adc" : currentCallback.event(parseInt(jsonObj.ADC)); break;
-                case "gpio/read" : currentCallback.event(parseInt(eval('jsonObj.D'+currentCallback.index))); break;
-                case "dht" : currentCallback.event(parseFloat(eval('jsonObj.'+currentCallback.index))); 
+                case "gpio/adc" : gpio.ADC = jsonObj.ADC; break;
+                case "gpio/read" : eval('gpio.D'+jsonObj.Pin+'='+jsonObj.Value); break;
+                case "dht" : 
                     dhtData.C = parseFloat(jsonObj.C); dhtData.H = parseFloat(jsonObj.Humidity); dhtData.F = parseFloat(jsonObj.F); break;
-                case "ds1" : currentCallback.event(parseFloat(eval('jsonObj.'+currentCallback.index))); 
+                case "ds1" : 
                     dsData.C = parseFloat(jsonObj.C); dsData.F = parseFloat(jsonObj.F); break;
-                case "distance" : currentCallback.event(parseInt(eval('jsonObj.'+currentCallback.index))); 
+                case "distance" : 
                     distance = parseInt(jsonObj.distance); break;
-                case "pm25" : currentCallback.event(parseInt(eval('jsonObj.'+currentCallback.index))); break;
-                case "pm25g" : currentCallback.event(parseInt(eval('jsonObj.'+currentCallback.index))); break;
-                case "ir/code" : currentCallback.event(eval('jsonObj.'+currentCallback.index)); 
+                case "pm25" :  break;
+                case "pm25g" :  break;
+                case "ir/code" : 
                     irCode = jsonObj.code; break;
-                case "ir/send" : currentCallback.event(eval('jsonObj.'+currentCallback.index)); break;
-                case "ir/stop" : currentCallback.event(eval('jsonObj.'+currentCallback.index)); break;
+                case "ir/send" : break;
+                case "ir/stop" : break;
                 default : break;
             }
             
@@ -269,7 +241,7 @@ console.log(jsonObj);
     // Block and block menu descriptions
     var descriptor = {
         blocks: [
-            [' ', '開發板位址 %s', 'set_ip', 'mywfxxxx.local'],
+            [' ', '開發板位址 %s', 'set_ip', 'mywf9441.local'],
             ['h', '當連線建立時', 'when_connected'],
             ['h', '當UART有資料時', 'when_uart'],
             [' ', '腳位 %d.gpio 模式設為 %m.mode', 'pinmode',5,'OUTPUT'],
@@ -279,13 +251,13 @@ console.log(jsonObj);
             [' ', 'UART to Socket %m.boolType' ,'socketUART', 'true'],
             [' ', 'UART Tx 送出 %m.uartCode %s 結尾換行 %m.boolType' ,'tx', 'text', 'Hi', 'true'],
             [' ', '%m.flushType 清空', 'flush', 'UART'], 
-            ['w', '紅外線發射器，接在腳位 %d.gpio 發送位址 %n 的資料' ,'irsend', 15, 0],
-            ['w', '停止紅外線接收' ,'irstop'],
-            ['w', 'HTTP %m.restfulType 到 %s' ,'http', 'POST', 'http://api.thingspeak.com/update?key=xxxxxx&field1=1&field2=2'],
-            ['w', 'HTTP %m.restfulType 從 %s' ,'http', 'GET', 'http://api.thingspeak.com/apps/thinghttp/send_request?api_key=EM18B52PSHXZB4DD'],
-            ['w', 'LASS 設備編號 %s' ,'lass', ''],
-            ['w', 'DHT%m.dhtType 溫濕度感測器 在腳位 %d.gpio' ,'dht', 11, 12],
-            ['W', 'DS18B20 溫度感測器 在腳位 %d.gpio' ,'ds', 4],
+            [' ', '紅外線發射器，接在腳位 %d.gpio 發送位址 %n 的資料' ,'irsend', 15, 0],
+            [' ', '停止紅外線接收' ,'irstop'],
+            [' ', 'HTTP %m.restfulType 到 %s' ,'http', 'POST', 'http://api.thingspeak.com/update?key=xxxxxx&field1=1&field2=2'],
+            [' ', 'HTTP %m.restfulType 從 %s' ,'http', 'GET', 'http://api.thingspeak.com/apps/thinghttp/send_request?api_key=EM18B52PSHXZB4DD'],
+            [' ', 'LASS 設備編號 %s' ,'lass', ''],
+            [' ', 'DHT%m.dhtType 溫濕度感測器 在腳位 %d.gpio' ,'dht', 11, 12],
+            [' ', 'DS18B20 溫度感測器 在腳位 %d.gpio' ,'ds', 4],
             ['R', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio' ,'distance', 5,4],
             ['R', 'PM25粉塵感測器 %m.pm25SensorParam 在腳位 %d.gpio' ,'pm25', 'G3', 14],
             ['R', '讀取紅外線接收器，接在腳位 %d.gpio' ,'irrecv', 14],            
@@ -314,5 +286,5 @@ console.log(jsonObj);
     };
 
     // Register the extension
-    ScratchExtensions.register('WF8266R 20160413', descriptor, ext);
+    ScratchExtensions.register('WF8266R 20160414', descriptor, ext);
 })({});
