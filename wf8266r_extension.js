@@ -283,7 +283,7 @@ console.log(jsonObj);
             ['w', 'DS18B20 溫度感測器 在腳位 %d.gpio' ,'ds', 'C', 4],
             ['w', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio' ,'distance', 5,4],
             ['w', 'PM25粉塵感測器 %m.pm25SensorParam 在腳位 %d.gpio' ,'pm25', 'G3', 14],
-            ['w', '讀取紅外線接收器，接在腳位 %d.gpio' ,'irrecv', 14],
+            ['R', '讀取紅外線接收器，接在腳位 %d.gpio' ,'irrecv', 14],
             ['w', '紅外線發射器，接在腳位 %d.gpio 發送位址 %n 的資料' ,'irsend', 15, 0],
             ['w', '停止紅外線接收' ,'irstop'],
             ['w', 'HTTP %m.restfulType 到 %s' ,'http', 'POST', 'http://api.thingspeak.com/update?key=xxxxxx&field1=1&field2=2'],
