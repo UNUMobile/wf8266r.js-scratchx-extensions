@@ -59,6 +59,7 @@
     
     ext.read = function(pin){
         sendCommand("gpio/read,"+pin+"=2");
+        return eval('gpio.D'+pin);
     };
     
     ext.dht = function(type, pin, callback){
