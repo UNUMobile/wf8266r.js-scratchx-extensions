@@ -192,6 +192,7 @@
     };
     
     ext.packageTotal = function(){
+        console.log(package.recv + " " +package.send);
         return (package.recv/package.send)*100;
     }
     
