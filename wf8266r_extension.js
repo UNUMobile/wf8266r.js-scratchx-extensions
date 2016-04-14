@@ -13,16 +13,15 @@
     var restfullGet = "";
     var lassData = {C:0, H:0, PM25:0};
     var socketCounter = 0;
-    var package = {send:0,recv:0};
+    var package = {send:0,recv:0, millis:0};
     
     function sendCommand(cmd)
     {
         //console.log(cmd + " " + socketCounter);
-        
+        package.send++;
         if(isConnected && socketCounter == 0)
         {
             socketCounter++;
-            package.send++;
             connection.send(cmd);
         }
     }
@@ -192,8 +191,7 @@
     };
     
     ext.packageTotal = function(){
-        console.log(package.recv + " " +package.send);
-        return (package.recv/package.send)*100;
+        return Math.round((package.recv/package.send)*100);
     }
     
     ext.when_uart = function(){
