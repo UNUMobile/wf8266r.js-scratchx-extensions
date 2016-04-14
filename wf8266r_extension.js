@@ -13,14 +13,16 @@
     var restfullGet = "";
     var lassData = {C:0, H:0, PM25:0};
     var socketCounter = 0;
+    var package = {send:0,recv:0};
     
     function sendCommand(cmd)
     {
-        console.log(cmd + " " + socketCounter);
+        //console.log(cmd + " " + socketCounter);
         
         if(isConnected && socketCounter == 0)
         {
             socketCounter++;
+            package.send++;
             connection.send(cmd);
         }
     }
@@ -189,6 +191,10 @@
       return isConnected;  
     };
     
+    ext.packageTotal = function(){
+        return (package.recv/package.send)*100;
+    }
+    
     ext.when_uart = function(){
       return isUARTData;  
     };
@@ -204,6 +210,7 @@
         };
         connection.onmessage = function (e) {
             socketCounter--;
+            package.recv++;
             isConnected = true;
             
             if(e.data.length == 1) // socket uart
@@ -215,7 +222,7 @@
             
             var jsonObj = JSON.parse(e.data.substring(0, e.data.length - 1));
                         
-console.log(jsonObj);
+//console.log(jsonObj);
             switch(jsonObj.Action)
             {
                 case "gpio/adc" : gpio.ADC = jsonObj.ADC; break;
@@ -246,7 +253,8 @@ console.log(jsonObj);
         blocks: [
             [' ', '開發板位址 %s', 'set_ip', 'mywfXXXX.local'],
             ['h', '當連線建立時', 'when_connected'],
-            ['h', '當UART有資料時', 'when_uart'],
+            ['r', '連線品質','packageTotal'],
+            
             [' ', '腳位 %d.gpio 模式設為 %m.mode', 'pinmode',5,'OUTPUT'],
             [' ', '腳位 %d.gpio 數位輸出 %m.level', 'gpio',5,1],
             [' ', '腳位 %d.gpio 類比輸出 %n', 'pwm', 5, 1023],
@@ -255,14 +263,16 @@ console.log(jsonObj);
             [' ', 'DS18B20 溫度感測器 在腳位 %d.gpio' ,'ds', 4],
             [' ', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio' ,'distance', 5,4],
             [' ', 'PM25粉塵感測器 %m.pm25SensorParam 在腳位 %d.gpio' ,'pm25', 'G3', 14],
+            ['h', '當UART有資料時', 'when_uart'],
             [' ', 'UART 速率 %m.uartBaud' ,'baud', '115200'],
             [' ', 'UART to Socket %m.boolType' ,'socketUART', 'true'],
             [' ', 'UART Tx 送出 %m.uartCode %s 結尾換行 %m.boolType' ,'tx', 'text', 'Hi', 'true'],
             [' ', '%m.flushType 清空', 'flush', 'UART'], 
-            [' ', '紅外線發射器，接在腳位 %d.gpio 發送位址 %n 的資料' ,'irsend', 15, 0],
-            [' ', '停止紅外線接收' ,'irstop'],
             ['w', 'HTTP %m.restfulType 到 %s' ,'http', 'POST', 'http://api.thingspeak.com/update?key=xxxxxx&field1=1&field2=2'],
             ['w', 'HTTP %m.restfulType 從 %s' ,'http', 'GET', 'http://api.thingspeak.com/apps/thinghttp/send_request?api_key=EM18B52PSHXZB4DD'],
+            
+            [' ', '紅外線發射器，接在腳位 %d.gpio 發送位址 %n 的資料' ,'irsend', 15, 0],
+            [' ', '停止紅外線接收' ,'irstop'],
             ['r', '讀取紅外線接收器，接在腳位 %d.gpio' ,'irrecv', 14],            
             ['r', '讀取數位腳位 %d.gpio' ,'read', 5],
             ['r', '讀取類比腳位 ADC','adc'],
