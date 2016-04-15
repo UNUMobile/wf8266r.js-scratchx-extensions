@@ -19,7 +19,8 @@
     function sendCommand(cmd)
     {
         
-        
+        console.log("Last time : "+ timeManager.lastTime);
+        console.log("millis time : "+ timeManager.millis);
         if((timeManager.millis - timeManager.lastTime) > 200)
         {
             timeManager.lastTime = (new Date).getTime();
