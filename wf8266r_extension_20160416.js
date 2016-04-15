@@ -18,13 +18,18 @@
     
     function sendCommand(cmd)
     {
-        console.log(timeManager.millis);
-        //console.log(cmd + " " + socketCounter);
-        package.send++;
-        if(isConnected && socketCounter == 0)
+        
+        
+        if((timeManager.millis - timeManager.lastTime) > 200)
         {
-            socketCounter++;
-            connection.send(cmd);
+            timeManager.lastTime = (new Date).getTime();
+            //console.log(cmd + " " + socketCounter);
+            package.send++;
+            if(isConnected && socketCounter == 0)
+            {
+                socketCounter++;
+                connection.send(cmd);
+            }
         }
     }
     
