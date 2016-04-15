@@ -21,17 +21,20 @@
         timeManager.millis = (new Date).getTime();
         console.log("Last time : "+ timeManager.lastTime);
         console.log("millis time : "+ timeManager.millis);
-        if((timeManager.millis - timeManager.lastTime) > 200)
-        {
-            timeManager.lastTime = (new Date).getTime();
-            //console.log(cmd + " " + socketCounter);
+        
+            console.log(cmd + " " + socketCounter);
             package.send++;
             if(isConnected && socketCounter == 0)
             {
-                socketCounter++;
-                connection.send(cmd);
+                if((timeManager.millis - timeManager.lastTime) > 200)
+                {
+                    console.log("Send");
+                    timeManager.lastTime = (new Date).getTime();
+                    socketCounter++;
+                    connection.send(cmd);
+                }
             }
-        }
+        
     }
     
     // Cleanup function when the extension is unloaded
