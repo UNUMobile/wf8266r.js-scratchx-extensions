@@ -184,7 +184,7 @@
 
     ext.set_ip = function (_ip) {
         if (connection != null)
-            connection.close();
+            return;
         ip = _ip;
         socketConnection(_ip);
     };
