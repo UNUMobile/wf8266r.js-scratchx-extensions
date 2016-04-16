@@ -204,6 +204,7 @@
 
     ext.speech_text = function (callback) {
         var rec = new webkitSpeechRecognition();
+        console.log(rec);
         rec.continuous = true;
         rec.interimResults = true;
         var result = "";
