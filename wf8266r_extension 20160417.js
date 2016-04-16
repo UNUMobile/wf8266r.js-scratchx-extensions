@@ -238,7 +238,7 @@
 
             if (event.results.length > 0) {
                 if (event.results[event.results.length - 1].isFinal)
-                    voiceData.Text = event.results[event.results.length - 1].transcript;
+                    voiceData.Text = event.results[event.results.length - 1][0].transcript;
                 console.log(voiceData.Text);
             }
         }
