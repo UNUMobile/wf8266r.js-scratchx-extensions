@@ -212,7 +212,7 @@
             
         rec.start();
         rec.continuous = true;
-        rec.interimResults = false;
+        rec.interimResults = true;
         var result = "";
 
         rec.onresult = function (event) {
