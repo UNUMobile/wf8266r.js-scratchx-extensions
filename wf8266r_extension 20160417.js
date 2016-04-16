@@ -211,8 +211,8 @@
             rec = new webkitSpeechRecognition();
             
         rec.start();
-        rec.continuous = false;
-        rec.interimResults = true;
+        rec.continuous = true;
+        rec.interimResults = false;
         var result = "";
 
         rec.onresult = function (event) {
