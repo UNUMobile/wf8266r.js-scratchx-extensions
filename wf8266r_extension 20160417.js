@@ -216,7 +216,7 @@
         var result = "";
 
         rec.onresult = function (event) {
-            
+console.log(event.results);
             if (typeof (event.results) == 'undefined') {
                 rec.onend = null;
                 rec.stop();
