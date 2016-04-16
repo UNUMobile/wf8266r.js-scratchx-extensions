@@ -314,7 +314,7 @@
             ['w', 'HTTP %m.restfulType 到 %s', 'http', 'POST', 'http://api.thingspeak.com/update?key=xxxxxx&field1=1&field2=2'],
             ['w', 'HTTP %m.restfulType 從 %s', 'http', 'GET', 'http://api.thingspeak.com/apps/thinghttp/send_request?api_key=EM18B52PSHXZB4DD'],
             ['w', '說 %s', 'speak_text', 'Scratch 遇上 WF8266R'],
-            ['w', '聽到', 'speech_text'],
+            ['R', '聽到', 'speech_text'],
 
             [' ', '紅外線發射器，接在腳位 %d.gpio 發送位址 %n 的資料', 'irsend', 15, 0],
             [' ', '停止紅外線接收', 'irstop'],
