@@ -183,6 +183,7 @@
     };
 
     ext.set_ip = function (_ip) {
+        console.log(connection);
         if (connection != null)
             return;
         ip = _ip;
