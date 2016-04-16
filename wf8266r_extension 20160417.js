@@ -232,6 +232,7 @@
             }
             voiceData.Text = result;
             console.log(voiceData.Text);
+            rec.start();
             callback(result);
         }
     }
