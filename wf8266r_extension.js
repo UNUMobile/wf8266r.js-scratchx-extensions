@@ -104,6 +104,10 @@
     ext.irstop = function () {
         sendCommand("ir/stop");
     };
+    
+    ext.servo = function (pin, degree) {
+        sendCommand("servo,pin=" + pin + "&degree=" + degree);
+    };
 
     ext.baud = function (rate) {
         sendCommand("baud," + rate + "=");
@@ -183,7 +187,6 @@
     };
 
     ext.set_ip = function (_ip) {
-        console.log(connection);
         if (connection != null)
             return;
         ip = _ip;
@@ -266,6 +269,7 @@
             [' ', 'DS18B20 溫度感測器 在腳位 %d.gpio', 'ds', 4],
             [' ', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio', 'distance', 5, 4],
             [' ', 'PM25粉塵感測器 %m.pm25SensorParam 在腳位 %d.gpio', 'pm25', 'G3', 14],
+            [' ', 'SERVO 伺服馬達，接在腳位 %d.gpio 轉 %n 度', 'servo', 5, 90],
             ['h', '當UART有資料時', 'when_uart'],
             [' ', 'UART 速率 %m.uartBaud', 'baud', '115200'],
             [' ', 'UART to Socket %m.boolType', 'socketUART', 'true'],
