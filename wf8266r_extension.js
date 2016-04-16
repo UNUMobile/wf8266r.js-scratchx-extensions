@@ -192,6 +192,15 @@
         ip = _ip;
         socketConnection(_ip);
     };
+    
+    ext.speak_text = function (text, callback) {
+        var u = new SpeechSynthesisUtterance(text.toString());
+        u.onend = function(event) {
+            if (typeof callback=="function") callback();
+        };
+        
+        speechSynthesis.speak(u);
+    };
 
     ext.when_connected = function () {
         return isConnected;
@@ -277,6 +286,7 @@
             [' ', '%m.flushType 清空', 'flush', 'UART'],
             ['w', 'HTTP %m.restfulType 到 %s', 'http', 'POST', 'http://api.thingspeak.com/update?key=xxxxxx&field1=1&field2=2'],
             ['w', 'HTTP %m.restfulType 從 %s', 'http', 'GET', 'http://api.thingspeak.com/apps/thinghttp/send_request?api_key=EM18B52PSHXZB4DD'],
+            ['w', '說 %s', 'speak_text', 'Scratch 遇上 WF8266R'],
 
             [' ', '紅外線發射器，接在腳位 %d.gpio 發送位址 %n 的資料', 'irsend', 15, 0],
             [' ', '停止紅外線接收', 'irstop'],
