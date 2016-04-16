@@ -16,6 +16,7 @@
     var socketCounter = 0;
     var package = { send: 0, recv: 0, millis: 0 };
     var timeManager = { lastTime: 0, startTime: 0, millis: 0 };
+    var rec = null;
 
     function sendCommand(cmd) {
         timeManager.millis = (new Date).getTime();
@@ -125,6 +126,7 @@
     ext.flush = function (type) {
         switch (type) {
             case "UART": uartData = ""; isUARTData = false; break;
+            case "Voice": voiceData.Text = "";
             default:
                 break;
         }
@@ -205,7 +207,9 @@
     };
 
     ext.speech_text = function (callback) {
-        var rec = new webkitSpeechRecognition();
+        if(rec == null)
+            rec = new webkitSpeechRecognition();
+            
         rec.start();
         rec.continuous = true;
         rec.interimResults = true;
@@ -227,6 +231,7 @@
                 }
             }
             voiceData.Text = result;
+            console.log(voiceData.Text);
             callback(result);
         }
     }
@@ -335,7 +340,7 @@
             'pm25SensorParam': ['G3', 'G5', 'GP2Y1010AU0F'],
             'dhtType': ['11', '22', '21'],
             'restfulType': ['GET', 'POST'],
-            'flushType': ['UART'],
+            'flushType': ['UART','Voice'],
             'level': ['0', '1'],
             'uartCode': ['text', 'hex'],
             'uartBaud': ['9600', '19200', '38400', '57600', '115200'],
