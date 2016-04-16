@@ -224,6 +224,7 @@
                     console.log(event.results[i][0].transcript);
                 }
             }
+            console.log(result);
             callback();
         }
     }
