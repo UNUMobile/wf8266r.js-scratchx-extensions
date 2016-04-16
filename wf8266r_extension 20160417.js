@@ -217,7 +217,14 @@
                 rec.stop();
                 callback();
             }
-            
+            for (var i = event.resultIndex; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) {
+                    result += event.results[i][0].transcript;
+                } else {
+                    console.log(event.results[i][0].transcript);
+                }
+            }
+            callback();
         }
     }
 
