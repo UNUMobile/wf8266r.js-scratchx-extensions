@@ -12,6 +12,7 @@
     var irCode = "";
     var restfullGet = "";
     var lassData = { C: 0, H: 0, PM25: 0 };
+    var voiceData = { Text:'' };
     var socketCounter = 0;
     var package = { send: 0, recv: 0, millis: 0 };
     var timeManager = { lastTime: 0, startTime: 0, millis: 0 };
@@ -224,7 +225,7 @@
                     console.log(event.results[i][0].transcript);
                 }
             }
-
+            voiceData.Text = result;
             callback(result);
         }
     }
@@ -314,7 +315,7 @@
             ['w', 'HTTP %m.restfulType 到 %s', 'http', 'POST', 'http://api.thingspeak.com/update?key=xxxxxx&field1=1&field2=2'],
             ['w', 'HTTP %m.restfulType 從 %s', 'http', 'GET', 'http://api.thingspeak.com/apps/thinghttp/send_request?api_key=EM18B52PSHXZB4DD'],
             ['w', '說 %s', 'speak_text', 'Scratch 遇上 WF8266R'],
-            ['R', '聽到', 'speech_text'],
+            ['w ', '聽到', 'speech_text'],
 
             [' ', '紅外線發射器，接在腳位 %d.gpio 發送位址 %n 的資料', 'irsend', 15, 0],
             [' ', '停止紅外線接收', 'irstop'],
@@ -326,7 +327,7 @@
         ],
         menus: {
             'mode': ['INPUT', 'OUTPUT'],
-            'sensor': ['DHT', 'DS', 'HCSR', 'IR', 'Rx', 'RESTfulGET', 'LASS'],
+            'sensor': ['DHT', 'DS', 'HCSR', 'IR', 'Rx', 'RESTfulGET', 'LASS', 'Voice'],
             'sensorParam': ['Value', 'C', 'F', 'H', 'PM25'],
             'dhtSensorParam': ['C', 'F', 'Humidity'],
             'dsSensorParam': ['C', 'F'],
