@@ -12,7 +12,7 @@
     var irCode = "";
     var restfullGet = "";
     var lassData = { C: 0, H: 0, PM25: 0 };
-    var voiceData = { Text:'' };
+    var voiceData = { Text: '' };
     var socketCounter = 0;
     var package = { send: 0, recv: 0, millis: 0 };
     var timeManager = { lastTime: 0, startTime: 0, millis: 0 };
@@ -207,43 +207,40 @@
     };
 
     ext.speech_text = function () {
-        if(rec == null)
+        if (rec == null)
             rec = new webkitSpeechRecognition();
-            
+
         rec.start();
         rec.continuous = true;
         rec.interimResults = true;
         var result = "";
 
-        rec.onend = function(){
+        rec.onend = function () {
             console.log("end");
-            rec.start();    
+            rec.start();
         }
-        
-        rec.onstart = function(){
+
+        rec.onstart = function () {
             console.log("start");
         }
-        
-        rec.onerror = function(event){
+
+        rec.onerror = function (event) {
             console.log(event);
         }
-        
+
         rec.onresult = function (event) {
-console.log(event.results);
+            console.log(event.results);
             if (typeof (event.results) == 'undefined') {
                 rec.onend = null;
                 rec.stop();
                 console.log("stop");
             }
-            for (var i = event.resultIndex; i < event.results.length; ++i) {
-                if (event.results[i].isFinal) {
-                    result += event.results[i][0].transcript;
-                } else {
-                    console.log(event.results[i][0].transcript);
-                }
+
+            if (event.results.length > 0) {
+                if (event.results[event.results.length - 1].isFinal)
+                    voiceData.Text = event.results[event.results.length - 1].transcript;
+                console.log(voiceData.Text);
             }
-            voiceData.Text = result;
-            console.log(voiceData.Text);
         }
     }
 
@@ -332,7 +329,7 @@ console.log(event.results);
             ['w', 'HTTP %m.restfulType 到 %s', 'http', 'POST', 'http://api.thingspeak.com/update?key=xxxxxx&field1=1&field2=2'],
             ['w', 'HTTP %m.restfulType 從 %s', 'http', 'GET', 'http://api.thingspeak.com/apps/thinghttp/send_request?api_key=EM18B52PSHXZB4DD'],
             ['w', '說 %s', 'speak_text', 'Scratch 遇上 WF8266R'],
-            [' ','監聽語音', 'speech_text'],
+            [' ', '監聽語音', 'speech_text'],
 
             [' ', '紅外線發射器，接在腳位 %d.gpio 發送位址 %n 的資料', 'irsend', 15, 0],
             [' ', '停止紅外線接收', 'irstop'],
@@ -351,7 +348,7 @@ console.log(event.results);
             'pm25SensorParam': ['G3', 'G5', 'GP2Y1010AU0F'],
             'dhtType': ['11', '22', '21'],
             'restfulType': ['GET', 'POST'],
-            'flushType': ['UART','Voice'],
+            'flushType': ['UART', 'Voice'],
             'level': ['0', '1'],
             'uartCode': ['text', 'hex'],
             'uartBaud': ['9600', '19200', '38400', '57600', '115200'],
