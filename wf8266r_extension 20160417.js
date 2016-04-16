@@ -207,16 +207,16 @@
     ext.speech_text = function (callback) {
         var rec = new webkitSpeechRecognition();
         rec.start();
-        console.log(rec);
-        rec.continuous = false;
+        rec.continuous = true;
         rec.interimResults = true;
         var result = "";
 
         rec.onresult = function (event) {
-            console.log(event);
+            
             if (typeof (event.results) == 'undefined') {
                 rec.onend = null;
                 rec.stop();
+                console.log("stop");
                 callback('');
             }
             for (var i = event.resultIndex; i < event.results.length; ++i) {
