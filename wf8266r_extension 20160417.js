@@ -233,7 +233,7 @@
         }
 
         rec.onresult = function (event) {
-            console.log(event.results);
+            //console.log(event.results);
             if (typeof (event.results) == 'undefined') {
                 rec.onend = null;
                 rec.stop();
@@ -362,5 +362,5 @@
     };
 
     // Register the extension
-    ScratchExtensions.register('WF8266R 20160416', descriptor, ext);
+    ScratchExtensions.register('WF8266R 20160417', descriptor, ext);
 })({});
