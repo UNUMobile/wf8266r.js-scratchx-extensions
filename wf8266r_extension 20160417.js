@@ -215,6 +215,19 @@
         rec.interimResults = true;
         var result = "";
 
+        rec.onend = function(){
+            console.log("end");
+            rec.start();    
+        }
+        
+        rec.onstart = function(){
+            console.log("start");
+        }
+        
+        rec.onerror = function(event){
+            console.log(event);
+        }
+        
         rec.onresult = function (event) {
 console.log(event.results);
             if (typeof (event.results) == 'undefined') {
