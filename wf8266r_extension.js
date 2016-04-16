@@ -191,7 +191,7 @@
     };
 
     ext.set_ip = function (_ip) {
-        if (connection != null)
+        if (isConnected)
             return;
         ip = _ip;
         socketConnection(_ip);
