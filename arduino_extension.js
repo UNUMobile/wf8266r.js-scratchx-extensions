@@ -39,7 +39,7 @@
     }
     ext.analogRead = function (pin) {
         send("analogRead," + pin + "=");
-        return eval('gpio.A'+pin);
+        return gpio.A0;
     }
 
     function send(cmd) {
