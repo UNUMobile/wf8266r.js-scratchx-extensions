@@ -60,6 +60,9 @@
         };
         connection.onmessage = function (e) {
             console.log(e.data);
+            if(e.data[0] != "{")
+                return;
+                
             var jsonObj = JSON.parse(e.data.substring(0, e.data.length - 1));
             switch (jsonObj.Action) {
                 case "digitalRead": eval('gpio.D'+jsonObj.Pin+'='+jsonObj.Value); break;
