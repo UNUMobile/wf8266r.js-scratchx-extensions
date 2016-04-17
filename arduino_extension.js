@@ -32,11 +32,11 @@
     ext.analogWrite = function (pin, value) {
         send("analogWrite," + pin + "=" + value);
     }
-    ext.digitalRead = function (pin, value) {
-        send("digitalRead," + pin + "=" + value);
+    ext.digitalRead = function (pin) {
+        send("digitalRead," + pin + "=");
     }
-    ext.analogRead = function (pin, value) {
-        send("analogRead," + pin + "=" + value);
+    ext.analogRead = function (pin) {
+        send("analogRead," + pin + "=");
     }
 
     function send(cmd) {
@@ -53,7 +53,8 @@
         };
         connection.onmessage = function (e) {
             console.log(e);
-            //var jsonObj = JSON.parse(e.data);
+            var jsonObj = JSON.parse(e.data);
+            console.log(jsonObj);
         };
         connection.onerror = function (e) {
             isConnected = false;
