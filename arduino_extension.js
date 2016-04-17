@@ -35,11 +35,15 @@
     }
     ext.digitalRead = function (pin) {
         send("digitalRead," + pin + "=");
-        return eval('gpio.D'+pin);
+        var v=0;
+        eval('v=gpio.D'+pin);
+        return v;
     }
     ext.analogRead = function (pin) {
         send("analogRead," + pin + "=");
-        return gpio.A0;
+        var v=0;
+        eval('v=gpio.A'+pin);
+        return v;
     }
 
     function send(cmd) {
