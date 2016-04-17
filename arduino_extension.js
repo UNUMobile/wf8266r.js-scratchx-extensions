@@ -18,14 +18,30 @@
     ext.connect = function (ip, port) {
         socketConnection(ip, port);
     }
-    
-    ext.gpio = function(pin, value){
-        if(value==1)
-            connection.send("GPIO13ON\r\n");
+
+    ext.pinMode = function (pin, value) {
+        if(value == "INPUT")
+            value = 0;
         else
-            connection.send("GPIO13OFF\r\n");    
+            value = 1;
+        send("pinMode," + pin + "=" + value);
+    }
+    ext.digitalWrite = function (pin, value) {
+        send("digitalWrite," + pin + "=" + value);
+    }
+    ext.analogWrite = function (pin, value) {
+        send("analogWrite," + pin + "=" + value);
+    }
+    ext.digitalRead = function (pin, value) {
+        send("digitalRead," + pin + "=" + value);
+    }
+    ext.analogRead = function (pin, value) {
+        send("analogRead," + pin + "=" + value);
     }
 
+    function send(cmd) {
+        connection.send(cmd);
+    }
 
     function socketConnection(ip, port) {
         connection = new WebSocket('ws://' + ip + ':' + port);
@@ -48,24 +64,18 @@
     var descriptor = {
         blocks: [
             [' ', 'WF %s:%n', 'connect', '127.0.0.1', 9999],
-            [' ', 'GPIO%n %n', 'gpio', 13, 1],
-
+            [' ', '腳位 %d.gpio 模式設為 %m.mode', 'pinMode', 13, 'OUTPUT'],
+            [' ', '腳位 %d.gpio 數位輸出 %m.level', 'digitalWrite', 13, 1],
+            [' ', '腳位 %d.pwmGPIO 類比輸出 %n', 'analogWrite', 3, 255],
+            ['r', '讀取類比腳位 %d.analogGPIO ', 'analogRead', 'A0'],
+            ['r', '讀取數位腳位 %d.gpio ', 'dititalRead', 13],
         ],
         menus: {
             'mode': ['INPUT', 'OUTPUT'],
-            'sensor': ['DHT', 'DS', 'HCSR', 'IR', 'Rx', 'RESTfulGET', 'LASS', 'Voice'],
-            'sensorParam': ['Value', 'C', 'F', 'H', 'PM25'],
-            'dhtSensorParam': ['C', 'F', 'Humidity'],
-            'dsSensorParam': ['C', 'F'],
-            'pm25SensorParam': ['G3', 'G5', 'GP2Y1010AU0F'],
-            'dhtType': ['11', '22', '21'],
-            'restfulType': ['GET', 'POST'],
-            'flushType': ['UART', 'Voice'],
             'level': ['0', '1'],
-            'uartCode': ['text', 'hex'],
-            'uartBaud': ['9600', '19200', '38400', '57600', '115200'],
-            'boolType': ['true', 'false'],
-            'gpio': ['5', '4', '12', '13', '14', '15', '16', '0', '1', '2', '3']
+            'pwmGPIO': ['3','5','6','9','10','11'],
+            'analogGPIO': ['A0','A1','A2','A3','A4','A5'],
+            'gpio': ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13']
         },
         url: 'http://unumobile.github.io/wf8266r.js-scratchx-extensions'
     };
