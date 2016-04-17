@@ -57,11 +57,14 @@
         connection.onmessage = function (e) {
             console.log(e.data);
             var jsonObj = JSON.parse(e.data.substring(0, e.data.length - 1));
+            console.log(jsonObj);
+            console.log(gpio.A0);
             switch (jsonObj.Action) {
-                case "dititalRead": eval('gpio.D'+jsonObj.Pin+'='+jsonObj.Value); break;
+                case "digitalRead": eval('gpio.D'+jsonObj.Pin+'='+jsonObj.Value); break;
                 case "analogRead": eval('gpio.A'+jsonObj.Pin+'='+jsonObj.Value); break;
                 default:break;
             }
+            console.log(gpio.A0);
         };
         connection.onerror = function (e) {
             isConnected = false;
