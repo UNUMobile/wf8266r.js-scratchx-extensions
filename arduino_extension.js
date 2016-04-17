@@ -11,7 +11,6 @@
     // Status reporting code
     // Use this to report missing hardware, plugin or unsupported browser
     ext._getStatus = function () {
-        timeManager.millis = (new Date).getTime();
         if (isConnected) return { status: 2, msg: 'Ready' };
         if (!isConnected) return { status: 1, msg: '請設定開發板位址' };
     };
@@ -22,11 +21,10 @@
 
 
     function socketConnection(ip, port) {
-        timeManager.startTime = (new Date).getTime();
         connection = new WebSocket('ws://' + ip + ':' + port);
         connection.onopen = function (e) {
             isConnected = true;
-            sendCommand("hello arduino");
+            connection.send("hello arduino");
         };
         connection.onclose = function (e) {
             isConnected = false;
