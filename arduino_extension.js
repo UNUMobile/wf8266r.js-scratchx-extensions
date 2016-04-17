@@ -55,8 +55,8 @@
             isConnected = false;
         };
         connection.onmessage = function (e) {
-            console.log(e);
-            var jsonObj = JSON.parse(e.data);
+            console.log(e.data);
+            var jsonObj = JSON.parse(e.data.substring(0, e.data.length - 1));
             switch (jsonObj.Action) {
                 case "dititalRead": eval('gpio.D'+jsonObj.Pin+'='+jsonObj.Value); break;
                 case "analogRead": eval('gpio.A'+jsonObj.Pin+'='+jsonObj.Value); break;
