@@ -53,7 +53,7 @@
         };
         connection.onmessage = function (e) {
             console.log(e);
-
+            //var jsonObj = JSON.parse(e.data);
         };
         connection.onerror = function (e) {
             isConnected = false;
@@ -68,7 +68,7 @@
             [' ', '腳位 %d.gpio 數位輸出 %m.level', 'digitalWrite', 13, 1],
             [' ', '腳位 %d.pwmGPIO 類比輸出 %n', 'analogWrite', 3, 255],
             ['r', '讀取類比腳位 %d.analogGPIO ', 'analogRead', 'A0'],
-            ['r', '讀取數位腳位 %d.gpio ', 'dititalRead', 13],
+            ['r', '讀取數位腳位 %d.gpio ', 'digitalRead', 13],
         ],
         menus: {
             'mode': ['INPUT', 'OUTPUT'],
