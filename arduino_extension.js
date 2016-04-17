@@ -18,13 +18,19 @@
     ext.connect = function (ip, port) {
         socketConnection(ip, port);
     }
+    
+    ext.gpio = function(pin, value){
+        if(value==1)
+            connection.send("GPIO13ON\r\n");
+        else
+            connection.send("GPIO13OFF\r\n");    
+    }
 
 
     function socketConnection(ip, port) {
         connection = new WebSocket('ws://' + ip + ':' + port);
         connection.onopen = function (e) {
             isConnected = true;
-            connection.send("hello arduino");
         };
         connection.onclose = function (e) {
             isConnected = false;
@@ -42,7 +48,7 @@
     var descriptor = {
         blocks: [
             [' ', 'WF %s:%n', 'connect', '127.0.0.1', 9999],
-
+            [' ', 'GPIO%n %n', 'gpio', 13, 1],
 
         ],
         menus: {
