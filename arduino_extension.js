@@ -16,8 +16,9 @@
         if (!isConnected) return { status: 1, msg: '請設定開發板位址' };
     };
 
-    ext.connect = function (ip, port) {
-        socketConnection(ip, port);
+    ext.connect = function () {
+        
+        socketConnection("127.0.0.1", 9999);
     }
 
     ext.pinMode = function (pin, value) {
@@ -78,7 +79,7 @@
     // Block and block menu descriptions
     var descriptor = {
         blocks: [
-            [' ', 'WF %s:%n', 'connect', '127.0.0.1', 9999],
+            [' ', '連接 WF Arduino', 'connect'],
             [' ', '腳位 %d.gpio 模式設為 %m.mode', 'pinMode', 13, 'OUTPUT'],
             [' ', '腳位 %d.gpio 數位輸出 %m.level', 'digitalWrite', 13, 1],
             [' ', '腳位 %d.pwmGPIO 類比輸出 %n', 'analogWrite', 3, 255],
