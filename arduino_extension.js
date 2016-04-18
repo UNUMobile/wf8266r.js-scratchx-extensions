@@ -60,7 +60,7 @@
     };
     ext.tone = function (pin, frequency, duration) {
         var fre = frequency.split(',')[1];
-        send("tone,pin=" + pin + "&" + fre + "=" + duration);
+        send("tone,pin=" + pin + "&" + parseInt(fre) + "=" + duration);
     };
     ext.noTone = function (pin) {
         send("notone,pin=" + pin);
