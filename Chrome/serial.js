@@ -5,13 +5,16 @@ var connectedSockets = [];
 var isServer = false;
 var connection;
 var arduinoCMD = "";
+var server;
 
 function $(id) {
   return document.getElementById(id);
 }
 
 onload = function () {
+  showMessage('Init...')
   var deviceList = document.getElementById('deviceList');
+  var btnClose = $('btnClose');
   var onGetPorts = function (ports) {
     var eligiblePorts = ports.filter(function (port) {
       return (!port.path.match(/[Bb]luetooth/) && port.path.match(/\/dev\/tty/)) || port.path.match(/COM/);
@@ -28,6 +31,22 @@ onload = function () {
     setStatus("Ready");
   }
 
+  btnClose.onclick = function () {
+    for (var i = 0; i < connectedSockets.length; i++) {
+      connectedSockets[i].close();
+    }
+    if (connectionId != -1)
+      chrome.serial.disconnect(connectionId, function () {
+        showMessage(connectionId + ' closed.');
+      });
+    server.close();
+    setTimeout(function () {
+      window.open('', '_self', '');
+     window.close();
+    }, 0);
+
+  }
+
   deviceList.onchange = function () {
     if (connectionId != -1) {
       chrome.serial.disconnect(connectionId, openSelectedPort);
@@ -42,9 +61,10 @@ onload = function () {
 function socketServer() {
   if (http.Server && http.WebSocketServer) {
     // Listen for HTTP connections.
-    var server = new http.Server();
+    server = new http.Server();
     var wsServer = new http.WebSocketServer(server);
-    server.listen(port);
+
+    serverId = server.listen(port);
     isServer = true;
 
     server.addEventListener('request', function (req) {
@@ -57,7 +77,7 @@ function socketServer() {
     });
 
     wsServer.addEventListener('request', function (req) {
-      console.log('Client connected');
+      showMessage('ScratchX connected');
       var socket = req.accept();
       connectedSockets.push(socket);
 
@@ -70,7 +90,7 @@ function socketServer() {
 
       // When a socket is closed, remove it from the list of connected sockets.
       socket.addEventListener('close', function () {
-        console.log('Client disconnected');
+        showMessage('ScratchX disconnected');
         for (var i = 0; i < connectedSockets.length; i++) {
           if (connectedSockets[i] == socket) {
             connectedSockets.splice(i, 1);
@@ -85,6 +105,10 @@ function socketServer() {
 
 function setStatus(status) {
   document.getElementById('status').innerText = status;
+}
+
+function showMessage(msg) {
+  document.getElementById('message').innerText = msg;
 }
 
 function openSelectedPort() {
@@ -120,7 +144,7 @@ function getCMD(cmd) {
   for (var i = 0; i < uint8View.length; i++) {
     str += String.fromCharCode(uint8View[i]);
   }
-  if (uint8View[uint8View.length-1] == 10) {
+  if (uint8View[uint8View.length - 1] == 10) {
     str = arduinoCMD + str;
     arduinoCMD = "";
     return str;
@@ -150,10 +174,10 @@ document.addEventListener('DOMContentLoaded', function () {
       window.location.href.replace('http', 'ws');
     connection = new WebSocket(address);
     connection.addEventListener('open', function () {
-      console.log('Connected');
+      showMessage('WFduino Agent connected');
     });
     connection.addEventListener('close', function () {
-      console.log('Connection lost');
+      showMessage('WFduino Agent closed');
     });
     connection.addEventListener('message', function (e) {
       console.log(e.data);

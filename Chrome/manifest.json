@@ -1,6 +1,6 @@
 {
   "name": "WFduino",
-  "version": "1.2",
+  "version": "1.4",
   "manifest_version": 2,
   "minimum_chrome_version": "23",
   "description": "WF8266R.js Arduino for ScratchX Extension",
@@ -28,6 +28,6 @@
     "128": "assets/icon-128x128.jpg"
   },
   "permissions": [
-    "serial"
+    "serial","storage"
   ]
 }

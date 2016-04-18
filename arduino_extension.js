@@ -3,6 +3,12 @@
     var isConnected = false;
     var connection;
     var gpio = { D0: 0, D1: 0, D2: 0, D3: 0, D4: 0, D5: 0, D6: 0, D7: 0, D8: 0, D9: 0, D10: 0, D11: 0, D12: 0, D13: 0, A0: 0, A1: 0, A2: 0, A3: 0, A4: 0, A5: 0 };
+    var restfullGet = "";
+    var lassData = { C: 0, H: 0, PM25: 0 };
+    var voiceData = { Text: '' };
+    var dhtData = { C: 0, F: 0, H: 0 };
+    var dsData = { C: 0, F: 0 };
+    var distance = 0;
 
     // Cleanup function when the extension is unloaded
     ext._shutdown = function () {
@@ -17,7 +23,7 @@
     };
 
     ext.connect = function () {
-        if(!isConnected)
+        if (!isConnected)
             socketConnection("127.0.0.1", 9999);
     }
 
@@ -36,15 +42,140 @@
     }
     ext.digitalRead = function (pin) {
         send("digitalRead," + pin + "=");
-        var v=0;
-        eval('v=gpio.D'+pin);
+        var v = 0;
+        eval('v=gpio.D' + pin);
         return v;
     }
     ext.analogRead = function (pin) {
         send("analogRead," + pin + "=");
-        var v=0;
-        eval('v=gpio.A'+pin.replace("A",""));
+        var v = 0;
+        eval('v=gpio.A' + pin);
         return v;
+    }
+    ext.dht = function (type, pin, callback) {
+        sendCommand("dht,pin=" + pin + "&type=" + type);
+    };
+
+    ext.ds = function (pin) {
+        sendCommand("ds,pin=" + pin + "&index=1");
+    };
+
+    ext.distance = function (echo, trig) {
+        sendCommand("distance,echo=" + echo + "&trig=" + trig);
+    };
+    ext.servo = function (pin, degree) {
+        sendCommand("servo,pin=" + pin + "&degree=" + degree);
+    };
+    ext.flush = function (type) {
+        switch (type) {
+            case "Voice": voiceData.Text = "";
+            default:
+                break;
+        }
+    };
+    ext.readSensor = function (type, param) {
+        switch (type) {
+            case "DHT":
+                if (param == 'Value')
+                    return dhtData.C;
+                else
+                    return eval('dhtData.' + param);
+            case "DS":
+                if (param == 'Value')
+                    return dsData.C;
+                else
+                    return eval('dsData.' + param);
+            case "HCSR": return distance;
+            case "RESTfulGET": return restfullGet;
+            case "IR": return irCode;
+            case "Rx": return uartData;
+            case "LASS":
+                if (param == 'Value')
+                    return lassData.PM25;
+                else
+                    return eval('lassData.' + param);
+            case "Voice": return voiceData.Text;
+            default: break;
+        }
+    };
+    ext.http = function (_type, uri, callback) {
+        $.ajax({
+            url: uri,
+            type: _type,
+            success: function (data) {
+                callback(data);
+                restfullGet = data;
+            },
+            error: function (e) {
+                callback(e);
+                restfullGet = JSON.stringify(e);
+            }
+        });
+    };
+
+    ext.lass = function (device) {
+        $.ajax({
+            url: 'http://nrl.iis.sinica.edu.tw/LASS/last.php?device_id=' + device,
+            success: function (data) {
+                var jsonObj = JSON.parse(data);
+                //console.log(jsonObj);
+                lassData.C = jsonObj.s_t0;
+                lassData.H = jsonObj.s_h0;
+                lassData.PM25 = jsonObj.s_d0;
+                //callback(true);
+            },
+            error: function (e) {
+                //callback(e);
+            }
+        });
+    };
+    ext.speak_text = function (text, callback) {
+        var u = new SpeechSynthesisUtterance(text.toString());
+        u.onend = function (event) {
+            if (typeof callback == "function") callback();
+        };
+
+        speechSynthesis.speak(u);
+    };
+
+    ext.voiceText = function () {
+        return voiceData.Text;
+    }
+
+    ext.speech_text = function () {
+        if (rec == null)
+            rec = new webkitSpeechRecognition();
+
+        rec.start();
+        rec.continuous = true;
+        rec.interimResults = true;
+        var result = "";
+
+        rec.onend = function () {
+            //console.log("end");
+            rec.start();
+        }
+
+        rec.onstart = function () {
+            //console.log("start");
+        }
+
+        rec.onerror = function (event) {
+            //console.log(event);
+        }
+
+        rec.onresult = function (event) {
+            //console.log(event.results);
+            if (typeof (event.results) == 'undefined') {
+                rec.onend = null;
+                rec.stop();
+            }
+
+            if (event.results.length > 0) {
+                if (event.results[event.results.length - 1].isFinal)
+                    voiceData.Text = event.results[event.results.length - 1][0].transcript;
+            }
+        }
     }
 
     function send(cmd) {
@@ -61,14 +192,14 @@
         };
         connection.onmessage = function (e) {
             console.log(e.data);
-            if(e.data[0] != "{")
+            if (e.data[0] != "{")
                 return;
-                
+
             var jsonObj = JSON.parse(e.data.substring(0, e.data.length - 1));
             switch (jsonObj.Action) {
-                case "digitalRead": eval('gpio.D'+jsonObj.Pin+'='+jsonObj.Value); break;
-                case "analogRead": eval('gpio.A'+jsonObj.Pin+'='+jsonObj.Value); break;
-                default:break;
+                case "digitalRead": eval('gpio.D' + jsonObj.Pin + '=' + jsonObj.Value); break;
+                case "analogRead": eval('gpio.A' + jsonObj.Pin + '=' + jsonObj.Value); break;
+                default: break;
             }
         };
         connection.onerror = function (e) {
@@ -83,14 +214,30 @@
             [' ', '腳位 %d.gpio 模式設為 %m.mode', 'pinMode', 13, 'OUTPUT'],
             [' ', '腳位 %d.gpio 數位輸出 %m.level', 'digitalWrite', 13, 1],
             [' ', '腳位 %d.pwmGPIO 類比輸出 %n', 'analogWrite', 3, 255],
-            ['r', '讀取類比腳位 %d.analogGPIO ', 'analogRead', 'A0'],
+            ['w', 'HTTP %m.restfulType 到 %s', 'http', 'POST', 'http://api.thingspeak.com/update?key=xxxxxx&field1=1&field2=2'],
+            ['w', 'HTTP %m.restfulType 從 %s', 'http', 'GET', 'http://api.thingspeak.com/apps/thinghttp/send_request?api_key=EM18B52PSHXZB4DD'],
+            [' ', 'LASS 設備編號 %s', 'lass', ''],
+            [' ', 'DHT%m.dhtType 溫濕度感測器 在腳位 %d.gpio', 'dht', 11, 12],
+            [' ', 'DS18B20 溫度感測器 在腳位 %d.gpio', 'ds', 4],
+            [' ', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio', 'distance', 5, 4],
+            [' ', 'SERVO 伺服馬達，接在腳位 %d.gpio 轉 %n 度', 'servo', 5, 90],
+            [' ', '%m.flushType 清空', 'flush', 'Voice'],
+            ['w', '說 %s', 'speak_text', 'Scratch 遇上 WF8266R'],
+            [' ', '監聽語音', 'speech_text'],
+            ['r', '語音文字', 'voiceText'],
+            ['r', '讀取類比腳位 A%d.analogGPIO ', 'analogRead', '0'],
             ['r', '讀取數位腳位 %d.gpio ', 'digitalRead', 13],
+            ['r', '讀取感測器 %m.sensor 參數 %m.sensorParam', 'readSensor', 'DHT', 'Value'],
         ],
         menus: {
             'mode': ['INPUT', 'OUTPUT'],
+            'sensor': ['DHT', 'DS', 'HCSR', 'RESTfulGET', 'LASS', 'Voice'],
+            'sensorParam': ['Value', 'C', 'F', 'H', 'PM25'],
             'level': ['0', '1'],
+            'flushType': ['Voice'],
             'pwmGPIO': ['3', '5', '6', '9', '10', '11'],
-            'analogGPIO': ['A0', 'A1', 'A2', 'A3', 'A4', 'A5'],
+            'analogGPIO': ['0', '1', '2', '3', '4', '5'],
+            'restfulType': ['GET', 'POST'],
             'gpio': ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13']
         },
         url: 'http://unumobile.github.io/wf8266r.js-scratchx-extensions'

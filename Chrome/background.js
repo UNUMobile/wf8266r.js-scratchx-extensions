@@ -1,3 +1,4 @@
+
 chrome.app.runtime.onLaunched.addListener(function() {
   chrome.app.window.create('main.html', {
     bounds: {
@@ -5,6 +6,8 @@ chrome.app.runtime.onLaunched.addListener(function() {
       left: 0,
       width: 640,
       height: 300
-    }
+    },
+    resizable : false,
   });
+  
 })

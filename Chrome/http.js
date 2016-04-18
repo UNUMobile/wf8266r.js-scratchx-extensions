@@ -351,6 +351,7 @@ HttpServer.prototype = {
         function(result) {
           if (!result) {
             t.readyState_ = 1;
+            chrome.storage.local.set({'socketId': socketInfo.socketId});
           }
           else {
             console.log(
@@ -359,6 +360,15 @@ HttpServer.prototype = {
                 ' (normal if another instance is already serving requests)');
           }
         });
+    });
+  },
+  
+  close: function(){
+    chrome.storage.local.get('socketId',function(result){
+      var socketId = result.socketId;
+      chrome.sockets.tcpServer.close(socketId, function(){
+        
+      });
     });
   },
 
