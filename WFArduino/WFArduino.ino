@@ -39,15 +39,15 @@ void listen() {
 }
 
 void doCommand() {
-  String p1,p2,v1,v2,temp;
+  String p1, p2, v1, v2, temp;
   uint8_t index = cmd.indexOf(',');
   String param = cmd.substring(index + 1, cmd.length() + 1);
   cmd = cmd.substring(0, index);
   index = param.indexOf('&');
   if (index < 255) //multi params
   {
-    temp = param.substring(0,index);
-    param= param.substring(index+1, param.length()+1);
+    temp = param.substring(0, index);
+    param = param.substring(index + 1, param.length() + 1);
     index = temp.indexOf('=');
     p1 = temp.substring(0, index);
     v1 = temp.substring(index + 1, temp.length() + 1);
@@ -91,12 +91,22 @@ void doCommand() {
   }
   else if (cmd == "distance")
   {
-    String rtn = "{\"Action\":\"" + cmd + "\"," + readDistance(v1.toInt(),v2.toInt()) + "}";
+    String rtn = "{\"Action\":\"" + cmd + "\"," + readDistance(v1.toInt(), v2.toInt()) + "}";
     Serial.println(rtn);
   }
   else if (cmd == "servo")
   {
-    String rtn = "{\"Action\":\"" + cmd + "\"," + servo(v1.toInt(),v2.toInt()) + "}";
+    String rtn = "{\"Action\":\"" + cmd + "\"," + servo(v1.toInt(), v2.toInt()) + "}";
+    Serial.println(rtn);
+  }
+  else if (cmd == "tone")
+  {
+    String rtn = "{\"Action\":\"" + cmd + "\"," + toneF(v1.toInt(), p2.toInt(), v2.toInt()) + "}";
+    Serial.println(rtn);
+  }
+  else if (cmd == "noTone")
+  {
+    String rtn = "{\"Action\":\"" + cmd + "\"," + noToneF(v1.toInt()) + "}";
     Serial.println(rtn);
   }
 
@@ -128,5 +138,16 @@ String servo(uint8_t pin, uint8_t degree) {
 
   delay(15);
   return "\"degree\":" + String(degree);
+}
+
+String toneF(uint8_t pin, uint16_t f, long t) {
+  tone(pin, f, t);
+  return "\"f\":" + String(f);
+}
+
+String noToneF(uint8_t pin)
+{
+  noTone(pin);
+  return "\"pin\":" + String(pin);
 }
 

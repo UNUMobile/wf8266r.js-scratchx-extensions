@@ -59,7 +59,8 @@
         send("servo,pin=" + pin + "&degree=" + degree);
     };
     ext.tone = function (pin, frequency, duration) {
-        send("tone,pin=" + pin + "&" + frequency + "=" + duration);
+        var fre = frequency.split(',')[1];
+        send("tone,pin=" + pin + "&" + fre + "=" + duration);
     };
     ext.noTone = function (pin) {
         send("notone,pin=" + pin);
@@ -206,7 +207,7 @@
             [' ', 'LASS 設備編號 %s', 'lass', ''],
             [' ', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio', 'distance', 5, 4],
             [' ', 'SERVO 伺服馬達，接在腳位 %d.gpio 轉 %n 度', 'servo', 5, 90],
-            [' ', 'Tone 音調，接在腳位 %d.gpio 頻率 %n 時長 %n', 'tone', 5, 523, 1000],
+            [' ', 'Tone 音調，接在腳位 %d.gpio 頻率 %d.tone 時長 %n', 'tone', 5, 'C,523', 1000],
             [' ', '關閉 Tone 音調，接在腳位 %d.gpio', 'noTone', 5],
             [' ', '%m.flushType 清空', 'flush', 'Voice'],
             ['w', '說 %s', 'speak_text', 'ScratchX 遇上 WFduino'],
@@ -225,7 +226,8 @@
             'pwmGPIO': ['3', '5', '6', '9', '10', '11'],
             'analogGPIO': ['0', '1', '2', '3', '4', '5'],
             'restfulType': ['GET', 'POST'],
-            'gpio': ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13']
+            'gpio': ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13'],
+            'tone':['C,523','C#,554','D,587','D#,622','E,659','F,698','G,784','G#,831','A,880','A#,932','B,988']
         },
         url: 'http://unumobile.github.io/wf8266r.js-scratchx-extensions'
     };
