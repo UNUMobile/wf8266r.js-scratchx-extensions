@@ -215,7 +215,7 @@
             ['r', '語音文字', 'voiceText'],
             ['r', '讀取類比腳位 A%d.analogGPIO ', 'analogRead', '0'],
             ['r', '讀取數位腳位 %d.gpio ', 'digitalRead', 13],
-            ['r', '讀取感測器 %m.sensor 參數 %m.sensorParam', 'readSensor', 'DHT', 'Value'],
+            ['r', '讀取感測器 %m.sensor 參數 %m.sensorParam', 'readSensor', 'Voice', 'Value'],
         ],
         menus: {
             'mode': ['INPUT', 'OUTPUT'],
