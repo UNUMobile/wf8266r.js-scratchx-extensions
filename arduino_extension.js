@@ -17,8 +17,8 @@
     };
 
     ext.connect = function () {
-        
-        socketConnection("127.0.0.1", 9999);
+        if(!isConnected)
+            socketConnection("127.0.0.1", 9999);
     }
 
     ext.pinMode = function (pin, value) {
