@@ -1,5 +1,5 @@
 /*
- WF8266R.js RESTful /serial/write service.
+ WFduino ScratchX firmware.
 */
 
 const uint8_t maxLength = 20;
@@ -37,47 +37,78 @@ void listen() {
 }
 
 void doCommand() {
+  String p1,p2,v1,v2,temp;
   uint8_t index = cmd.indexOf(',');
   String param = cmd.substring(index + 1, cmd.length() + 1);
   cmd = cmd.substring(0, index);
-  index = param.indexOf('=');
-  uint8_t pin = param.substring(0, index).toInt();
-  uint16_t value = param.substring(index + 1, param.length() + 1).toInt();
-
-  /*Serial.print("Pin:");
-  Serial.print(pin);
-  Serial.print(" Value:");
-  Serial.print(value);
-  Serial.print(" CMD :");
-  Serial.println(cmd);*/
+  index = param.indexOf('&');
+  if (index < 255) //multi params
+  {
+    temp = param.substring(0,index);
+    param= param.substring(index+1, param.length()+1);
+    index = temp.indexOf('=');
+    p1 = temp.substring(0, index);
+    v1 = temp.substring(index + 1, temp.length() + 1);
+    index = param.indexOf('=');
+    p2 = param.substring(0, index);
+    v2 = param.substring(index + 1, param.length() + 1);
+  }
+  else
+  {
+    index = param.indexOf('=');
+    p1 = param.substring(0, index);
+    v1 = param.substring(index + 1, param.length() + 1);
+  }
 
   if (cmd == "pinMode")
   {
-    if (value == 0)
-      pinMode(pin, INPUT);
+    if (v1.toInt() == 0)
+      pinMode(p1.toInt(), INPUT);
     else
-      pinMode(pin, OUTPUT);
+      pinMode(p1.toInt(), OUTPUT);
   }
   else if (cmd == "digitalWrite")
   {
-    digitalWrite(pin, value);
+    digitalWrite(p1.toInt(), v1.toInt());
   }
   else if (cmd == "analogWrite")
   {
-    analogWrite(pin, value);
+    analogWrite(p1.toInt(), v1.toInt());
   }
   else if (cmd == "digitalRead")
   {
-    uint8_t v = digitalRead(pin);
-    String rtn = "{\"Action\":\"" + cmd + "\",\"Pin\":" + pin + ",\"Value\":" + v + "}";
+    uint8_t v = digitalRead(p1.toInt());
+    String rtn = "{\"Action\":\"" + cmd + "\",\"Pin\":" + p1.toInt() + ",\"Value\":" + v + "}";
     Serial.println(rtn);
   }
   else if (cmd == "analogRead")
   {
-    uint16_t v = analogRead(pin);
-    String rtn = "{\"Action\":\"" + cmd + "\",\"Pin\":" + pin + ",\"Value\":" + v + "}";
+    uint16_t v = analogRead(p1.toInt());
+    String rtn = "{\"Action\":\"" + cmd + "\",\"Pin\":" + p1.toInt() + ",\"Value\":" + v + "}";
+    Serial.println(rtn);
+  }
+  else if (cmd == "distance")
+  {
+    String rtn = "{\"Action\":\"" + cmd + "\"," + readDistance(v1.toInt(),v2.toInt()) + "}";
     Serial.println(rtn);
   }
 
+}
+
+//Senser
+String readDistance(uint8_t echoPin, uint8_t trigPin)
+{
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  long duration;
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  duration = pulseIn(echoPin, HIGH);
+  uint16_t distance = (duration / 2) / 29.1;
+
+  return "\"distance\":\"" + String(distance) + "\"";
 }
 

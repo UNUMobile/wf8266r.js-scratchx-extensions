@@ -88,8 +88,6 @@
                     return eval('dsData.' + param);
             case "HCSR": return distance;
             case "RESTfulGET": return restfullGet;
-            case "IR": return irCode;
-            case "Rx": return uartData;
             case "LASS":
                 if (param == 'Value')
                     return lassData.PM25;
@@ -200,6 +198,7 @@
             switch (jsonObj.Action) {
                 case "digitalRead": eval('gpio.D' + jsonObj.Pin + '=' + jsonObj.Value); break;
                 case "analogRead": eval('gpio.A' + jsonObj.Pin + '=' + jsonObj.Value); break;
+                case "distance": distance = jsonObj.distance; break;
                 default: break;
             }
         };
@@ -211,7 +210,7 @@
     // Block and block menu descriptions
     var descriptor = {
         blocks: [
-            [' ', '連接 WF Arduino', 'connect'],
+            [' ', '連接 WFduino', 'connect'],
             [' ', '腳位 %d.gpio 模式設為 %m.mode', 'pinMode', 13, 'OUTPUT'],
             [' ', '腳位 %d.gpio 數位輸出 %m.level', 'digitalWrite', 13, 1],
             [' ', '腳位 %d.pwmGPIO 類比輸出 %n', 'analogWrite', 3, 255],
