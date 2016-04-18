@@ -54,18 +54,18 @@
         return v;
     }
     ext.dht = function (type, pin, callback) {
-        sendCommand("dht,pin=" + pin + "&type=" + type);
+        send("dht,pin=" + pin + "&type=" + type);
     };
 
     ext.ds = function (pin) {
-        sendCommand("ds,pin=" + pin + "&index=1");
+        send("ds,pin=" + pin + "&index=1");
     };
 
     ext.distance = function (echo, trig) {
-        sendCommand("distance,echo=" + echo + "&trig=" + trig);
+        send("distance,echo=" + echo + "&trig=" + trig);
     };
     ext.servo = function (pin, degree) {
-        sendCommand("servo,pin=" + pin + "&degree=" + degree);
+        send("servo,pin=" + pin + "&degree=" + degree);
     };
     ext.flush = function (type) {
         switch (type) {
