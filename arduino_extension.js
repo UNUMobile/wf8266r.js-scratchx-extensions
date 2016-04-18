@@ -9,7 +9,8 @@
     var dhtData = { C: 0, F: 0, H: 0 };
     var dsData = { C: 0, F: 0 };
     var distance = 0;
-
+    var rec = null;
+    
     // Cleanup function when the extension is unloaded
     ext._shutdown = function () {
 
@@ -19,7 +20,7 @@
     // Use this to report missing hardware, plugin or unsupported browser
     ext._getStatus = function () {
         if (isConnected) return { status: 2, msg: 'Ready' };
-        if (!isConnected) return { status: 1, msg: '請設定開發板位址' };
+        if (!isConnected) return { status: 1, msg: '請開啟 WFduino App' };
     };
 
     ext.connect = function () {
@@ -222,7 +223,7 @@
             [' ', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio', 'distance', 5, 4],
             [' ', 'SERVO 伺服馬達，接在腳位 %d.gpio 轉 %n 度', 'servo', 5, 90],
             [' ', '%m.flushType 清空', 'flush', 'Voice'],
-            ['w', '說 %s', 'speak_text', 'Scratch 遇上 WF8266R'],
+            ['w', '說 %s', 'speak_text', 'ScratchX 遇上 WFduino'],
             [' ', '監聽語音', 'speech_text'],
             ['r', '語音文字', 'voiceText'],
             ['r', '讀取類比腳位 A%d.analogGPIO ', 'analogRead', '0'],
