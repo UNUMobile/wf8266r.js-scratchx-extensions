@@ -6,11 +6,9 @@
     var restfullGet = "";
     var lassData = { C: 0, H: 0, PM25: 0 };
     var voiceData = { Text: '' };
-    var dhtData = { C: 0, F: 0, H: 0 };
-    var dsData = { C: 0, F: 0 };
     var distance = 0;
     var rec = null;
-    
+
     // Cleanup function when the extension is unloaded
     ext._shutdown = function () {
 
@@ -53,19 +51,18 @@
         eval('v=gpio.A' + pin);
         return v;
     }
-    ext.dht = function (type, pin, callback) {
-        send("dht,pin=" + pin + "&type=" + type);
-    };
-
-    ext.ds = function (pin) {
-        send("ds,pin=" + pin + "&index=1");
-    };
 
     ext.distance = function (echo, trig) {
         send("distance,echo=" + echo + "&trig=" + trig);
     };
     ext.servo = function (pin, degree) {
         send("servo,pin=" + pin + "&degree=" + degree);
+    };
+    ext.tone = function (pin, frequency, duration) {
+        send("tone,pin=" + pin + "&" + frequency + "=" + duration);
+    };
+    ext.noTone = function (pin) {
+        send("notone,pin=" + pin);
     };
     ext.flush = function (type) {
         switch (type) {
@@ -76,16 +73,6 @@
     };
     ext.readSensor = function (type, param) {
         switch (type) {
-            case "DHT":
-                if (param == 'Value')
-                    return dhtData.C;
-                else
-                    return eval('dhtData.' + param);
-            case "DS":
-                if (param == 'Value')
-                    return dsData.C;
-                else
-                    return eval('dsData.' + param);
             case "HCSR": return distance;
             case "RESTfulGET": return restfullGet;
             case "LASS":
@@ -217,10 +204,10 @@
             ['w', 'HTTP %m.restfulType 到 %s', 'http', 'POST', 'http://api.thingspeak.com/update?key=xxxxxx&field1=1&field2=2'],
             ['w', 'HTTP %m.restfulType 從 %s', 'http', 'GET', 'http://api.thingspeak.com/apps/thinghttp/send_request?api_key=EM18B52PSHXZB4DD'],
             [' ', 'LASS 設備編號 %s', 'lass', ''],
-            [' ', 'DHT%m.dhtType 溫濕度感測器 在腳位 %d.gpio', 'dht', 11, 12],
-            [' ', 'DS18B20 溫度感測器 在腳位 %d.gpio', 'ds', 4],
             [' ', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio', 'distance', 5, 4],
             [' ', 'SERVO 伺服馬達，接在腳位 %d.gpio 轉 %n 度', 'servo', 5, 90],
+            [' ', 'Tone 音調，接在腳位 %d.gpio 頻率 %n 時長 %n', 'tone', 5, 523, 1000],
+            [' ', '關閉 Tone 音調，接在腳位 %d.gpio', 'noTone', 5],
             [' ', '%m.flushType 清空', 'flush', 'Voice'],
             ['w', '說 %s', 'speak_text', 'ScratchX 遇上 WFduino'],
             [' ', '監聽語音', 'speech_text'],
@@ -231,7 +218,7 @@
         ],
         menus: {
             'mode': ['INPUT', 'OUTPUT'],
-            'sensor': ['DHT', 'DS', 'HCSR', 'RESTfulGET', 'LASS', 'Voice'],
+            'sensor': ['HCSR', 'RESTfulGET', 'LASS', 'Voice'],
             'sensorParam': ['Value', 'C', 'F', 'H', 'PM25'],
             'level': ['0', '1'],
             'flushType': ['Voice'],

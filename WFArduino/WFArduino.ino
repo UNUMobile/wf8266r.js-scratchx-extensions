@@ -1,7 +1,9 @@
 /*
  WFduino ScratchX firmware.
 */
+#include <Servo.h>
 
+Servo myservo;
 const uint8_t maxLength = 20;
 uint8_t serialIndex = 0;
 char serialBuffer[256];
@@ -92,6 +94,11 @@ void doCommand() {
     String rtn = "{\"Action\":\"" + cmd + "\"," + readDistance(v1.toInt(),v2.toInt()) + "}";
     Serial.println(rtn);
   }
+  else if (cmd == "servo")
+  {
+    String rtn = "{\"Action\":\"" + cmd + "\"," + servo(v1.toInt(),v2.toInt()) + "}";
+    Serial.println(rtn);
+  }
 
 }
 
@@ -109,6 +116,17 @@ String readDistance(uint8_t echoPin, uint8_t trigPin)
   duration = pulseIn(echoPin, HIGH);
   uint16_t distance = (duration / 2) / 29.1;
 
-  return "\"distance\":\"" + String(distance) + "\"";
+  return "\"distance\":" + String(distance);
+}
+
+String servo(uint8_t pin, uint8_t degree) {
+  pinMode(pin, OUTPUT);
+
+  //myservo.attach(action.toInt());
+  myservo.attach(pin, 570, 2500);
+  myservo.write(degree);
+
+  delay(15);
+  return "\"degree\":" + String(degree);
 }
 
