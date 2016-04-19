@@ -221,7 +221,7 @@
             [' ', '%m.flushType 清空', 'flush', 'Voice'],
             ['w', '說 %s', 'speak_text', 'ScratchX 遇上 WFduino'], 
             [' ', '監聽語音', 'speech_text'],
-            [' ', 'WF8266R 腳位 %d.wfgpio %m.wfgpioType 輸出 %n', 'wfgpio', '數位', 5, 1],
+            [' ', 'WF8266R 腳位 %d.wfgpio %m.wfgpioType 輸出 %n', 'wfgpio', 5, '數位', 1],
             ['r', '語音文字', 'voiceText'],
             ['r', '讀取類比腳位 A%d.analogGPIO ', 'analogRead', '0'],
             ['r', '讀取數位腳位 %d.gpio ', 'digitalRead', 13],
