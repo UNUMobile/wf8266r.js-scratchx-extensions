@@ -6,12 +6,29 @@ var isServer = false;
 var connection;
 var arduinoCMD = "";
 var server;
+var isVerchecked = false;
+var newVersion,arduinVersion;
 
 function $(id) {
   return document.getElementById(id);
 }
 
+function getNewVersion() {
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", "http://wf8266.com/wf8266r/api/ota/wfduino", true);
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4) {
+      // JSON.parse does not evaluate the attacker's scripts.
+      var resp = JSON.parse(xhr.responseText);
+      $('version').innerText = resp.Version;
+      newVersion = resp.Version.replace('.','');
+    }
+  }
+  xhr.send();
+}
+
 onload = function () {
+  getNewVersion();
   showMessage('Init...')
   var deviceList = document.getElementById('deviceList');
   var btnClose = $('btnClose');
@@ -42,7 +59,7 @@ onload = function () {
     server.close();
     setTimeout(function () {
       window.open('', '_self', '');
-     window.close();
+      window.close();
     }, 0);
 
   }
@@ -157,7 +174,21 @@ function getCMD(cmd) {
 
 function onRead(readInfo) {
   var backCMD = getCMD(readInfo.data);
-  console.log(backCMD);
+
+  if (!isVerchecked) //version check
+  {
+    var index = backCMD.indexOf(".WFduino.Ready");
+    if (index > 0) {
+      backCMD = backCMD.replace(".WFduino.Ready", "");
+      $('aversion').innerText = backCMD;
+      arduinVersion = backCMD.replace('.','');
+      backCMD = "";
+      isVerchecked = true;
+      if(newVersion > arduinVersion)
+        setStatus('Older firmware');
+    }
+  }
+
   if (backCMD != "") {
     for (var i = 0; i < connectedSockets.length; i++)
       connectedSockets[i].send(backCMD);

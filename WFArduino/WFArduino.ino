@@ -3,6 +3,7 @@
 */
 #include <Servo.h>
 
+const char* version = "2016.04.19";
 Servo myservo;
 const uint8_t maxLength = 20;
 uint8_t serialIndex = 0;
@@ -10,7 +11,8 @@ char serialBuffer[256];
 String cmd = "";
 void setup() {
   Serial.begin(115200);
-  Serial.println("WF8266R.Arduino Ready");
+  Serial.print(version);
+  Serial.println(".WFduino.Ready");
 }
 
 void loop() {
