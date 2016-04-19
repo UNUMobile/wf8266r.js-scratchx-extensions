@@ -8,8 +8,8 @@ SoftwareSerial wf8266r(2, 4); // RX, TX
 const char* version = "2016.04.20";
 Servo myservo;
 const uint8_t maxLength = 20;
-uint8_t serialIndex = 0,serialIndexWF = 0;
-char serialBuffer[50],serialBufferWF[50];
+uint8_t serialIndex = 0, serialIndexWF = 0;
+char serialBuffer[50], serialBufferWF[50];
 String cmd = "";
 void setup() {
   Serial.begin(115200);
@@ -26,7 +26,7 @@ void loop() {
 void listen() {
   while (Serial.available() > 0)
   {
-    
+
     uint8_t val = Serial.read();
     if (val == 10)
     {
@@ -48,7 +48,6 @@ void listenWF8266R() {
   while (wf8266r.available() > 0)
   {
     uint8_t val = wf8266r.read();
-    
     if (val == 10)
     {
       serialBufferWF[serialIndexWF - 1] = '\0';
@@ -116,18 +115,18 @@ void doCommand() {
     String rtn = "{\"Action\":\"" + cmd + "\",\"Pin\":" + p1 + ",\"Value\":" + v + "}";
     Serial.println(rtn);
   }
-  else if(cmd == "wtgpio")
+  else if (cmd == "wtgpio")
   {
     String rtn = "{\"Action\":\"" + cmd + "\",\"Pin\":" + p2 + ",\"Value\":" + v2 + "}";
     Serial.println(rtn);
-    rtn = "WTGPIO+TYPE:"+v1+",RW:W,PIN:"+p2+",VALUE:"+v2;
+    rtn = "WTGPIO+TYPE:" + v1 + ",RW:W,PIN:" + p2 + ",VALUE:" + v2;
     wf8266r.println(rtn);
   }
-  else if(cmd == "wtcmd")
+  else if (cmd == "wtsen")
   {
     String rtn = "{\"Action\":\"" + cmd + "\",\"AT\":" + p1 + ",\"Degree\":" + v2 + "}";
     Serial.println(rtn);
-    rtn = "WTCMD+AT:"+v2+",VALUE:"+p2+","+v2;
+    rtn = "WTSEN+" + v1 + ":" + p2 + ",VALUE:" + v2;
     wf8266r.println(rtn);
   }
   else if (cmd == "distance")
@@ -153,7 +152,7 @@ void doCommand() {
 
 }
 
-//Senser
+//Sensors
 String readDistance(uint8_t echoPin, uint8_t trigPin)
 {
   pinMode(trigPin, OUTPUT);
