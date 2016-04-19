@@ -73,7 +73,7 @@
         send("wtgpio,type="+type+"&"+pin+"="+value);
     }
     ext.wfcmdservo = function(pin,degree){
-        send("wtcmd,type="+type+"&"+pin+"="+degree);
+        send("wtcmd,type=SERVO&"+pin+"="+degree);
     }
     ext.flush = function (type) {
         switch (type) {
