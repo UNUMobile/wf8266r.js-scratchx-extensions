@@ -72,6 +72,9 @@
             type = "A";
         send("wtgpio,type="+type+"&"+pin+"="+value);
     }
+    ext.wfcmdservo = function(pin,degree){
+        send("wtcmd,type="+type+"&"+pin+"="+degree);
+    }
     ext.flush = function (type) {
         switch (type) {
             case "Voice": voiceData.Text = "";
@@ -222,6 +225,7 @@
             ['w', '說 %s', 'speak_text', 'ScratchX 遇上 WFduino'], 
             [' ', '監聽語音', 'speech_text'],
             [' ', 'WF8266R 腳位 %d.wfgpio %m.wfgpioType 輸出 %n', 'wfgpio', 5, '數位', 1],
+            [' ', 'WF8266R SERVO 伺服馬達腳位 %d.wfgpio 轉 %n 度', 'wfcmdservo', 5, 90],
             ['r', '語音文字', 'voiceText'],
             ['r', '讀取類比腳位 A%d.analogGPIO ', 'analogRead', '0'],
             ['r', '讀取數位腳位 %d.gpio ', 'digitalRead', 13],
@@ -245,5 +249,5 @@
     };
 
     // Register the extension
-    ScratchExtensions.register('WF8266 Arduino(20160429)', descriptor, ext);
+    ScratchExtensions.register('WF8266 Arduino(20160420)', descriptor, ext);
 })({});

@@ -5,7 +5,7 @@
 #include <SoftwareSerial.h>
 SoftwareSerial wf8266r(2, 4); // RX, TX
 
-const char* version = "2016.04.19";
+const char* version = "2016.04.20";
 Servo myservo;
 const uint8_t maxLength = 20;
 uint8_t serialIndex = 0,serialIndexWF = 0;
@@ -121,6 +121,13 @@ void doCommand() {
     String rtn = "{\"Action\":\"" + cmd + "\",\"Pin\":" + p2 + ",\"Value\":" + v2 + "}";
     Serial.println(rtn);
     rtn = "WTGPIO+TYPE:"+v1+",RW:W,PIN:"+p2+",VALUE:"+v2;
+    wf8266r.println(rtn);
+  }
+  else if(cmd == "wtcmd")
+  {
+    String rtn = "{\"Action\":\"" + cmd + "\",\"AT\":" + p1 + ",\"Degree\":" + v2 + "}";
+    Serial.println(rtn);
+    rtn = "WTCMD+AT:"+v2+",VALUE:"+p2+","+v2;
     wf8266r.println(rtn);
   }
   else if (cmd == "distance")

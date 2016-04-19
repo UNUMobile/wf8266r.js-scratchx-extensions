@@ -135,7 +135,8 @@ function showMessage(msg) {
 function openSelectedPort() {
   var deviceList = document.getElementById('deviceList');
   var selectedPort = deviceList.options[deviceList.selectedIndex].value;
-  chrome.serial.connect(selectedPort, { bitrate: 115200 }, onOpen);
+  if(selectedPort != '')
+    chrome.serial.connect(selectedPort, { bitrate: 115200 }, onOpen);
 }
 
 function onOpen(openInfo) {
