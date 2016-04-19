@@ -119,7 +119,6 @@
     ext.speak_text = function (text, callback) {
         var u = new SpeechSynthesisUtterance();
         u.text = text.toString();
-        u.lang = 'zh-TW';
         u.onend = function (event) {
             if (typeof callback == "function") callback();
         };

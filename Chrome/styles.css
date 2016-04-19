@@ -10,11 +10,15 @@ label {
   padding: 20px;
   border-bottom: solid 0px #ddd;
   border-right: solid 0px #ddd;
-  width: 300px;
+  width: 500px;
 }
 
 label {
   color: #999;
+}
+
+button{
+  height: 50px;
 }
 
 #port-picker,
