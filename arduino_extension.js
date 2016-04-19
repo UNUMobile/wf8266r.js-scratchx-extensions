@@ -65,7 +65,7 @@
     ext.noTone = function (pin) {
         send("notone,pin=" + pin);
     };
-    ext.wfgpio = function(type, pin, value){
+    ext.wfgpio = function(pin, type, value){
         if(type=="數位")
             type = "D";
         else
@@ -245,5 +245,5 @@
     };
 
     // Register the extension
-    ScratchExtensions.register('WF8266 Arduino', descriptor, ext);
+    ScratchExtensions.register('WF8266 Arduino(20160429)', descriptor, ext);
 })({});
