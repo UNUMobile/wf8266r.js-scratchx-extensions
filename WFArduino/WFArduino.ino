@@ -2,28 +2,32 @@
  WFduino ScratchX firmware.
 */
 #include <Servo.h>
+#include <SoftwareSerial.h>
+SoftwareSerial wf8266r(2, 4); // RX, TX
 
 const char* version = "2016.04.19";
 Servo myservo;
 const uint8_t maxLength = 20;
-uint8_t serialIndex = 0;
-char serialBuffer[256];
+uint8_t serialIndex = 0,serialIndexWF = 0;
+char serialBuffer[50],serialBufferWF[50];
 String cmd = "";
 void setup() {
   Serial.begin(115200);
+  wf8266r.begin(9600);
   Serial.print(version);
   Serial.println(".WFduino.Ready");
 }
 
 void loop() {
   listen();
+  listenWF8266R();
 }
 
 void listen() {
   while (Serial.available() > 0)
   {
+    
     uint8_t val = Serial.read();
-
     if (val == 10)
     {
       serialBuffer[serialIndex - 1] = '\0';
@@ -36,6 +40,27 @@ void listen() {
     {
       //save to buffer
       serialBuffer[serialIndex++] = (char)val;
+    }
+  }
+}
+
+void listenWF8266R() {
+  while (wf8266r.available() > 0)
+  {
+    uint8_t val = wf8266r.read();
+    
+    if (val == 10)
+    {
+      serialBufferWF[serialIndexWF - 1] = '\0';
+      cmd = String(serialBufferWF);
+      serialIndexWF = 0;
+
+      doCommand();
+    }
+    else
+    {
+      //save to buffer
+      serialBufferWF[serialIndexWF++] = (char)val;
     }
   }
 }
@@ -82,14 +107,21 @@ void doCommand() {
   else if (cmd == "digitalRead")
   {
     uint8_t v = digitalRead(p1.toInt());
-    String rtn = "{\"Action\":\"" + cmd + "\",\"Pin\":" + p1.toInt() + ",\"Value\":" + v + "}";
+    String rtn = "{\"Action\":\"" + cmd + "\",\"Pin\":" + p1 + ",\"Value\":" + v + "}";
     Serial.println(rtn);
   }
   else if (cmd == "analogRead")
   {
     uint16_t v = analogRead(p1.toInt());
-    String rtn = "{\"Action\":\"" + cmd + "\",\"Pin\":" + p1.toInt() + ",\"Value\":" + v + "}";
+    String rtn = "{\"Action\":\"" + cmd + "\",\"Pin\":" + p1 + ",\"Value\":" + v + "}";
     Serial.println(rtn);
+  }
+  else if(cmd == "wtgpio")
+  {
+    String rtn = "{\"Action\":\"" + cmd + "\",\"Pin\":" + p2 + ",\"Value\":" + v2 + "}";
+    Serial.println(rtn);
+    rtn = "WTGPIO+TYPE:"+v1+",RW:W,PIN:"+p2+",VALUE:"+v2;
+    wf8266r.println(rtn);
   }
   else if (cmd == "distance")
   {

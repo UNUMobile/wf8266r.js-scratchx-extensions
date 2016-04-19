@@ -32,6 +32,7 @@ onload = function () {
   showMessage('Init...')
   var deviceList = document.getElementById('deviceList');
   var btnClose = $('btnClose');
+  var btnScratchX = $('btnScratchX');
   var onGetPorts = function (ports) {
     var eligiblePorts = ports.filter(function (port) {
       return (!port.path.match(/[Bb]luetooth/) && port.path.match(/\/dev\/tty/)) || port.path.match(/COM/);
@@ -61,7 +62,10 @@ onload = function () {
       window.open('', '_self', '');
       window.close();
     }, 0);
-
+  }
+  
+  btnScratchX.onclick = function () {
+    window.open('http://goo.gl/fnON4H','scratchX','');
   }
 
   deviceList.onchange = function () {
@@ -142,7 +146,7 @@ function onOpen(openInfo) {
     return;
   }
   setStatus(connectionId + ' Connected');
-
+  window.open('http://goo.gl/fnON4H','scratchX','');
   chrome.serial.onReceive.addListener(onRead);
 };
 
@@ -174,7 +178,7 @@ function getCMD(cmd) {
 
 function onRead(readInfo) {
   var backCMD = getCMD(readInfo.data);
-
+console.log(backCMD);
   if (!isVerchecked) //version check
   {
     var index = backCMD.indexOf(".WFduino.Ready");

@@ -65,6 +65,13 @@
     ext.noTone = function (pin) {
         send("notone,pin=" + pin);
     };
+    ext.wfgpio = function(type, pin, value){
+        if(type=="數位")
+            type = "D";
+        else
+            type = "A";
+        send("wtgpio,type="+type+"&"+pin+"="+value);
+    }
     ext.flush = function (type) {
         switch (type) {
             case "Voice": voiceData.Text = "";
@@ -116,6 +123,7 @@
             }
         });
     };
+    
     ext.speak_text = function (text, callback) {
         var u = new SpeechSynthesisUtterance();
         u.text = text.toString();
@@ -211,8 +219,9 @@
             [' ', 'Tone 音調，接在腳位 %d.gpio 頻率 %d.tone 時長 %n', 'tone', 5, 'C,523', 1000],
             [' ', '關閉 Tone 音調，接在腳位 %d.gpio', 'noTone', 5],
             [' ', '%m.flushType 清空', 'flush', 'Voice'],
-            ['w', '說 %s', 'speak_text', 'ScratchX 遇上 WFduino'],
+            ['w', '說 %s', 'speak_text', 'ScratchX 遇上 WFduino'], 
             [' ', '監聽語音', 'speech_text'],
+            [' ', 'WF8266R 腳位 %d.wfgpio %m.wfgpioType 輸出 %n', 'wfgpio', '數位', 5, 1],
             ['r', '語音文字', 'voiceText'],
             ['r', '讀取類比腳位 A%d.analogGPIO ', 'analogRead', '0'],
             ['r', '讀取數位腳位 %d.gpio ', 'digitalRead', 13],
@@ -225,14 +234,16 @@
             'level': ['0', '1'],
             'flushType': ['Voice'],
             'pwmGPIO': ['3', '5', '6', '9', '10', '11'],
-            'analogGPIO': ['0', '1', '2', '3', '4', '5'],
+            'analogGPIO': ['0', '1', '2', '3', '4', '5', '6', '7'],
             'restfulType': ['GET', 'POST'],
             'gpio': ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13'],
-            'tone':['C,523','C#,554','D,587','D#,622','E,659','F,698','F#,740','G,784','G#,831','A,880','A#,932','B,988']
+            'tone':['C,523','C#,554','D,587','D#,622','E,659','F,698','F#,740','G,784','G#,831','A,880','A#,932','B,988'],
+            'wfgpio': ['5', '4', '12', '13', '14', '15', '16', '0', '1', '2', '3'],
+            'wfgpioType':['數位','類比']
         },
         url: 'http://unumobile.github.io/wf8266r.js-scratchx-extensions'
     };
 
     // Register the extension
-    ScratchExtensions.register('WF Arduino', descriptor, ext);
+    ScratchExtensions.register('WF8266 Arduino', descriptor, ext);
 })({});
