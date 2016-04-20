@@ -61,7 +61,7 @@
     };
     ext.tone = function (pin, frequency, duration) {
         var fre = frequency.split(',');
-        if(fre.length>1)
+        if(fre.length>0)
             fre= fre[1];
         else
             fre = frequency;
