@@ -8,6 +8,7 @@
     var voiceData = { Text: '' };
     var distance = 0;
     var rec = null;
+    var isAutoOpen = false;
 
     // Cleanup function when the extension is unloaded
     ext._shutdown = function () {
@@ -130,6 +131,7 @@
     ext.speak_text = function (text, callback) {
         var u = new SpeechSynthesisUtterance();
         u.text = text.toString();
+        u.voice = speechSynthesis.getVoices().filter(function(voice) { return voice.name == 'Google 普通话（中国大陆）'; })[0];  
         u.onend = function (event) {
             if (typeof callback == "function") callback();
         };

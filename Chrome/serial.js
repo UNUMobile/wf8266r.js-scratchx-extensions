@@ -9,6 +9,7 @@ var server;
 var isVerchecked = false;
 var newVersion,arduinVersion;
 
+
 function $(id) {
   return document.getElementById(id);
 }
@@ -33,6 +34,7 @@ onload = function () {
   var deviceList = document.getElementById('deviceList');
   var btnClose = $('btnClose');
   var btnScratchX = $('btnScratchX');
+  var btnFirmware = $('btnFirmware');
   var onGetPorts = function (ports) {
     var eligiblePorts = ports.filter(function (port) {
       return (!port.path.match(/[Bb]luetooth/) && port.path.match(/\/dev\/tty/)) || port.path.match(/COM/);
@@ -66,6 +68,10 @@ onload = function () {
   
   btnScratchX.onclick = function () {
     window.open('http://goo.gl/fnON4H','scratchX','');
+  }
+  
+  btnFirmware.onclick = function () {
+    window.open('https://goo.gl/3Lbm0Q','scratchX','');
   }
 
   deviceList.onchange = function () {
@@ -147,7 +153,6 @@ function onOpen(openInfo) {
     return;
   }
   setStatus(connectionId + ' Connected');
-  window.open('http://goo.gl/fnON4H','scratchX','');
   chrome.serial.onReceive.addListener(onRead);
 };
 
@@ -190,7 +195,10 @@ console.log(backCMD);
       backCMD = "";
       isVerchecked = true;
       if(newVersion > arduinVersion)
+      {
         setStatus('Older firmware');
+        window.open('https://goo.gl/3Lbm0Q','scratchX','');
+      }
     }
   }
 
