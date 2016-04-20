@@ -129,14 +129,17 @@
     };
     
     ext.speak_text = function (text, callback) {
-        var u = new SpeechSynthesisUtterance();
-        u.text = text.toString();
-        u.voice = speechSynthesis.getVoices().filter(function(voice) { return voice.name == 'Google 普通话（中国大陆）'; })[0];  
+        /*var u = new SpeechSynthesisUtterance();
+        u.text = text.toString(); 
         u.onend = function (event) {
             if (typeof callback == "function") callback();
         };
 
         speechSynthesis.speak(u);
+        */
+        var audio = new Audio();   
+        audio.src ='http://translate.google.com/translate_tts?ie=utf-8&tl=en&q=' + encodeURI(text);   
+        audio.play();  
     };
 
     ext.voiceText = function () {
