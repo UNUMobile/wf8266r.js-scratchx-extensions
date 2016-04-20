@@ -142,7 +142,12 @@
         return voiceData.Text;
     }
 
-    ext.speech_text = function () {
+    ext.speech_text = function (type) {
+        if(type=="True")
+            isAutoOpen = true;
+        else
+            isAutoOpen = false;
+            
         if (rec == null)
             rec = new webkitSpeechRecognition();
 
@@ -153,7 +158,8 @@
 
         rec.onend = function () {
             //console.log("end");
-            rec.start();
+            if(isAutoOpen)
+                rec.start();
         }
 
         rec.onstart = function () {
@@ -224,7 +230,7 @@
             [' ', '關閉 Tone 音調，接在腳位 %d.gpio', 'noTone', 5],
             [' ', '%m.flushType 清空', 'flush', 'Voice'],
             ['w', '說 %s', 'speak_text', 'ScratchX 遇上 WFduino'], 
-            [' ', '監聽語音', 'speech_text'],
+            [' ', '監聽語音, 自動啟動設為 %m.bool', 'speech_text','False'],
             [' ', 'WF8266R 腳位 %d.wfgpio %m.wfgpioType 輸出 %n', 'wfgpio', 5, '數位', 1],
             [' ', 'WF8266R SERVO 伺服馬達腳位 %d.wfgpio 轉 %n 度', 'wfcsenservo', 5, 90],
             ['r', '語音文字', 'voiceText'],
@@ -234,6 +240,7 @@
         ],
         menus: {
             'mode': ['INPUT', 'OUTPUT'],
+            'bool': ['True', 'False'],
             'sensor': ['HCSR', 'RESTfulGET', 'LASS', 'Voice'],
             'sensorParam': ['Value', 'C', 'F', 'H', 'PM25'],
             'level': ['0', '1'],
