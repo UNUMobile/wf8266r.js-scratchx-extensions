@@ -60,11 +60,15 @@
         send("servo,pin=" + pin + "&degree=" + degree);
     };
     ext.tone = function (pin, frequency, duration) {
+        console.log(frequency);
         var fre = frequency.split(',');
+        console.log(fre.length);
         if(fre.length>0)
             fre= fre[1];
         else
             fre = frequency;
+        
+        console.log(fre);    
         send("tone,pin=" + pin + "&" + parseInt(fre) + "=" + duration);
     };
     ext.noTone = function (pin) {
