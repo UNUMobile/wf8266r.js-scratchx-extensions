@@ -218,6 +218,7 @@
     var descriptor = {
         blocks: [
             [' ', '連接 WFduino', 'connect'],
+            [' ', 'test腳位 %d.gpio 模式設為 %m.mode', 'pinModetest', 13, 'OUTPUT'],
             [' ', '腳位 %d.gpio 模式設為 %m.mode', 'pinMode', 13, 'OUTPUT'],
             [' ', '腳位 %d.gpio 數位輸出 %m.level', 'digitalWrite', 13, 1],
             [' ', '腳位 %d.pwmGPIO 類比輸出 %n', 'analogWrite', 3, 255],
