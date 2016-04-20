@@ -257,5 +257,5 @@
     };
 
     // Register the extension
-    ScratchExtensions.register('WF8266 Arduino(20160420)', descriptor, ext);
+    ScratchExtensions.register('WF8266 Arduino', descriptor, ext);
 })({});

@@ -17,6 +17,7 @@
     var package = { send: 0, recv: 0, millis: 0 };
     var timeManager = { lastTime: 0, startTime: 0, millis: 0 };
     var rec = null;
+    var isAutoOpen = false;
 
     function sendCommand(cmd) {
         timeManager.millis = (new Date).getTime();
@@ -210,7 +211,12 @@
         return voiceData.Text;
     }
 
-    ext.speech_text = function () {
+    ext.speech_text = function (type) {
+        if(type == 'true')
+            isAutoOpen = true;
+        else
+            isAutoOpen = false;
+            
         if (rec == null)
             rec = new webkitSpeechRecognition();
 
@@ -221,7 +227,8 @@
 
         rec.onend = function () {
             //console.log("end");
-            rec.start();
+            if(isAutoOpen)
+                rec.start();
         }
 
         rec.onstart = function () {
@@ -331,7 +338,7 @@
             ['w', 'HTTP %m.restfulType 到 %s', 'http', 'POST', 'http://api.thingspeak.com/update?key=xxxxxx&field1=1&field2=2'],
             ['w', 'HTTP %m.restfulType 從 %s', 'http', 'GET', 'http://api.thingspeak.com/apps/thinghttp/send_request?api_key=EM18B52PSHXZB4DD'],
             ['w', '說 %s', 'speak_text', 'Scratch 遇上 WF8266R'],
-            [' ', '監聽語音', 'speech_text'],
+            [' ', '監聽語音, 自動啟用設為 %m.boolType', 'speech_text', 'false'],
             ['r', '語音文字', 'voiceText'],
 
             [' ', '紅外線發射器，接在腳位 %d.gpio 發送位址 %n 的資料', 'irsend', 15, 0],
@@ -362,5 +369,5 @@
     };
 
     // Register the extension
-    ScratchExtensions.register('WF8266R 20160417', descriptor, ext);
+    ScratchExtensions.register('WF8266R', descriptor, ext);
 })({});
