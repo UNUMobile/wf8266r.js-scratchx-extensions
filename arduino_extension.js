@@ -9,6 +9,10 @@
     var distance = 0;
     var rec = null;
     var isAutoOpen = false;
+    //WF8266R
+    var isConnectedWF8266R = false;
+    var connectionWF8266R;
+    var timeManager = { lastTime: 0, startTime: 0, millis: 0 };
 
     // Cleanup function when the extension is unloaded
     ext._shutdown = function () {
@@ -188,9 +192,51 @@
             }
         }
     }
+    
+    //WF8266R 
+    ext.set_ip = function (_ip) {
+        if (isConnectedWF8266R)
+            return;
+        ip = _ip;
+        socketConnectionWF8266R(_ip);
+    };
+    
+    ext.wf8266rState = function(){
+        return isConnectedWF8266R;
+    }
 
     function send(cmd) {
+        if(isConnectedWF8266R)
+            cmd = "uart/tx,type=text&text="+cmd+"&ln=true";
         connection.send(cmd + "\r\n");
+    }
+    
+    function socketConnectionWF8266R(ip) {
+        timeManager.startTime = (new Date).getTime();
+        connection = new WebSocket('ws://' + ip + ':81/api', ['wf8266r']);
+        connection.onopen = function (e) {
+            isConnectedWF8266R = true;
+        };
+        connection.onclose = function (e) {
+            isConnectedWF8266R = false;
+        };
+        connection.onmessage = function (e) {
+            socketCounter--;
+            package.recv++;
+            isConnectedWF8266R = true;
+
+            var jsonObj = JSON.parse(e.data.substring(0, e.data.length - 1));
+
+            //console.log(jsonObj);
+            switch (jsonObj.Action) {
+
+                default: break;
+            }
+
+        };
+        connection.onerror = function (e) {
+            isConnectedWF8266R = false;
+        };
     }
 
     function socketConnection(ip, port) {
@@ -223,6 +269,8 @@
     var descriptor = {
         blocks: [
             [' ', '連接 WFduino', 'connect'],
+            [' ', 'WF8266R 位址 %s', 'set_ip', 'mywfXXXX.local'],
+            ['r', 'WF8266R 連線狀態', 'wf8266rState'],
             [' ', '腳位 %d.gpio 模式設為 %m.mode', 'pinMode', 13, 'OUTPUT'],
             [' ', '腳位 %d.gpio 數位輸出 %m.level', 'digitalWrite', 13, 1],
             [' ', '腳位 %d.pwmGPIO 類比輸出 %n', 'analogWrite', 3, 255],
