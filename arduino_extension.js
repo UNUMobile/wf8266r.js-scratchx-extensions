@@ -209,8 +209,27 @@
 
     function send(cmd) {
         if(isConnectedWF8266R)
+        {
             cmd = "uart/tx,type=text&text="+cmd+"&ln=true";
-        connection.send(cmd + "\r\n");
+            sendWF8266R(cmd);
+        }
+        else
+            connection.send(cmd + "\r\n");
+    }
+    
+    function sendWF8266R(cmd) {
+        timeManager.millis = (new Date).getTime();
+
+        console.log(cmd + " " + socketCounter);
+        package.send++;
+        if (isConnectedWF8266R && socketCounter == 0) {
+            if ((timeManager.millis - timeManager.lastTime) > 100) {
+                timeManager.lastTime = (new Date).getTime();
+                socketCounter++;
+                connectionWF8266R.send(cmd);
+            }
+        }
+
     }
     
     function socketConnectionWF8266R(ip) {
@@ -229,7 +248,7 @@
 
             var jsonObj = JSON.parse(e.data.substring(0, e.data.length - 1));
 
-            //console.log(jsonObj);
+            console.log(jsonObj);
             switch (jsonObj.Action) {
 
                 default: break;
