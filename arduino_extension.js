@@ -206,6 +206,11 @@
     ext.wf8266rState = function(){
         return isConnectedWF8266R;
     }
+    
+    ext.stopWF8266R = function(){
+        if(connectionWF8266R != null)
+            connectionWF8266R.close();
+    }
 
     function send(cmd) {
         if(isConnectedWF8266R)
@@ -220,7 +225,7 @@
     function sendWF8266R(cmd) {
         timeManager.millis = (new Date).getTime();
 
-        console.log(cmd + " " + socketCounter);
+        //console.log(cmd + " " + socketCounter);
         package.send++;
         if (isConnectedWF8266R && socketCounter == 0) {
             if ((timeManager.millis - timeManager.lastTime) > 100) {
@@ -248,7 +253,7 @@
 
             var jsonObj = JSON.parse(e.data.substring(0, e.data.length - 1));
 
-            console.log(jsonObj);
+            //console.log(jsonObj);
             switch (jsonObj.Action) {
 
                 default: break;
@@ -292,6 +297,7 @@
             [' ', '連接 WFduino', 'connect'],
             [' ', 'WF8266R 位址 %s', 'set_ip', 'mywfXXXX.local'],
             ['r', 'WF8266R 連線狀態', 'wf8266rState'],
+            [' ', '中斷 WF8266R 連線', 'stopWF8266R'],
             [' ', '腳位 %d.gpio 模式設為 %m.mode', 'pinMode', 13, 'OUTPUT'],
             [' ', '腳位 %d.gpio 數位輸出 %m.level', 'digitalWrite', 13, 1],
             [' ', '腳位 %d.pwmGPIO 類比輸出 %n', 'analogWrite', 3, 255],
