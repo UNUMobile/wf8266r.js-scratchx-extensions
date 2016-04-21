@@ -211,7 +211,7 @@
         if(isConnectedWF8266R)
         {
             cmd = "wfduino,"+cmd.replace(",",":").replace("=","~");
-            sendWF8266R(cmd);
+            sendWF8266R(cmd+"=");
         }
         else
             connection.send(cmd + "\r\n");
