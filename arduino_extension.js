@@ -12,6 +12,8 @@
     //WF8266R
     var isConnectedWF8266R = false;
     var connectionWF8266R;
+    var socketCounter = 0;
+    var package = { send: 0, recv: 0, millis: 0 };
     var timeManager = { lastTime: 0, startTime: 0, millis: 0 };
 
     // Cleanup function when the extension is unloaded
