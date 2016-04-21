@@ -210,7 +210,7 @@
     function send(cmd) {
         if(isConnectedWF8266R)
         {
-            cmd = "wfduino,"+cmd.replace(",",":");
+            cmd = "wfduino,"+cmd.replace(",",":").replace("=","~");
             sendWF8266R(cmd);
         }
         else
