@@ -210,7 +210,7 @@
     function send(cmd) {
         if(isConnectedWF8266R)
         {
-            cmd = "uart/tx,type=text&text="+cmd+"&ln=true";
+            cmd = "wfduino,"+cmd.replace(",",":");
             sendWF8266R(cmd);
         }
         else
