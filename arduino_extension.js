@@ -234,14 +234,14 @@
     
     function socketConnectionWF8266R(ip) {
         timeManager.startTime = (new Date).getTime();
-        connection = new WebSocket('ws://' + ip + ':81/api', ['wf8266r']);
-        connection.onopen = function (e) {
+        connectionWF8266R = new WebSocket('ws://' + ip + ':81/api', ['wf8266r']);
+        connectionWF8266R.onopen = function (e) {
             isConnectedWF8266R = true;
         };
-        connection.onclose = function (e) {
+        connectionWF8266R.onclose = function (e) {
             isConnectedWF8266R = false;
         };
-        connection.onmessage = function (e) {
+        connectionWF8266R.onmessage = function (e) {
             socketCounter--;
             package.recv++;
             isConnectedWF8266R = true;
@@ -255,7 +255,7 @@
             }
 
         };
-        connection.onerror = function (e) {
+        connectionWF8266R.onerror = function (e) {
             isConnectedWF8266R = false;
         };
     }
