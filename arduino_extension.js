@@ -252,7 +252,6 @@
             if(e.data.length == 1)
             {
                 socketBuffer+= e.data;
-                console.log(socketBuffer);
                 if(e.data=='}')
                 {
                     jsonObj = JSON.parse(socketBuffer);

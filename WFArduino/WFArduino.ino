@@ -53,8 +53,10 @@ void listenWF8266R() {
     {
       serialBufferWF[serialIndexWF - 1] = '\0';
       cmd = String(serialBufferWF);
-      if (cmd == "digitalRead" || cmd == "analogRead")
+      if (cmd.indexOf("digitalRead") == 0 || cmd.indexOf("analogRead") == 0)
+      {
         isRead = true;
+      }
       serialIndexWF = 0;
 
       doCommand();
@@ -112,10 +114,7 @@ void doCommand() {
     String rtn = "{\"Action\":\"" + cmd + "\",\"Pin\":" + p1 + ",\"Value\":" + v + "}";
     if (isRead)
     {
-      rtn.replace("=","~");
-      rtn.replace(",","@");
-      rtn.replace(":","!");
-      Serial.println(rtn);
+      rtn = "{\"Action\"!\"" + cmd + "\"@\"Pin\"!" + p1 + "@\"Value\"!" + v + "}";
       wf8266r.println("WTUART+WEBSOCKET:"+rtn);
       isRead = false;
     }
