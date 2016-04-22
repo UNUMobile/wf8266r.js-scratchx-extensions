@@ -5,7 +5,7 @@
 #include <SoftwareSerial.h>
 SoftwareSerial wf8266r(2, 4); // RX, TX
 
-const char* version = "2016.04.20";
+const char* version = "2016.04.23";
 Servo myservo;
 bool isRead = false;
 const uint8_t maxLength = 20;
@@ -124,7 +124,13 @@ void doCommand() {
   {
     uint16_t v = analogRead(p1.toInt());
     String rtn = "{\"Action\":\"" + cmd + "\",\"Pin\":" + p1 + ",\"Value\":" + v + "}";
-    Serial.println(rtn);
+    if (isRead)
+    {
+      wf8266r.println(rtn);
+      isRead = false;
+    }
+    else
+      Serial.println(rtn);
   }
   else if (cmd == "wtgpio")
   {
