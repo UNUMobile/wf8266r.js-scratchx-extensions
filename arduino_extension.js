@@ -251,6 +251,7 @@
             if(e.data.length == 1)
             {
                 socketBuffer+= e.data;
+                cosole.log(socketBuffer);
                 if(e.data=='}')
                 {
                     e.data = socketBuffer;
