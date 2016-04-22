@@ -15,6 +15,7 @@
     var socketCounter = 0;
     var package = { send: 0, recv: 0, millis: 0 };
     var timeManager = { lastTime: 0, startTime: 0, millis: 0 };
+    var socketBuffer="";
 
     // Cleanup function when the extension is unloaded
     ext._shutdown = function () {
@@ -247,10 +248,22 @@
             isConnectedWF8266R = false;
         };
         connectionWF8266R.onmessage = function (e) {
+            if(e.data.length == 1)
+            {
+                socketBuffer+= e.data;
+                if(e.data=='}')
+                {
+                    e.data = socketBuffer;
+                    socketBuffer = "";
+                }
+                else
+                    return;
+                    
+            }
             socketCounter--;
             package.recv++;
             isConnectedWF8266R = true;
-console.log(e.data);
+
             var jsonObj = JSON.parse(e.data.substring(0, e.data.length - 1));
 
             console.log(jsonObj);
