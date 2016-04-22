@@ -225,7 +225,7 @@
     function sendWF8266R(cmd) {
         timeManager.millis = (new Date).getTime();
 
-        //console.log(cmd + " " + socketCounter);
+        console.log(cmd + " " + socketCounter);
         package.send++;
         if (isConnectedWF8266R && socketCounter == 0) {
             if ((timeManager.millis - timeManager.lastTime) > 100) {
@@ -253,7 +253,7 @@
 
             var jsonObj = JSON.parse(e.data.substring(0, e.data.length - 1));
 
-            //console.log(jsonObj);
+            console.log(jsonObj);
             switch (jsonObj.Action) {
 
                 default: break;
@@ -305,9 +305,9 @@
             ['w', 'HTTP %m.restfulType 從 %s', 'http', 'GET', 'http://api.thingspeak.com/apps/thinghttp/send_request?api_key=EM18B52PSHXZB4DD'],
             [' ', 'LASS 設備編號 %s', 'lass', ''],
             [' ', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio', 'distance', 5, 4],
-            [' ', 'SERVO 伺服馬達，接在腳位 %d.gpio 轉 %n 度', 'servo', 5, 90],
-            [' ', 'Tone 音調，接在腳位 %d.gpio 頻率 %d.tone 時長 %n', 'tone', 5, 'C,523', 1000],
-            [' ', '關閉 Tone 音調，接在腳位 %d.gpio', 'noTone', 5],
+            [' ', '伺服馬達為腳位 %d.gpio， 轉動角度為 %n 度', 'servo', 5, 90],
+            [' ', '腳位 %d.gpio 播放音調，頻率為 %d.tone 時間為 %n ms', 'tone', 5, 'C,523', 500],
+            [' ', '關閉腳位 %d.gpio 的音調', 'noTone', 5],
             [' ', '%m.flushType 清空', 'flush', 'Voice'],
             ['w', '說 %s', 'speak_text', 'ScratchX 遇上 WFduino'], 
             [' ', '監聽語音, 自動啟動設為 %m.bool', 'speech_text','False'],

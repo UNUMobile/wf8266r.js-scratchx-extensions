@@ -329,7 +329,7 @@
             [' ', 'DS18B20 溫度感測器 在腳位 %d.gpio', 'ds', 4],
             [' ', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio', 'distance', 5, 4],
             [' ', 'PM25粉塵感測器 %m.pm25SensorParam 在腳位 %d.gpio', 'pm25', 'G3', 14],
-            [' ', 'SERVO 伺服馬達，接在腳位 %d.gpio 轉 %n 度', 'servo', 5, 90],
+            [' ', '伺服馬達在腳位 %d.gpio，轉動角度為 %n 度', 'servo', 5, 90],
             ['h', '當UART有資料時', 'when_uart'],
             [' ', 'UART 速率 %m.uartBaud', 'baud', '115200'],
             [' ', 'UART to Socket %m.boolType', 'socketUART', 'true'],

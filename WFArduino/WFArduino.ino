@@ -7,6 +7,7 @@ SoftwareSerial wf8266r(2, 4); // RX, TX
 
 const char* version = "2016.04.20";
 Servo myservo;
+bool isRead = false;
 const uint8_t maxLength = 20;
 uint8_t serialIndex = 0, serialIndexWF = 0;
 char serialBuffer[50], serialBufferWF[50];
@@ -52,6 +53,8 @@ void listenWF8266R() {
     {
       serialBufferWF[serialIndexWF - 1] = '\0';
       cmd = String(serialBufferWF);
+      if (cmd == "digitalRead" || cmd == "analogRead")
+        isRead = true;
       serialIndexWF = 0;
 
       doCommand();
@@ -107,7 +110,16 @@ void doCommand() {
   {
     uint8_t v = digitalRead(p1.toInt());
     String rtn = "{\"Action\":\"" + cmd + "\",\"Pin\":" + p1 + ",\"Value\":" + v + "}";
-    Serial.println(rtn);
+    if (isRead)
+    {
+      rtn.replace("=","~");
+      rtn.replace(",","@");
+      rtn.replace(":","!");
+      wf8266r.println("WTUART+WEBSOCKET:"+rtn);
+      isRead = false;
+    }
+    else
+      Serial.println(rtn);
   }
   else if (cmd == "analogRead")
   {
