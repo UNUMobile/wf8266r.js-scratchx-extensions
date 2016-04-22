@@ -115,6 +115,7 @@ void doCommand() {
       rtn.replace("=","~");
       rtn.replace(",","@");
       rtn.replace(":","!");
+      Serial.println(rtn);
       wf8266r.println("WTUART+WEBSOCKET:"+rtn);
       isRead = false;
     }
