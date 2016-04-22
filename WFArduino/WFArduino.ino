@@ -114,8 +114,7 @@ void doCommand() {
     String rtn = "{\"Action\":\"" + cmd + "\",\"Pin\":" + p1 + ",\"Value\":" + v + "}";
     if (isRead)
     {
-      rtn = "{\"Action\"!\"" + cmd + "\"@\"Pin\"!" + p1 + "@\"Value\"!" + v + "}";
-      wf8266r.println("WTUART+WEBSOCKET:"+rtn);
+      wf8266r.println(rtn);
       isRead = false;
     }
     else

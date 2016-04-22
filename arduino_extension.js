@@ -212,6 +212,10 @@
         if(connectionWF8266R != null)
             connectionWF8266R.close();
     }
+    
+    exit.readDistance = function(){
+        return distance;
+    }
 
     function send(cmd) {
         if(isConnectedWF8266R)
@@ -226,7 +230,7 @@
     function sendWF8266R(cmd) {
         timeManager.millis = (new Date).getTime();
 
-        console.log(cmd + " " + socketCounter);
+        //console.log(cmd + " " + socketCounter);
         package.send++;
         if (isConnectedWF8266R && socketCounter == 0) {
             if ((timeManager.millis - timeManager.lastTime) > 100) {
@@ -271,7 +275,8 @@
 
             console.log(jsonObj);
             switch (jsonObj.Action) {
-
+                case "digitalRead": eval('gpio.D' + jsonObj.Pin + '=' + jsonObj.Value); break;
+                case "analogRead": eval('gpio.A' + jsonObj.Pin + '=' + jsonObj.Value); break;
                 default: break;
             }
 
@@ -311,27 +316,30 @@
     var descriptor = {
         blocks: [
             [' ', '連接 WFduino', 'connect'],
-            [' ', 'WF8266R 位址 %s', 'set_ip', 'mywfXXXX.local'],
-            ['r', 'WF8266R 連線狀態', 'wf8266rState'],
-            [' ', '中斷 WF8266R 連線', 'stopWF8266R'],
             [' ', '腳位 %d.gpio 模式設為 %m.mode', 'pinMode', 13, 'OUTPUT'],
             [' ', '腳位 %d.gpio 數位輸出 %m.level', 'digitalWrite', 13, 1],
             [' ', '腳位 %d.pwmGPIO 類比輸出 %n', 'analogWrite', 3, 255],
-            ['w', 'HTTP %m.restfulType 到 %s', 'http', 'POST', 'http://api.thingspeak.com/update?key=xxxxxx&field1=1&field2=2'],
-            ['w', 'HTTP %m.restfulType 從 %s', 'http', 'GET', 'http://api.thingspeak.com/apps/thinghttp/send_request?api_key=EM18B52PSHXZB4DD'],
-            [' ', 'LASS 設備編號 %s', 'lass', ''],
-            [' ', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio', 'distance', 5, 4],
-            [' ', '伺服馬達為腳位 %d.gpio， 轉動角度為 %n 度', 'servo', 5, 90],
+            ['r', '讀取數位腳位 %d.gpio ', 'digitalRead', 13],
+            ['r', '讀取類比腳位 A%d.analogGPIO ', 'analogRead', '0'],
             [' ', '腳位 %d.gpio 播放音調，頻率為 %d.tone 時間為 %n ms', 'tone', 5, 'C,523', 500],
             [' ', '關閉腳位 %d.gpio 的音調', 'noTone', 5],
+            [' ', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio', 'distance', 5, 4],
+            ['r', '讀取超音波感測器回傳距離', 'readDistance'],
+            [' ', '伺服馬達為腳位 %d.gpio， 轉動角度為 %n 度', 'servo', 5, 90],
             [' ', '%m.flushType 清空', 'flush', 'Voice'],
             ['w', '說 %s', 'speak_text', 'ScratchX 遇上 WFduino'], 
             [' ', '監聽語音, 自動啟動設為 %m.bool', 'speech_text','False'],
+            ['r', '語音文字', 'voiceText'],
+            
+            [' ', 'WF8266R 位址 %s', 'set_ip', 'mywfXXXX.local'],
+            [' ', '中斷 WF8266R 連線', 'stopWF8266R'],
+            ['r', 'WF8266R 連線狀態', 'wf8266rState'],
             [' ', 'WF8266R 腳位 %d.wfgpio %m.wfgpioType 輸出 %n', 'wfgpio', 5, '數位', 1],
             [' ', 'WF8266R SERVO 伺服馬達腳位 %d.wfgpio 轉 %n 度', 'wfcsenservo', 5, 90],
-            ['r', '語音文字', 'voiceText'],
-            ['r', '讀取類比腳位 A%d.analogGPIO ', 'analogRead', '0'],
-            ['r', '讀取數位腳位 %d.gpio ', 'digitalRead', 13],
+            
+            ['w', 'HTTP %m.restfulType 到 %s', 'http', 'POST', 'http://api.thingspeak.com/update?key=xxxxxx&field1=1&field2=2'],
+            ['w', 'HTTP %m.restfulType 從 %s', 'http', 'GET', 'http://api.thingspeak.com/apps/thinghttp/send_request?api_key=EM18B52PSHXZB4DD'],
+            [' ', 'LASS 設備編號 %s', 'lass', ''],
             ['r', '讀取感測器 %m.sensor 參數 %m.sensorParam', 'readSensor', 'Voice', 'Value'],
         ],
         menus: {
