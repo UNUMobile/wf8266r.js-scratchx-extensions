@@ -213,7 +213,7 @@
             connectionWF8266R.close();
     }
     
-    exit.readDistance = function(){
+    ext.readDistance = function(){
         return distance;
     }
 
