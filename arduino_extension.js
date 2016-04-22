@@ -248,24 +248,27 @@
             isConnectedWF8266R = false;
         };
         connectionWF8266R.onmessage = function (e) {
+            var jsonObj;
             if(e.data.length == 1)
             {
                 socketBuffer+= e.data;
-                cosole.log(socketBuffer);
+                console.log(socketBuffer);
                 if(e.data=='}')
                 {
-                    e.data = socketBuffer;
+                    jsonObj = JSON.parse(socketBuffer);
                     socketBuffer = "";
                 }
                 else
                     return;
                     
             }
-            socketCounter--;
-            package.recv++;
-            isConnectedWF8266R = true;
-console.log(e.data);
-            var jsonObj = JSON.parse(e.data.substring(0, e.data.length - 1));
+            else
+            {
+                socketCounter--;
+                package.recv++;
+                isConnectedWF8266R = true;
+                jsonObj = JSON.parse(e.data.substring(0, e.data.length - 1));
+            }
 
             console.log(jsonObj);
             switch (jsonObj.Action) {
