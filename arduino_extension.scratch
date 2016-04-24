@@ -1,0 +1,36 @@
+{
+   "host": "127.0.0.1",
+   "extensionName": "WFduino",
+   "extensionPort": 9999,
+   "useHTTP": true, 
+      "blockSpecs": [
+            [" ", "腳位 %d.gpio 模式設為 %m.mode", "pinMode", 13, "OUTPUT"],
+            [" ", "腳位 %d.gpio 數位輸出 %m.level", "digitalWrite", 13, 1],
+            [" ", "腳位 %d.pwmGPIO 類比輸出 %n", "analogWrite", 3, 255],
+            ["r", "讀取數位腳位 %d.gpio ", "digitalRead", 13],
+            ["r", "讀取類比腳位 A%d.analogGPIO ", "analogRead", "0"],
+            [" ", "腳位 %d.gpio 播放音調，頻率為 %d.tone 時間為 %n ms", "tone", 5, "C,523", 500],
+            [" ", "關閉腳位 %d.gpio 的音調", "noTone", 5],
+            [" ", "HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio", "distance", 5, 4],
+            ["r", "讀取超音波感測器回傳距離", "readDistance"],
+            [" ", "伺服馬達為腳位 %d.gpio， 轉動角度為 %n 度", "servo", 5, 90],
+            
+            ["w", "HTTP %m.restfulType 到 %s", "http", "POST", "http://api.thingspeak.com/update?key=xxxxxx&field1=1&field2=2"],
+            ["w", "HTTP %m.restfulType 從 %s", "http", "GET", "http://api.thingspeak.com/apps/thinghttp/send_request?api_key=EM18B52PSHXZB4DD"],
+            [" ", "LASS 設備編號 %s", "lass", ""],
+            ["r", "讀取感測器 %m.sensor 參數 %m.sensorParam", "readSensor", "LASS", "Value"],
+   ],
+   "menus":{
+    "mode": ["INPUT", "OUTPUT"],
+            "bool": ["True", "False"],
+            "sensor": ["HCSR", "RESTfulGET", "LASS"],
+            "sensorParam": ["Value", "C", "F", "H", "PM25"],
+            "level": ["0", "1"],
+            "flushType": ["Voice"],
+            "pwmGPIO": ["3", "5", "6", "9", "10", "11"],
+            "analogGPIO": ["0", "1", "2", "3", "4", "5", "6", "7"],
+            "restfulType": ["GET", "POST"],
+            "gpio": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"],
+            "tone":["C,523","C#,554","D,587","D#,622","E,659","F,698","F#,740","G,784","G#,831","A,880","A#,932","B,988"],
+   }
+}

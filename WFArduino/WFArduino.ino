@@ -5,7 +5,7 @@
 #include <SoftwareSerial.h>
 SoftwareSerial wf8266r(2, 4); // RX, TX
 
-const char* version = "2016.04.23";
+const char* version = "2016.04.24";
 Servo myservo;
 bool isRead = false;
 const uint8_t maxLength = 20;
@@ -99,6 +99,24 @@ void doCommand() {
       pinMode(p1.toInt(), INPUT);
     else
       pinMode(p1.toInt(), OUTPUT);
+  }
+  else if (cmd == "readGPIO")
+  {
+    uint16_t gpios[22];
+    for (uint8_t i = 0; i < 22; i++)
+    {
+      if (i < 14)
+        gpios[i] = digitalRead(i);
+      else
+        gpios[i] = analogRead(i);
+    }
+    char buf[100];
+    sprintf(buf, "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d", 
+    gpios[0], gpios[1], gpios[2], gpios[3], gpios[4], gpios[5], gpios[6], gpios[7], gpios[8], gpios[9], gpios[10], 
+    gpios[11], gpios[12], gpios[13], gpios[14], gpios[15], gpios[16], gpios[17], gpios[18], gpios[19], gpios[20], gpios[21]);
+    String rtn = "{\"Action\":\"" + cmd + "\",\"Value\":\"" + String(buf) + "\"}";
+    Serial.flush();
+    Serial.println(rtn);
   }
   else if (cmd == "digitalWrite")
   {
