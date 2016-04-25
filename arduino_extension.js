@@ -231,7 +231,6 @@
     }
 
     function send(cmd) {
-        console.log(cmd);
         if(isConnectedWF8266R)
         {
             cmd = "wfduino,"+cmd.replace(",",":").replace("=","~");
