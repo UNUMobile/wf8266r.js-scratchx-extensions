@@ -93,14 +93,19 @@ function replaceAll(str, find, replace) {
 }
 function httpRequest(_type,uri) {
 
-  uri = decodeURI(uri);
-  
+  uri = replaceAll(uri,"%3A",":")
+  uri = replaceAll(uri, "%2F","/");
+  uri = replaceAll(uri, "%3F","?");
+  uri = replaceAll(uri, "%3D","=");
+  uri = replaceAll(uri, "%26","&");
+ 
   var xhr = new XMLHttpRequest();
   xhr.open(_type, uri, true);
   xhr.onreadystatechange = function () {
     if (xhr.readyState == 4) {
       // JSON.parse does not evaluate the attacker's scripts.
       restfullGet =  xhr.responseText;
+      //console.log(restfullGet);
     }
   }
   xhr.send();
@@ -301,7 +306,7 @@ function doRESTful(url){
       +"\nanalogRead/6 "+gpio[20]
       +"\nanalogRead/7 "+gpio[21]
       +"\nreadDistance "+distance
-      +"\nreadSensor/RESTfulGET/Value "+restfullGet
+      +"\nreadSensor/RESTfulGET/Value "+encodeURI(restfullGet)
       +"\nreadSensor/LASS/Value "+lassData.PM25
       +"\nreadSensor/LASS/C "+lassData.C
       +"\nreadSensor/LASS/H "+lassData.H
@@ -329,7 +334,7 @@ function doRESTful(url){
             fre = p2;
         send(cmd+",pin=" + p1 + "&" + parseInt(fre) + "=" + p3+"\r\n");break;
     case "noTone" : send(cmd+",pin=" + p1+"\r\n");break;   
-    case "http" : httpRequest(p2,p3); break; 
+    case "http" : httpRequest(p1,p2); break; 
     case "lass" : lass(p1); break;
     case "speak_text" : speak(decodeURI(p1)); break;
     case "speech_text" : speech_text(); break;
