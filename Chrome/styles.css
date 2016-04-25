@@ -7,7 +7,7 @@ body {
 
 label {
   display: block;
-  padding: 20px;
+  padding: 18px;
   border-bottom: solid 0px #ddd;
   border-right: solid 0px #ddd;
   width: 500px;
@@ -67,4 +67,28 @@ button{
   width: 640px;
 }
 
+.info{
+  font-size: xx-small;
+  color:#c8c8c8;
+}
 
+/* unvisited link */
+a:link {
+    text-decoration: none;
+    color: #c8c8c8;
+}
+
+/* visited link */
+a:visited {
+    color: #c8c8c8;
+}
+
+/* mouse over link */
+a:hover {
+    color: #fff;
+}
+
+/* selected link */
+a:active {
+    color: #c8c8c8;
+}
