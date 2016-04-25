@@ -83,10 +83,23 @@
             type = "D";
         else
             type = "A";
-        send("wtgpio,type="+type+"&"+pin+"="+value);
+        if(isConnectedWF8266R)
+        {
+            if(type=="D")
+                sendCommand("gpio," + pin + "=" + value);
+            else
+                sendCommand("gpio/pwm," + pin + "=" + value);
+        }
+        else
+            send("wtgpio,type="+type+"&"+pin+"="+value);
     }
     ext.wfcsenservo = function(pin,degree){
-        send("wtsen,type=SERVO&"+pin+"="+degree);
+        if(isConnectedWF8266R)
+        {
+            sendCommand("servo,pin=" + pin + "&degree=" + degree);
+        }
+        else
+            send("wtsen,type=SERVO&"+pin+"="+degree);
     }
     ext.flush = function (type) {
         switch (type) {
