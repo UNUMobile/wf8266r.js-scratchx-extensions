@@ -79,6 +79,8 @@ onload = function () {
   var btnScratchX = $('btnScratchX');
   var btnScratch = $('btnScratch');
   var btnFirmware = $('btnFirmware');
+  var btnScratchTemplate = $('btnScratchTemplate');
+  
   var onGetPorts = function (ports) {
     var eligiblePorts = ports.filter(function (port) {
       return (!port.path.match(/[Bb]luetooth/) && port.path.match(/\/dev\/tty/)) || port.path.match(/COM/);
@@ -115,6 +117,10 @@ onload = function () {
   }
   
   btnScratch.onclick = function () {
+    window.open('https://scratch.mit.edu/','scratch','');
+  }
+  
+  btnScratchTemplate.onclick = function(){
     window.open('https://goo.gl/khTjBv','scratch','');
   }
   
@@ -155,7 +161,7 @@ function socketServer() {
     });
 
     wsServer.addEventListener('request', function (req) {
-      showMessage('ScratchX connected');
+      showMessage('ScratchX 已連接');
       var socket = req.accept();
       connectedSockets.push(socket);
 
@@ -168,7 +174,7 @@ function socketServer() {
 
       // When a socket is closed, remove it from the list of connected sockets.
       socket.addEventListener('close', function () {
-        showMessage('ScratchX disconnected');
+        showMessage('已中斷 ScratchX 連線');
         for (var i = 0; i < connectedSockets.length; i++) {
           if (connectedSockets[i] == socket) {
             connectedSockets.splice(i, 1);
@@ -213,7 +219,7 @@ function doRESTful(url){
     
   switch(cmd)
   {
-    case "poll" : showMessage('Scratch2 connected'); 
+    case "poll" : showMessage('Scratch2 已連接'); 
       WFduinoType = 0; 
       timeManager.millis = (new Date).getTime();
       if( (new Date).getTime() - timeManager.lastTime > 1000)
@@ -300,7 +306,7 @@ function onOpen(openInfo) {
     setStatus('Could not open');
     return;
   }
-  setStatus(connectionId + ' Connected');
+  setStatus('WFduino 已連接');
   chrome.serial.onReceive.addListener(onRead);
 };
 
@@ -348,7 +354,7 @@ console.log("UART Rx : " + backCMD);
       isVerchecked = true;
       if(newVersion > arduinVersion)
       {
-        setStatus('Older firmware');
+        setStatus('請更新最新版本的 Arduino 韌體');
         window.open('https://goo.gl/3Lbm0Q','scratchX','');
       }
     }
@@ -387,10 +393,10 @@ document.addEventListener('DOMContentLoaded', function () {
       window.location.href.replace('http', 'ws');
     connection = new WebSocket(address);
     connection.addEventListener('open', function () {
-      showMessage('WFduino Agent connected');
+      showMessage('WFduino 服務器已就緒');
     });
     connection.addEventListener('close', function () {
-      showMessage('WFduino Agent closed');
+      showMessage('WFduino 服務器已關閉');
     });
     connection.addEventListener('message', function (e) {
       console.log(e.data);

@@ -1,5 +1,11 @@
 /*
- WFduino ScratchX firmware.
+ WFduino ＝ Scratch2.x + ScratchX + Arduino + WF8266R
+ ----------------------------------------------------
+ WFduino let you control Arduino by Scratch.
+
+ ----------------------------------------------------
+ 2016 @ Union U Inc. http://wf8266.com/wf8266r
+ 竹林資訊站 : http://blog.ilc.edu.tw/blog/blog/868
 */
 #include <Servo.h>
 #include <SoftwareSerial.h>
