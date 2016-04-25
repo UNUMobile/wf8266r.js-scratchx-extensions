@@ -77,6 +77,7 @@ onload = function () {
   var deviceList = document.getElementById('deviceList');
   var btnClose = $('btnClose');
   var btnScratchX = $('btnScratchX');
+  var btnScratch = $('btnScratch');
   var btnFirmware = $('btnFirmware');
   var onGetPorts = function (ports) {
     var eligiblePorts = ports.filter(function (port) {
@@ -113,8 +114,12 @@ onload = function () {
     window.open('http://goo.gl/fnON4H','scratchX','');
   }
   
+  btnScratch.onclick = function () {
+    window.open('https://goo.gl/khTjBv','scratch','');
+  }
+  
   btnFirmware.onclick = function () {
-    window.open('https://goo.gl/3Lbm0Q','scratchX','');
+    window.open('https://goo.gl/3Lbm0Q','WFduino','');
   }
 
   deviceList.onchange = function () {
