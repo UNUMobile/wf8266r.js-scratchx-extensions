@@ -15,15 +15,20 @@
             ["r", "讀取超音波感測器回傳距離", "readDistance"],
             [" ", "伺服馬達為腳位 %d.gpio， 轉動角度為 %n 度", "servo", 5, 90],
             
-            ["w", "HTTP %m.restfulType 到 %s", "http", "POST", "http://api.thingspeak.com/update?key=xxxxxx&field1=1&field2=2"],
-            ["w", "HTTP %m.restfulType 從 %s", "http", "GET", "http://api.thingspeak.com/apps/thinghttp/send_request?api_key=EM18B52PSHXZB4DD"],
+            [" ", "說 %s", "speak_text", "Scratch 遇上 WFduino"], 
+            [" ", "監聽語音", "speech_text"],
+            ["r", "語音文字", "voiceText"],
+            [" ", "清空語音文字", "flush"],
+            
+            [" ", "HTTP %m.restfulType 到 %s", "http", "POST", "http://api.thingspeak.com/update?key=xxxxxx&field1=1&field2=2"],
+            [" ", "HTTP %m.restfulType 從 %s", "http", "GET", "http://api.thingspeak.com/apps/thinghttp/send_request?api_key=EM18B52PSHXZB4DD"],
             [" ", "LASS 設備編號 %s", "lass", ""],
             ["r", "讀取感測器 %m.sensor 參數 %m.sensorParam", "readSensor", "LASS", "Value"],
    ],
    "menus":{
     "mode": ["INPUT", "OUTPUT"],
             "bool": ["True", "False"],
-            "sensor": ["HCSR", "RESTfulGET", "LASS"],
+            "sensor": ["HCSR", "RESTfulGET", "LASS", "Voice"],
             "sensorParam": ["Value", "C", "F", "H", "PM25"],
             "level": ["0", "1"],
             "flushType": ["Voice"],

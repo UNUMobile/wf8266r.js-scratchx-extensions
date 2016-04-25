@@ -15,9 +15,64 @@ var timeManager = { lastTime: 0, startTime: 0, millis: 0, lastTimeSend:0 };
 var restfullGet="";
 var lassData = { C: 0, H: 0, PM25: 0 };
 var page={url:"",count:0};
+var speakText = "";
+var rec;
+var voiceData = { Text: '' };
 
 function $(id) {
   return document.getElementById(id);
+}
+
+function speak(text){
+if(speakText == text )
+  return;
+  
+  speakText = text;
+  var u = new SpeechSynthesisUtterance(text.toString());
+        u.onend = function (event) {
+
+        };
+        
+        speechSynthesis.speak(u);
+
+}
+
+function speech_text() {       
+
+        if (rec == null)
+            rec = new webkitSpeechRecognition();
+
+        rec.start();
+        rec.continuous = true;
+        rec.interimResults = true;
+        var result = "";
+
+        rec.onend = function () {
+            //console.log("end");
+            rec.start();
+        }
+
+        rec.onstart = function () {
+            //console.log("start");
+        }
+
+        rec.onerror = function (event) {
+            //console.log(event);
+        }
+
+        rec.onresult = function (event) {
+            //console.log(event.results);
+            if (typeof (event.results) == 'undefined') {
+                rec.onend = null;
+                rec.stop();
+            }
+
+            if (event.results.length > 0) {
+                if (event.results[event.results.length - 1].isFinal)
+                    voiceData.Text = event.results[event.results.length - 1][0].transcript;
+                    console.log(voiceData.Text);
+            }
+        }
 }
 
 function getNewVersion() {
@@ -38,11 +93,7 @@ function replaceAll(str, find, replace) {
 }
 function httpRequest(_type,uri) {
 
-  uri = replaceAll(uri,"%3A",":")
-  uri = replaceAll(uri, "%2F","/");
-  uri = replaceAll(uri, "%3F","?");
-  uri = replaceAll(uri, "%3D","=");
-  uri = replaceAll(uri, "%26","&");
+  uri = decodeURI(uri);
   
   var xhr = new XMLHttpRequest();
   xhr.open(_type, uri, true);
@@ -161,7 +212,7 @@ function socketServer() {
     });
 
     wsServer.addEventListener('request', function (req) {
-      showMessage('ScratchX 已連接');
+      showMessage('ScratchX 已連接',true);
       var socket = req.accept();
       connectedSockets.push(socket);
 
@@ -174,7 +225,7 @@ function socketServer() {
 
       // When a socket is closed, remove it from the list of connected sockets.
       socket.addEventListener('close', function () {
-        showMessage('已中斷 ScratchX 連線');
+        showMessage('已中斷 Scratch 連線',true);
         for (var i = 0; i < connectedSockets.length; i++) {
           if (connectedSockets[i] == socket) {
             connectedSockets.splice(i, 1);
@@ -255,6 +306,7 @@ function doRESTful(url){
       +"\nreadSensor/LASS/C "+lassData.C
       +"\nreadSensor/LASS/H "+lassData.H
       +"\nreadSensor/LASS/PM25 "+lassData.PM25
+      +"\nvoiceText "+ encodeURI(voiceData.Text)
       ; 
       break;
     case "pinMode" :
@@ -278,6 +330,9 @@ function doRESTful(url){
     case "noTone" : send(cmd+",pin=" + p1+"\r\n");break;   
     case "http" : httpRequest(p2,p3); break; 
     case "lass" : lass(p1); break;
+    case "speak_text" : speak(decodeURI(p2)); break;
+    case "speech_text" : speech_text(); break;
+    case "flush" : voiceData.Text = ""; break;
     default : break;
   }
   
@@ -285,10 +340,13 @@ function doRESTful(url){
 }
 
 function setStatus(status) {
+  speak(status);
   document.getElementById('status').innerText = status;
 }
 
-function showMessage(msg) {
+function showMessage(msg, isSpeak) {
+  if(isSpeak)
+    speak(msg);
   document.getElementById('message').innerText = msg;
 }
 
