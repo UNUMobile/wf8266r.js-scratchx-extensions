@@ -306,6 +306,7 @@ function doRESTful(url){
       +"\nreadSensor/LASS/C "+lassData.C
       +"\nreadSensor/LASS/H "+lassData.H
       +"\nreadSensor/LASS/PM25 "+lassData.PM25
+      +"\nreadSensor/Voice/Value "+encodeURI(voiceData.Text)
       +"\nvoiceText "+ encodeURI(voiceData.Text)
       ; 
       break;
@@ -330,7 +331,7 @@ function doRESTful(url){
     case "noTone" : send(cmd+",pin=" + p1+"\r\n");break;   
     case "http" : httpRequest(p2,p3); break; 
     case "lass" : lass(p1); break;
-    case "speak_text" : speak(decodeURI(p2)); break;
+    case "speak_text" : speak(decodeURI(p1)); break;
     case "speech_text" : speech_text(); break;
     case "flush" : voiceData.Text = ""; break;
     default : break;
