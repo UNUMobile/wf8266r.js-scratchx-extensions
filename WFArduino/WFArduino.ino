@@ -21,6 +21,7 @@ String cmd = "";
 void setup() {
   Serial.begin(115200);
   wf8266r.begin(9600);
+  Serial.flush();
   Serial.print(version);
   Serial.println(".WFduino.Ready");
 }

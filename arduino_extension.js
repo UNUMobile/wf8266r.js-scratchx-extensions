@@ -218,6 +218,7 @@
     }
 
     function send(cmd) {
+        console.log(cmd);
         if(isConnectedWF8266R)
         {
             cmd = "wfduino,"+cmd.replace(",",":").replace("=","~");
@@ -256,6 +257,7 @@
             if(e.data.length == 1)
             {
                 socketBuffer+= e.data;
+                console.log(e.data);
                 if(e.data=='}')
                 {
                     jsonObj = JSON.parse(socketBuffer);
