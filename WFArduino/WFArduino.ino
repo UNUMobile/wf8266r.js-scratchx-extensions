@@ -11,7 +11,7 @@
 #include <SoftwareSerial.h>
 SoftwareSerial wf8266r(2, 4); // RX, TX
 
-const char* version = "2016.04.24";
+const char* version = "2016.04.26";
 Servo myservo;
 bool isRead = false;
 const uint8_t maxLength = 20;
