@@ -11,13 +11,108 @@ var newVersion,arduinVersion;
 var gpio = {0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0,10:0,11:0,12:0,13:0,14:0,15:0,16:0,17:0,18:0,19:0,20:0,21:0};
 var distance=0;
 var WFduinoType = 1; //0: scratch 1:scratchx
-var timeManager = { lastTime: 0, startTime: 0, millis: 0, lastTimeSend:0 };
+var timeManager = { lastTime: 0, startTime: 0, millis: 0, lastTimeSend:0, 
+  startTimeWF8266R:0, lastTimeWF8266R:0, millisWF8266R:0 };
 var restfullGet="";
 var lassData = { C: 0, H: 0, PM25: 0 };
 var page={url:"",count:0};
 var speakText = "";
 var rec;
 var voiceData = { Text: '' };
+   //WF8266R
+    var package = { send: 0, recv: 0, millis: 0 };
+    var isConnectedWF8266R = false;
+    var connectionWF8266R;
+    var socketCounter = 0;
+    var ip="";
+    var socketBuffer="";
+    
+//WF8266R 
+    function set_ip(_ip) {
+        if (isConnectedWF8266R)
+            return;
+            
+        if(ip == _ip)
+          return;
+          
+        ip = _ip;
+        socketConnectionWF8266R(_ip);
+    };
+    
+    function stopWF8266R(){
+        if(connectionWF8266R != null)
+            connectionWF8266R.close();
+    }    
+    
+    function sendWF8266R(cmd) {
+        timeManager.millisWF8266R = (new Date).getTime();
+
+        //console.log(cmd + " " + socketCounter);
+        package.send++;
+        if (isConnectedWF8266R && socketCounter == 0) {
+            if ((timeManager.millisWF8266R - timeManager.lastTimeWF8266R) > 100) {
+                timeManager.lastTimeWF8266R = (new Date).getTime();
+                socketCounter++;
+                console.log(cmd);
+                connectionWF8266R.send(cmd);
+            }
+        }
+
+    }
+    
+    function socketConnectionWF8266R(ip) {
+        timeManager.startTimeWF8266R = (new Date).getTime();
+        connectionWF8266R = new WebSocket('ws://' + ip + ':81/api', ['wf8266r']);
+        connectionWF8266R.onopen = function (e) {
+            isConnectedWF8266R = true;
+            speak('WF8266R connected');
+            showMessage('WF8266R 已連接');
+        };
+        connectionWF8266R.onclose = function (e) {
+            isConnectedWF8266R = false;
+            speak('WF8266R disconnect');
+            showMessage('WF8266R 已斷線');
+        };
+        connectionWF8266R.onmessage = function (e) {
+            var jsonObj;
+            if(e.data.length == 1)
+            {
+                socketBuffer+= e.data;
+                if(e.data=='}')
+                {
+                    jsonObj = JSON.parse(socketBuffer);
+                   
+                    socketBuffer = "";
+                }
+                else
+                    return;
+                    
+            }
+            else
+            {
+                socketCounter--;
+                package.recv++;
+                isConnectedWF8266R = true;
+                jsonObj = JSON.parse(e.data.substring(0, e.data.length - 1));
+            }
+
+            console.log(jsonObj);
+            switch (jsonObj.Action) {
+                case "digitalRead": eval('gpio.D' + jsonObj.Pin + '=' + jsonObj.Value); break;
+                case "analogRead": eval('gpio.A' + jsonObj.Pin + '=' + jsonObj.Value); break;
+                case "readGPIO" : var gpios = jsonObj.Value.split(','); 
+                        for(var i=0;i<Object.keys(gpio).length;i++)
+                            gpio[i] = gpios[i];
+                        break;
+                default: break;
+            }
+
+        };
+        connectionWF8266R.onerror = function (e) {
+            isConnectedWF8266R = false;
+        };
+    }
+//WF8266R Function end    
 
 function $(id) {
   return document.getElementById(id);
@@ -217,6 +312,7 @@ function socketServer() {
     });
 
     wsServer.addEventListener('request', function (req) {
+      speak('ScratchX connected');
       showMessage('ScratchX 已連接',true);
       var socket = req.accept();
       connectedSockets.push(socket);
@@ -230,6 +326,7 @@ function socketServer() {
 
       // When a socket is closed, remove it from the list of connected sockets.
       socket.addEventListener('close', function () {
+        speak('Disconnect from Scratch');
         showMessage('已中斷 Scratch 連線',true);
         for (var i = 0; i < connectedSockets.length; i++) {
           if (connectedSockets[i] == socket) {
@@ -244,6 +341,7 @@ function socketServer() {
 }
 
 function doRESTful(url){
+
   url = url.substring(1,url.length)+"/";
 
   var message = "";
@@ -276,12 +374,20 @@ function doRESTful(url){
   switch(cmd)
   {
     case "poll" : showMessage('Scratch2 已連接'); 
+      if(connectionId == -1)
+        break;
       WFduinoType = 0; 
       timeManager.millis = (new Date).getTime();
-      if( (new Date).getTime() - timeManager.lastTime > 1000)
+      var readTimer = 1000;
+      if(isConnectedWF8266R)
+        readTimer = 5000;
+      if( (new Date).getTime() - timeManager.lastTime > readTimer)
       {
         timeManager.lastTime = (new Date).getTime();
-        send("readGPIO\r\n");
+        if(isConnectedWF8266R)
+          sendWF8266R("wfduino,readGPIO");
+        else
+          send("readGPIO\r\n");
       }
       message = "digitalRead/0 "+gpio[0]
       +"\ndigitalRead/1 "+gpio[1]
@@ -313,6 +419,7 @@ function doRESTful(url){
       +"\nreadSensor/LASS/PM25 "+lassData.PM25
       +"\nreadSensor/Voice/Value "+encodeURI(voiceData.Text)
       +"\nvoiceText "+ encodeURI(voiceData.Text)
+      +"\nwf8266rState "+ isConnectedWF8266R
       ; 
       break;
     case "pinMode" :
@@ -320,6 +427,7 @@ function doRESTful(url){
             p2 = 0;
         else
             p2 = 1;
+ 
         send(cmd+"," + p1 + "=" + p2+"\r\n");break;
     case "digitalWrite" : send(cmd+"," + p1 + "=" + p2+"\r\n");break;
     case "analogWrite" : send(cmd+"," + p1 + "=" + p2+"\r\n");break;
@@ -339,6 +447,29 @@ function doRESTful(url){
     case "speak_text" : speak(decodeURI(p1)); break;
     case "speech_text" : speech_text(); break;
     case "flush" : voiceData.Text = ""; break;
+    case "set_ip" : set_ip(p1); break;
+    case "stopWF8266R" : stopWF8266R(); break;
+    case "wfcsenservo" :
+      if(isConnectedWF8266R)
+        sendWF8266R("servo,pin=" + p1 + "&degree=" + p2);
+      else
+        send("wtsen,type=SERVO&"+p1+"="+p2);
+      break;
+    case "wfgpio" :
+        if(decodeURI(p2)=="數位")
+            p2 = "D";
+        else
+            p2 = "A";
+        if(isConnectedWF8266R)
+        {
+            if(p2=="D")
+                sendWF8266R("gpio," + p1 + "=" + p3);
+            else
+                sendWF8266R("gpio/pwm," + p1 + "=" + p3);
+        }
+        else
+            send("wtgpio,type="+p2+"&"+p1+"="+p3);
+        break;
     default : break;
   }
   
@@ -346,13 +477,10 @@ function doRESTful(url){
 }
 
 function setStatus(status) {
-  speak(status);
   document.getElementById('status').innerText = status;
 }
 
-function showMessage(msg, isSpeak) {
-  if(isSpeak)
-    speak(msg);
+function showMessage(msg) {
   document.getElementById('message').innerText = msg;
 }
 
@@ -361,6 +489,12 @@ function openSelectedPort() {
   var selectedPort = deviceList.options[deviceList.selectedIndex].value;
   if(selectedPort != '')
     chrome.serial.connect(selectedPort, { bitrate: 115200 }, onOpen);
+  else
+  {
+    connectionId = -1;
+    speak('WFDuino closed');
+    setStatus('請選擇 USB 口連接 WFduino');
+  }
 }
 
 function onOpen(openInfo) {
@@ -370,11 +504,19 @@ function onOpen(openInfo) {
     setStatus('Could not open');
     return;
   }
+  speak('WFduino connected');
   setStatus('WFduino 已連接');
   chrome.serial.onReceive.addListener(onRead);
 };
 
 function send(cmd) {
+  if(isConnectedWF8266R)
+  {
+    cmd = "wfduino,"+cmd.replace(",",":").replace("=","~");
+    sendWF8266R(cmd+"=");
+  }
+  else
+  {
   if(connectionId == -1)
     return;
   var buffer = new ArrayBuffer(cmd.length);
@@ -383,6 +525,7 @@ function send(cmd) {
     uint8View[i] = cmd.charCodeAt(i);
     
     chrome.serial.send(connectionId, buffer, function () { });
+  }
 };
 
 function getCMD(cmd) {
@@ -418,6 +561,7 @@ console.log("UART Rx : " + backCMD);
       isVerchecked = true;
       if(newVersion > arduinVersion)
       {
+        speak('Please update new firmware');
         setStatus('請更新最新版本的 Arduino 韌體');
         window.open('https://goo.gl/3Lbm0Q','scratchX','');
       }
@@ -457,9 +601,11 @@ document.addEventListener('DOMContentLoaded', function () {
       window.location.href.replace('http', 'ws');
     connection = new WebSocket(address);
     connection.addEventListener('open', function () {
+      speak('WFduino ready');
       showMessage('WFduino 服務器已就緒');
     });
     connection.addEventListener('close', function () {
+      speak('WFduino closed');
       showMessage('WFduino 服務器已關閉');
     });
     connection.addEventListener('message', function (e) {

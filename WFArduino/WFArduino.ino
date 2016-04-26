@@ -60,7 +60,7 @@ void listenWF8266R() {
     {
       serialBufferWF[serialIndexWF - 1] = '\0';
       cmd = String(serialBufferWF);
-      if (cmd.indexOf("digitalRead") == 0 || cmd.indexOf("analogRead") == 0)
+      if (cmd.indexOf("digitalRead") == 0 || cmd.indexOf("analogRead") == 0 || cmd.indexOf("readGPIO") == 0)
       {
         isRead = true;
       }
@@ -118,12 +118,20 @@ void doCommand() {
         gpios[i] = analogRead(i);
     }
     char buf[100];
-    sprintf(buf, "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d", 
-    gpios[0], gpios[1], gpios[2], gpios[3], gpios[4], gpios[5], gpios[6], gpios[7], gpios[8], gpios[9], gpios[10], 
-    gpios[11], gpios[12], gpios[13], gpios[14], gpios[15], gpios[16], gpios[17], gpios[18], gpios[19], gpios[20], gpios[21]);
+    sprintf(buf, "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d",
+            gpios[0], gpios[1], gpios[2], gpios[3], gpios[4], gpios[5], gpios[6], gpios[7], gpios[8], gpios[9], gpios[10],
+            gpios[11], gpios[12], gpios[13], gpios[14], gpios[15], gpios[16], gpios[17], gpios[18], gpios[19], gpios[20], gpios[21]);
     String rtn = "{\"Action\":\"" + cmd + "\",\"Value\":\"" + String(buf) + "\"}";
-    Serial.flush();
-    Serial.println(rtn);
+    if (isRead)
+    {
+      wf8266r.println(rtn);
+      isRead = false;
+    }
+    else
+    {
+      Serial.flush();
+      Serial.println(rtn);
+    }
   }
   else if (cmd == "digitalWrite")
   {

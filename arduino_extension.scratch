@@ -20,6 +20,13 @@
             ["r", "語音文字", "voiceText"],
             [" ", "清空語音文字", "flush"],
             
+            [" ", "WF8266R 位址 %s", "set_ip", "mywfXXXX.local"],
+            [" ", "中斷 WF8266R 連線", "stopWF8266R"],
+            ["r", "WF8266R 連線狀態", "wf8266rState"],
+            [" ", "WF8266R 腳位 %d.wfgpio %m.wfgpioType 輸出 %n", "wfgpio", 5, "數位", 1],
+            [" ", "WF8266R SERVO 伺服馬達腳位 %d.wfgpio 轉 %n 度", "wfcsenservo", 5, 90],
+            
+            
             [" ", "HTTP %m.restfulType 到 %s", "http", "POST", "http://api.thingspeak.com/update?key=xxxxxx&field1=1&field2=2"],
             [" ", "HTTP %m.restfulType 從 %s", "http", "GET", "http://api.thingspeak.com/apps/thinghttp/send_request?api_key=EM18B52PSHXZB4DD"],
             [" ", "LASS 設備編號 %s", "lass", ""],
@@ -39,5 +46,7 @@
             "tone":["C1,262","C1#,277","D1,294","D1#,311","E1,330","F1,349","F1#,370","G1,392","G1#,415","A1,440","A1#,466","B1,494"
             ,"C2,523","C2#,554","D2,587","D2#,622","E2,659","F2,698","F2#,740","G2,784","G2#,831","A2,880","A2#,932","B2,988"
             ,"C3,1046","C3#,1109","D3,1175","D3#,1245","E3,1318","F3,1397","F3#,1480","G3,1568","G3#,1661","A3,1760","A3#,1865","B3,1976"],
+            "wfgpio": ["5", "4", "12", "13", "14", "15", "16", "0", "1", "2", "3"],
+            "wfgpioType":["數位","類比"]
    }
 }
