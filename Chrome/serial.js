@@ -231,6 +231,7 @@ onload = function () {
   var btnScratch = $('btnScratch');
   var btnFirmware = $('btnFirmware');
   var btnScratchTemplate = $('btnScratchTemplate');
+  var btnHex = $('btnHex');
   
   var onGetPorts = function (ports) {
     var eligiblePorts = ports.filter(function (port) {
@@ -277,6 +278,10 @@ onload = function () {
   
   btnFirmware.onclick = function () {
     window.open('https://goo.gl/3Lbm0Q','WFduino','');
+  }
+  
+  btnHex.onclick = function(){
+    window.open('https://goo.gl/BTk0NP','WFduino','');
   }
 
   deviceList.onchange = function () {
