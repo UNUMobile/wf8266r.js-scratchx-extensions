@@ -125,7 +125,7 @@ if(speakText == text )
   speakText = text;
   var u = new SpeechSynthesisUtterance(text.toString());
         u.onend = function (event) {
-
+            speakText = "";
         };
         
         speechSynthesis.speak(u);
