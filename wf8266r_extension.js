@@ -12,6 +12,7 @@
     var irCode = "";
     var restfullGet = "";
     var lassData = { C: 0, H: 0, PM25: 0 };
+    var pm25Data = {PM1:0, PM25:0, PM10:0};
     var voiceData = { Text: '' };
     var socketCounter = 0;
     var package = { send: 0, recv: 0, millis: 0 };
@@ -187,6 +188,11 @@
                 else
                     return eval('lassData.' + param);
             case "Voice": return voiceData.Text;
+            case "PM25":
+                if (param == 'Value')
+                    return pm25Data.PM25;
+                else
+                    return eval('pm25Data.' + param);
             default: break;
         }
     };
@@ -289,7 +295,7 @@
 
             var jsonObj = JSON.parse(e.data.substring(0, e.data.length - 1));
 
-            //console.log(jsonObj);
+            console.log(jsonObj);
             switch (jsonObj.Action) {
                 case "gpio/adc": gpio.ADC = jsonObj.ADC; break;
                 case "gpio/read": eval('gpio.D' + jsonObj.Pin + '=' + jsonObj.Value); break;
@@ -351,8 +357,8 @@
         ],
         menus: {
             'mode': ['INPUT', 'OUTPUT'],
-            'sensor': ['DHT', 'DS', 'HCSR', 'IR', 'Rx', 'RESTfulGET', 'LASS', 'Voice'],
-            'sensorParam': ['Value', 'C', 'F', 'H', 'PM25'],
+            'sensor': ['DHT', 'DS', 'HCSR', 'IR', 'Rx', 'RESTfulGET', 'LASS', 'Voice', 'PM25'],
+            'sensorParam': ['Value', 'C', 'F', 'H', 'PM1', 'PM25', 'PM10'],
             'dhtSensorParam': ['C', 'F', 'Humidity'],
             'dsSensorParam': ['C', 'F'],
             'pm25SensorParam': ['G3', 'G5', 'GP2Y1010AU0F'],
