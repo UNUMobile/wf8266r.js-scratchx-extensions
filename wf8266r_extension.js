@@ -306,8 +306,10 @@
                     dsData.C = parseFloat(jsonObj.C); dsData.F = parseFloat(jsonObj.F); break;
                 case "distance":
                     distance = parseInt(jsonObj.distance); break;
-                case "pm25": break;
-                case "pm25g": break;
+                case "pm25": 
+                    pm25Data.PM25 = jsonObj.PM25; break;
+                case "pm25g": pm25Data.PM1 = jsonObj.PMAT10; pm25Data.PM25 = jsonObj.PMAT25; pm25Data.PM10 = jsonObj.PMAT100;  
+                    break;
                 case "ir/code":
                     irCode = jsonObj.code; break;
                 case "ir/send": break;
