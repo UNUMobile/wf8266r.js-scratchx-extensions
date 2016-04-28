@@ -296,7 +296,7 @@
 
             var jsonObj = JSON.parse(e.data.substring(0, e.data.length - 1));
 
-            console.log(jsonObj);
+            //console.log(jsonObj);
             switch (jsonObj.Action) {
                 case "gpio/adc": gpio.ADC = jsonObj.ADC; break;
                 case "gpio/read": eval('gpio.D' + jsonObj.Pin + '=' + jsonObj.Value); break;
