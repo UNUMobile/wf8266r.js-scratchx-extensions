@@ -615,7 +615,10 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     connection.addEventListener('message', function (e) {
       console.log(e.data);
-      send(e.data);
+      if(e.data=='speech_text')
+        speech_text();
+      else
+        send(e.data);
     });
 
   }, 1e3);

@@ -167,46 +167,8 @@
         return voiceData.Text;
     }
 
-    ext.speech_text = function (type) {
-        if(type=="True")
-            isAutoOpen = true;
-        else
-            isAutoOpen = false;
-            
-        if (rec == null)
-            rec = new webkitSpeechRecognition();
-
-        rec.start();
-        rec.continuous = true;
-        rec.interimResults = true;
-        var result = "";
-
-        rec.onend = function () {
-            //console.log("end");
-            if(isAutoOpen)
-                rec.start();
-        }
-
-        rec.onstart = function () {
-            //console.log("start");
-        }
-
-        rec.onerror = function (event) {
-            //console.log(event);
-        }
-
-        rec.onresult = function (event) {
-            //console.log(event.results);
-            if (typeof (event.results) == 'undefined') {
-                rec.onend = null;
-                rec.stop();
-            }
-
-            if (event.results.length > 0) {
-                if (event.results[event.results.length - 1].isFinal)
-                    voiceData.Text = event.results[event.results.length - 1][0].transcript;
-            }
-        }
+    ext.speech_text = function () {
+        send('speech_text');
     }
     
     //WF8266R 
@@ -342,7 +304,7 @@
             [' ', '伺服馬達為腳位 %d.gpio， 轉動角度為 %n 度', 'servo', 5, 90],
             [' ', '%m.flushType 清空', 'flush', 'Voice'],
             ['w', '說 %s', 'speak_text', 'ScratchX 遇上 WFduino'], 
-            [' ', '監聽語音, 自動啟動設為 %m.bool', 'speech_text','False'],
+            [" ", "監聽語音", "speech_text"],
             ['r', '語音文字', 'voiceText'],
             
             [' ', 'WF8266R 位址 %s', 'set_ip', 'mywfXXXX.local'],
