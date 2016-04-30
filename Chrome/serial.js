@@ -18,6 +18,8 @@ var lassData = { C: 0, H: 0, PM25: 0 };
 var page={url:"",count:0};
 var speakText = "";
 var rec;
+var isConnectedWFduino = false;
+var isFirst = true;
 var voiceData = { Text: '' };
    //WF8266R
     var package = { send: 0, recv: 0, millis: 0 };
@@ -136,6 +138,8 @@ function speech_text() {
 
         if (rec == null)
             rec = new webkitSpeechRecognition();
+        else
+            rec.stop();
 
         rec.start();
         rec.continuous = true;
@@ -148,11 +152,11 @@ function speech_text() {
         }
 
         rec.onstart = function () {
-            console.log("start");
+            //console.log("start");
         }
 
         rec.onerror = function (event) {
-            console.log(event);
+            //console.log(event);
         }
 
         rec.onresult = function (event) {
@@ -166,6 +170,7 @@ function speech_text() {
                 if (event.results[event.results.length - 1].isFinal)
                 {
                     voiceData.Text = event.results[event.results.length - 1][0].transcript;
+                    voiceData.Text = voiceData.replace(" ","");
                     console.log(voiceData.Text);
                     
                     for (var i = 0; i < connectedSockets.length; i++)
@@ -383,9 +388,10 @@ function doRESTful(url){
     
   switch(cmd)
   {
-    case "poll" : showMessage('Scratch2 已連接'); 
-      if(connectionId == -1)
+    case "poll" : 
+      if(!isConnectedWFduino)
         break;
+      showMessage('Scratch2 已連接');   
       WFduinoType = 0; 
       timeManager.millis = (new Date).getTime();
       var readTimer = 1000;
@@ -501,9 +507,20 @@ function openSelectedPort() {
     chrome.serial.connect(selectedPort, { bitrate: 115200 }, onOpen);
   else
   {
-    connectionId = -1;
+    isFirst = false;
+    isConnectedWFduino = false;
+    isVerchecked = false;
+    $('aversion').innerText = "";
+    newVersion="";
+    arduinVersion="";
+    arduinoCMD = "";
+    for (var i = 0; i < connectedSockets.length; i++) {
+      connectedSockets[i].close();
+    }
+    
     speak('WFDuino closed');
     setStatus('請選擇 USB 口連接 WFduino');
+    connectionId = -1;
   }
 }
 
@@ -512,11 +529,14 @@ function onOpen(openInfo) {
   console.log("connectionId: " + connectionId);
   if (connectionId == -1) {
     setStatus('Could not open');
+    isConnectedWFduino = false;
     return;
   }
   speak('WFduino connected');
   setStatus('WFduino 已連接');
-  chrome.serial.onReceive.addListener(onRead);
+  
+  if(isFirst)
+    chrome.serial.onReceive.addListener(onRead);
 };
 
 function send(cmd) {
@@ -533,7 +553,6 @@ function send(cmd) {
   var uint8View = new Uint8Array(buffer);
   for (var i = 0; i < cmd.length; i++)
     uint8View[i] = cmd.charCodeAt(i);
-    
     chrome.serial.send(connectionId, buffer, function () { });
   }
 };
@@ -569,6 +588,7 @@ console.log("UART Rx : " + backCMD);
       arduinVersion = backCMD.replace('.','');
       backCMD = "";
       isVerchecked = true;
+      isConnectedWFduino = true;
       if(newVersion > arduinVersion)
       {
         speak('Please update new firmware');
