@@ -280,6 +280,7 @@
                 case "digitalRead": eval('gpio.D' + jsonObj.Pin + '=' + jsonObj.Value); break;
                 case "analogRead": eval('gpio.A' + jsonObj.Pin + '=' + jsonObj.Value); break;
                 case "distance": distance = jsonObj.distance; break;
+                case "voiceText": voiceData.Text = jsonObj.Text; break;
                 default: break;
             }
         };

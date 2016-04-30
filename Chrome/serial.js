@@ -143,20 +143,20 @@ function speech_text() {
         var result = "";
 
         rec.onend = function () {
-            //console.log("end");
+            console.log("end");
             rec.start();
         }
 
         rec.onstart = function () {
-            //console.log("start");
+            console.log("start");
         }
 
         rec.onerror = function (event) {
-            //console.log(event);
+            console.log(event);
         }
 
         rec.onresult = function (event) {
-            //console.log(event.results);
+            console.log(event.results);
             if (typeof (event.results) == 'undefined') {
                 rec.onend = null;
                 rec.stop();
@@ -164,8 +164,13 @@ function speech_text() {
 
             if (event.results.length > 0) {
                 if (event.results[event.results.length - 1].isFinal)
+                {
                     voiceData.Text = event.results[event.results.length - 1][0].transcript;
                     console.log(voiceData.Text);
+                    
+                    for (var i = 0; i < connectedSockets.length; i++)
+                      connectedSockets[i].send("{\"Action\":\"voiceText\",\"Text\":\""+voiceData.Text+"\"} ");
+                }
             }
         }
 }
@@ -614,9 +619,12 @@ document.addEventListener('DOMContentLoaded', function () {
       showMessage('WFduino 服務器已關閉');
     });
     connection.addEventListener('message', function (e) {
-      console.log(e.data);
-      if(e.data=='speech_text')
+      var cmd = e.data;
+      console.log(cmd);
+      if(cmd.replace("\r\n","")=='speech_text')
+      {
         speech_text();
+      }
       else
         send(e.data);
     });
