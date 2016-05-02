@@ -142,7 +142,7 @@ function speech_text() {
             rec.stop();
 
         rec.start();
-        rec.continuous = true;
+        rec.continuous = false;
         rec.interimResults = true;
         var result = "";
 
@@ -170,7 +170,7 @@ function speech_text() {
                 if (event.results[event.results.length - 1].isFinal)
                 {
                     voiceData.Text = event.results[event.results.length - 1][0].transcript;
-                    voiceData.Text = voiceData.replace(" ","");
+                    voiceData.Text = replaceAll(voiceData.Text," ","");
                     console.log(voiceData.Text);
                     
                     for (var i = 0; i < connectedSockets.length; i++)
