@@ -11,7 +11,7 @@
 #include <SoftwareSerial.h>
 SoftwareSerial wf8266r(2, 4); // RX, TX
 
-const char* version = "2016.04.26";
+const char* version = "2016.05.03";
 Servo myservo;
 bool isRead = false;
 const uint8_t maxLength = 20;
@@ -199,6 +199,12 @@ void doCommand() {
     String rtn = "{\"Action\":\"" + cmd + "\"," + noToneF(v1.toInt()) + "}";
     Serial.println(rtn);
   }
+  else if (cmd == "reset")
+  {
+    reset();
+    String rtn = "{\"Action\":\"" + cmd + "\"}";
+    Serial.println(rtn);
+  }
 
 }
 
@@ -239,5 +245,24 @@ String noToneF(uint8_t pin)
 {
   noTone(pin);
   return "\"pin\":" + String(pin);
+}
+
+void reset()
+{
+  digitalWrite(0,HIGH);
+  digitalWrite(1,HIGH);
+  digitalWrite(2,HIGH);
+  digitalWrite(3,LOW);
+  digitalWrite(4,HIGH);
+  digitalWrite(5,LOW);
+  digitalWrite(6,LOW);
+  digitalWrite(7,LOW);
+  digitalWrite(8,LOW);
+  digitalWrite(9,HIGH);
+  digitalWrite(10,HIGH);
+  digitalWrite(11,HIGH);
+  digitalWrite(12,HIGH);
+  digitalWrite(13,HIGH);
+  asm volatile ("  jmp 0");
 }
 

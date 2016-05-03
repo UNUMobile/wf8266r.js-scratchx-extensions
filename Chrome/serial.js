@@ -388,6 +388,7 @@ function doRESTful(url){
     
   switch(cmd)
   {
+    case "reset_all" : send("reset\r\n");break;
     case "poll" : 
       if(!isConnectedWFduino)
         break;
