@@ -11,7 +11,7 @@
 #include <SoftwareSerial.h>
 SoftwareSerial wf8266r(2, 4); // RX, TX
 
-const char* version = "2016.05.03";
+const char* version = "2016.05.04";
 Servo myservo;
 bool isRead = false;
 const uint8_t maxLength = 20;
@@ -249,20 +249,9 @@ String noToneF(uint8_t pin)
 
 void reset()
 {
-  digitalWrite(0,HIGH);
-  digitalWrite(1,HIGH);
-  digitalWrite(2,HIGH);
-  digitalWrite(3,LOW);
-  digitalWrite(4,HIGH);
-  digitalWrite(5,LOW);
-  digitalWrite(6,LOW);
-  digitalWrite(7,LOW);
-  digitalWrite(8,LOW);
-  digitalWrite(9,HIGH);
-  digitalWrite(10,HIGH);
-  digitalWrite(11,HIGH);
-  digitalWrite(12,HIGH);
-  digitalWrite(13,HIGH);
+  for(uint8_t i=0;i<14;i++)
+    digitalWrite(i,LOW);
+  
   asm volatile ("  jmp 0");
 }
 
