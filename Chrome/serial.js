@@ -141,9 +141,10 @@ function speech_text() {
         else
             rec.stop();
 
-        rec.start();
+        rec.lang = "zh-TW";
         rec.continuous = false;
         rec.interimResults = true;
+        rec.start();
         var result = "";
 
         rec.onend = function () {
@@ -395,7 +396,7 @@ function doRESTful(url){
       showMessage('Scratch2 已連接');   
       WFduinoType = 0; 
       timeManager.millis = (new Date).getTime();
-      var readTimer = 1000;
+      var readTimer = 100;
       if(isConnectedWF8266R)
         readTimer = 5000;
       if( (new Date).getTime() - timeManager.lastTime > readTimer)
