@@ -19,6 +19,7 @@
     var timeManager = { lastTime: 0, startTime: 0, millis: 0 };
     var rec = null;
     var isAutoOpen = false;
+    var tft = {ip:"",relay:""};
 
     function sendCommand(cmd) {
         timeManager.millis = (new Date).getTime();
@@ -372,7 +373,7 @@
             'uartCode': ['text', 'hex'],
             'uartBaud': ['9600', '19200', '38400', '57600', '115200'],
             'boolType': ['true', 'false'],
-            'gpio': ['5', '4', '12', '13', '14', '15', '16', '0', '1', '2', '3']
+            'gpio': ['5', '4', '12', '13', '14', '15', '16', '0', '1', '2', '3'],
         },
         url: 'http://unumobile.github.io/wf8266r.js-scratchx-extensions'
     };

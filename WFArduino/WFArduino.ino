@@ -11,12 +11,13 @@
 #include <SoftwareSerial.h>
 SoftwareSerial wf8266r(2, 4); // RX, TX
 
-const char* version = "2016.05.04";
+const char* version = "2016.05.11";
 Servo myservo;
 bool isRead = false;
 const uint8_t maxLength = 20;
 uint8_t serialIndex = 0, serialIndexWF = 0;
 char serialBuffer[50], serialBufferWF[50];
+uint8_t pinState[22] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 String cmd = "";
 void setup() {
   Serial.begin(115200);
@@ -113,9 +114,15 @@ void doCommand() {
     for (uint8_t i = 0; i < 22; i++)
     {
       if (i < 14)
-        gpios[i] = digitalRead(i);
+      {
+        if (pinState[i] == 0)
+          gpios[i] = digitalRead(i);
+      }
       else
-        gpios[i] = analogRead(i);
+      {
+        if (pinState[i] == 0)
+          gpios[i] = analogRead(i);
+      }
     }
     char buf[100];
     sprintf(buf, "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d",
@@ -135,10 +142,12 @@ void doCommand() {
   }
   else if (cmd == "digitalWrite")
   {
+    pinState[p1.toInt()] = 0;
     digitalWrite(p1.toInt(), v1.toInt());
   }
   else if (cmd == "analogWrite")
   {
+    pinState[p1.toInt()] = 1;
     analogWrite(p1.toInt(), v1.toInt());
   }
   else if (cmd == "digitalRead")
@@ -186,16 +195,19 @@ void doCommand() {
   }
   else if (cmd == "servo")
   {
+    pinState[v1.toInt()] = 1;
     String rtn = "{\"Action\":\"" + cmd + "\"," + servo(v1.toInt(), v2.toInt()) + "}";
     Serial.println(rtn);
   }
   else if (cmd == "tone")
   {
+    pinState[v1.toInt()] = 1;
     String rtn = "{\"Action\":\"" + cmd + "\"," + toneF(v1.toInt(), p2.toInt(), v2.toInt()) + "}";
     Serial.println(rtn);
   }
   else if (cmd == "noTone")
   {
+    pinState[v1.toInt()] = 0;
     String rtn = "{\"Action\":\"" + cmd + "\"," + noToneF(v1.toInt()) + "}";
     Serial.println(rtn);
   }
@@ -249,9 +261,12 @@ String noToneF(uint8_t pin)
 
 void reset()
 {
-  for(uint8_t i=0;i<14;i++)
-    digitalWrite(i,LOW);
-  
+  for (uint8_t i = 0; i < 14; i++)
+  {
+    digitalWrite(i, LOW);
+    pinState[i] = 0;
+  }
+
   asm volatile ("  jmp 0");
 }
 
