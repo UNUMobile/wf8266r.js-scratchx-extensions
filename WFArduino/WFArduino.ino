@@ -9,9 +9,9 @@
 */
 #include <Servo.h>
 #include <SoftwareSerial.h>
-SoftwareSerial wf8266r(2, 4); // RX, TX
+SoftwareSerial wf8266r(2,4); // RX 2, TX 4
 
-const char* version = "2016.05.11";
+const char* version = "2016.05.13";
 Servo myservo;
 bool isRead = false;
 const uint8_t maxLength = 20;
@@ -19,6 +19,8 @@ uint8_t serialIndex = 0, serialIndexWF = 0;
 char serialBuffer[50], serialBufferWF[50];
 uint8_t pinState[22] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 String cmd = "";
+bool isWF8266R = false;
+
 void setup() {
   Serial.begin(115200);
   wf8266r.begin(9600);
@@ -249,6 +251,7 @@ String servo(uint8_t pin, uint8_t degree) {
 }
 
 String toneF(uint8_t pin, uint16_t f, long t) {
+  pinMode(pin,OUTPUT);
   tone(pin, f, t);
   return "\"f\":" + String(f);
 }
@@ -266,7 +269,5 @@ void reset()
     digitalWrite(i, LOW);
     pinState[i] = 0;
   }
-
-  asm volatile ("  jmp 0");
 }
 
