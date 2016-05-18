@@ -203,7 +203,7 @@ function getJSON(uri, index)
     if (xhr.readyState == 4) {
       // JSON.parse does not evaluate the attacker's scripts.
       var resp = JSON.parse(xhr.responseText);
-      
+      console.log(resp);
       if(resp.feed!=null)
       {
         console.log(resp.feed.entry);
@@ -216,6 +216,13 @@ function getJSON(uri, index)
         jsonData.obj = resp.feeds;
         jsonData.count = resp.feeds.length;
       }
+      else
+      {
+        jsonData.obj = resp;
+        jsonData.count = resp.length;
+        if(jsonData.count == undefined)
+          jsonData.count = 0;
+      }
 
     }
   }
@@ -223,21 +230,44 @@ function getJSON(uri, index)
 }
 
 function getJSONRead(index, name)
-{
+{  
   switch(name)
   {
-    case "title" : jsonData.data = jsonData.obj[index-1].title.$t; break;
-    case "content" : jsonData.data = jsonData.obj[index-1].content.$t; break;
+    case "title" : 
+      if(jsonData.count > 0)
+        jsonData.data = jsonData.obj[index-1].title.$t; 
+      else
+        jsonData.data = jsonData.obj.title;
+    break;
+    case "content" : 
+      if(jsonData.count>0)
+        jsonData.data = jsonData.obj[index-1].content.$t; 
+      else
+        jsonData.data = jsonData.obj.content;
+    break;
     default :
-    var data = jsonData.obj[index-1][name];
-    if(data == undefined)
-      jsonData.data =  JSON.stringify(jsonData.obj[index-1]); 
+    var data; 
+    if(jsonData.count > 0)
+      data = jsonData.obj[index-1][name];
     else
-      jsonData.data = jsonData.obj[index-1][name];
+      data = jsonData.obj[name];
+    
+    if(data == undefined)
+    {
+      if(jsonData.count >0)
+        jsonData.data =  JSON.stringify(jsonData.obj[index-1]); 
+      else
+        jsonData.data =  JSON.stringify(jsonData.obj); 
+    }
+    else
+    {
+      if(jsonData.count > 0)
+        jsonData.data = jsonData.obj[index-1][name];
+      else
+        jsonData.data = jsonData.obj[name];
+    }
     break;
   }
-
-  console.log(jsonData.data);
 
 }
 
