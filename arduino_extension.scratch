@@ -29,12 +29,17 @@
             
             [" ", "HTTP %m.restfulType 到 %s", "http", "POST", "http://api.thingspeak.com/update?key=xxxxxx&field1=1&field2=2"],
             [" ", "HTTP %m.restfulType 從 %s", "http", "GET", "http://api.thingspeak.com/apps/thinghttp/send_request?api_key=EM18B52PSHXZB4DD"],
+            [" ", "雲端資料 JSON 從 %s 取得", "json", "https://spreadsheets.google.com/feeds/list/1GS-3Xtr5W_Zxhm55lQLT8lyLLYrPEjF_v7aAShQ2Swc/1/public/values?alt=json"],
+            [" ", "讀取第 %n 筆欄位 %d.jsonField 的雲端資料", "jsonRead", 1, "content"],
+            ["r", "雲端資料筆數", "jsonCount"],
+            ["r", "顯示雲端資料", "jsonData"],
             [" ", "LASS 設備編號 %s", "lass", ""],
             ["r", "讀取感測器 %m.sensor 參數 %m.sensorParam", "readSensor", "LASS", "Value"],
    ],
    "menus":{
     "mode": ["INPUT", "OUTPUT"],
             "bool": ["True", "False"],
+            "jsonField": ["title", "content","field1","field2"],
             "sensor": ["HCSR", "RESTfulGET", "LASS", "Voice"],
             "sensorParam": ["Value", "C", "F", "H", "PM25"],
             "level": ["0", "1"],

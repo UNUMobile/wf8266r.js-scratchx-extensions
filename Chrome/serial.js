@@ -21,6 +21,8 @@ var rec;
 var isConnectedWFduino = false;
 var isFirst = true;
 var voiceData = { Text: '' };
+var jsonData = { data : "", obj : "", count:0};
+
    //WF8266R
     var package = { send: 0, recv: 0, millis: 0 };
     var isConnectedWF8266R = false;
@@ -116,7 +118,7 @@ var voiceData = { Text: '' };
     }
 //WF8266R Function end    
 
-function $(id) {
+function ELE(id) {
   return document.getElementById(id);
 }
 
@@ -181,6 +183,64 @@ function speech_text() {
         }
 }
 
+function parseURI(uri)
+{
+  uri = replaceAll(uri,"%3A",":")
+  uri = replaceAll(uri, "%2F","/");
+  uri = replaceAll(uri, "%3F","?");
+  uri = replaceAll(uri, "%3D","=");
+  uri = replaceAll(uri, "%26","&");
+  return uri;
+}
+
+function getJSON(uri, index)
+{
+  //url = "https://spreadsheets.google.com/feeds/list/1GS-3Xtr5W_Zxhm55lQLT8lyLLYrPEjF_v7aAShQ2Swc/1/public/values?alt=json";
+  
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", parseURI(uri), true);
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4) {
+      // JSON.parse does not evaluate the attacker's scripts.
+      var resp = JSON.parse(xhr.responseText);
+      
+      if(resp.feed!=null)
+      {
+        console.log(resp.feed.entry);
+        jsonData.obj=resp.feed.entry;
+        jsonData.count = resp.feed.entry.length;
+      }
+      else if(resp.feeds != null)
+      {
+        console.log(resp.feeds);
+        jsonData.obj = resp.feeds;
+        jsonData.count = resp.feeds.length;
+      }
+
+    }
+  }
+  xhr.send();
+}
+
+function getJSONRead(index, name)
+{
+  switch(name)
+  {
+    case "title" : jsonData.data = jsonData.obj[index-1].title.$t; break;
+    case "content" : jsonData.data = jsonData.obj[index-1].content.$t; break;
+    default :
+    var data = jsonData.obj[index-1][name];
+    if(data == undefined)
+      jsonData.data =  JSON.stringify(jsonData.obj[index-1]); 
+    else
+      jsonData.data = jsonData.obj[index-1][name];
+    break;
+  }
+
+  console.log(jsonData.data);
+
+}
+
 function getNewVersion() {
   var xhr = new XMLHttpRequest();
   xhr.open("GET", "http://wf8266.com/wf8266r/api/ota/wfduino", true);
@@ -188,7 +248,7 @@ function getNewVersion() {
     if (xhr.readyState == 4) {
       // JSON.parse does not evaluate the attacker's scripts.
       var resp = JSON.parse(xhr.responseText);
-      $('version').innerText = resp.Version;
+      ELE('version').innerText = resp.Version;
       newVersion = resp.Version.replace('.','');
     }
   }
@@ -237,12 +297,13 @@ onload = function () {
   getNewVersion();
   showMessage('Init...')
   var deviceList = document.getElementById('deviceList');
-  var btnClose = $('btnClose');
-  var btnScratchX = $('btnScratchX');
-  var btnScratch = $('btnScratch');
-  var btnFirmware = $('btnFirmware');
-  var btnScratchTemplate = $('btnScratchTemplate');
-  var btnHex = $('btnHex');
+  var btnClose = ELE('btnClose');
+  var btnScratchX = ELE('btnScratchX');
+  var btnScratch = ELE('btnScratch');
+  var btnFirmware = ELE('btnFirmware');
+  var btnScratchTemplate = ELE('btnScratchTemplate');
+  var btnHex = ELE('btnHex');
+  var btnVirtual = ELE('isVirtual');
   
   var onGetPorts = function (ports) {
     var eligiblePorts = ports.filter(function (port) {
@@ -258,6 +319,10 @@ onload = function () {
     }
 
     setStatus("Ready");
+  }
+  
+  btnVirtual.onchange = function () {
+    isConnectedWFduino = btnVirtual.checked;
   }
 
   btnClose.onclick = function () {
@@ -438,6 +503,8 @@ function doRESTful(url){
       +"\nreadSensor/Voice/Value "+encodeURI(voiceData.Text)
       +"\nvoiceText "+ encodeURI(voiceData.Text)
       +"\nwf8266rState "+ isConnectedWF8266R
+      +"\njsonData "+encodeURI(jsonData.data)
+      +"\njsonCount "+ jsonData.count
       ; 
       break;
     case "pinMode" :
@@ -461,6 +528,8 @@ function doRESTful(url){
         send(cmd+",pin=" + p1 + "&" + parseInt(fre) + "=" + p3+"\r\n");break;
     case "noTone" : send(cmd+",pin=" + p1+"\r\n");break;   
     case "http" : httpRequest(p1,p2); break; 
+    case "json" : getJSON(p1,0); break;
+    case "jsonRead" : getJSONRead(p1,p2); break;
     case "lass" : lass(p1); break;
     case "speak_text" : speak(decodeURI(p1)); break;
     case "speech_text" : speech_text(); break;
@@ -512,7 +581,7 @@ function openSelectedPort() {
     isFirst = false;
     isConnectedWFduino = false;
     isVerchecked = false;
-    $('aversion').innerText = "";
+    ELE('aversion').innerText = "";
     newVersion="";
     arduinVersion="";
     arduinoCMD = "";
@@ -542,6 +611,7 @@ function onOpen(openInfo) {
 };
 
 function send(cmd) {
+  console.log(cmd);
   if(isConnectedWF8266R)
   {
     cmd = "wfduino,"+cmd.replace(",",":").replace("=","~");
@@ -586,7 +656,7 @@ console.log("UART Rx : " + backCMD);
     var index = backCMD.indexOf(".WFduino.Ready");
     if (index > 0) {
       backCMD = backCMD.replace(".WFduino.Ready", "");
-      $('aversion').innerText = backCMD;
+      ELE('aversion').innerText = backCMD;
       arduinVersion = backCMD.replace('.','');
       backCMD = "";
       isVerchecked = true;
@@ -605,14 +675,24 @@ console.log("UART Rx : " + backCMD);
     {
       if(backCMD[0] != '{')
         return;
-      var json = JSON.parse(backCMD);
-      switch(json.Action){
-        case "readGPIO" : var gpios = json.Value.split(','); 
-          for(var i=0;i<Object.keys(gpio).length;i++)
-              gpio[i] = gpios[i];
-          break;
-        case "distance" : distance = json.distance; break;
-        default : break;
+      var json;
+      
+      try{
+        json = JSON.parse(backCMD);
+        
+        switch(json.Action){
+          case "readGPIO" : var gpios = json.Value.split(','); 
+            for(var i=0;i<Object.keys(gpio).length;i++)
+                gpio[i] = gpios[i];
+            break;
+          case "distance" : distance = json.distance; break;
+          default : break;
+        }
+      }
+      catch(e)
+      {
+        console.log(e);
+        arduinoCMD = "";
       }
     }
     else //ScratchX WebSocket

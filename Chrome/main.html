@@ -6,6 +6,7 @@
   <script src="sha1.js"></script>
   <script src="http.js"></script>
   <script src="serial.js"></script>
+  
   <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -13,13 +14,13 @@
   <div id="container">
     <label>
       USB :
-      <select id="deviceList"></select>
+      <select id="deviceList"></select> <input type="checkbox" id="isVirtual">雲端積木</input>
     </label>
 
     <label>
       狀態:
       <span id="status">Loading</span><br/>
-      版本資訊 : <span id="version"></span>(3.0) | Arduino 韌體版本 : <span id="aversion">未連接</span>
+      版本資訊 : <span id="version"></span>(3.1) | Arduino 韌體版本 : <span id="aversion">未連接</span>
     </label>
     
     <label>
@@ -29,7 +30,7 @@
     <label>
       <button id="btnClose">關閉<br/>WFduino</button> <button id="btnScratchX">打開<br/>ScratchX</button> <button id="btnScratch">打開<br/>Scratch2.0</button>  <button id="btnScratchTemplate">範本下載<br/>Scratch2.0</button> <button id="btnFirmware">原始碼<br/>Arduino</button> <button id="btnHex">韌體下載<br/>Arduino</button>
     </label>
-    <center><span class="info">| <a href="http://wf8266.com/wf8266r" target="_blank">WF8266R.js</a> | <a href="http://blog.ilc.edu.tw/blog/blog/868" target="_blank">竹林資訊站</a> |</span></center>
+    <center><span class="info">| <a href="http://wf8266.com/wf8266r/tutorials/65_Sx4ABlocks" target="_blank">WFduino 教學</a> | <a href="http://blog.ilc.edu.tw/blog/blog/868" target="_blank">竹林資訊站</a> |</span></center>
     <div id="image"></div>
 
   </div>
