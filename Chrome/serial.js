@@ -21,7 +21,7 @@ var rec;
 var isConnectedWFduino = false;
 var isFirst = true;
 var voiceData = { Text: '' };
-var jsonData = { data : "", obj : "", count:0};
+var jsonData = { data : "", obj : "", count:0, isRequest:false};
 
    //WF8266R
     var package = { send: 0, recv: 0, millis: 0 };
@@ -189,21 +189,30 @@ function parseURI(uri)
   uri = replaceAll(uri, "%2F","/");
   uri = replaceAll(uri, "%3F","?");
   uri = replaceAll(uri, "%3D","=");
+  uri = replaceAll(uri, "%24","$");
   uri = replaceAll(uri, "%26","&");
   return uri;
 }
 
-function getJSON(uri, index)
-{
-  //url = "https://spreadsheets.google.com/feeds/list/1GS-3Xtr5W_Zxhm55lQLT8lyLLYrPEjF_v7aAShQ2Swc/1/public/values?alt=json";
-  
+function getJSON(uri, index) {
+  if(jsonData.isRequest)
+    return;
+  jsonData.isRequest = true;  
   var xhr = new XMLHttpRequest();
-  xhr.open("GET", parseURI(uri), true);
+  xhr.open("POST", "http://wf8266.com/wf8266r/data/getJSON.aspx", true);
   xhr.onreadystatechange = function () {
     if (xhr.readyState == 4) {
-      // JSON.parse does not evaluate the attacker's scripts.
-      var resp = JSON.parse(xhr.responseText);
-      console.log(resp);
+      parseJSON(xhr.responseText);  
+      jsonData.isRequest = false;
+    }
+  }
+  xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhr.send("url="+uri);
+}
+
+function parseJSON(responseText)
+{
+  var resp = JSON.parse(responseText);
       if(resp.feed!=null)
       {
         console.log(resp.feed.entry);
@@ -216,6 +225,18 @@ function getJSON(uri, index)
         jsonData.obj = resp.feeds;
         jsonData.count = resp.feeds.length;
       }
+      else if(resp.result != null)
+      {
+        console.log(resp.result.records);
+        jsonData.obj = resp.result.records;
+        jsonData.count = resp.result.records.length;
+      }
+      else if(resp.observations != null)
+      {
+        console.log(resp.observations.data);
+        jsonData.obj = resp.observations.data;
+        jsonData.count = resp.observations.data.length;
+      }
       else
       {
         jsonData.obj = resp;
@@ -223,14 +244,13 @@ function getJSON(uri, index)
         if(jsonData.count == undefined)
           jsonData.count = 0;
       }
-
-    }
-  }
-  xhr.send();
 }
 
 function getJSONRead(index, name)
 {  
+  name = parseURI(name);
+  name = decodeURI(name);
+  console.log(name);
   switch(name)
   {
     case "title" : 
@@ -251,24 +271,46 @@ function getJSONRead(index, name)
       data = jsonData.obj[index-1][name];
     else
       data = jsonData.obj[name];
+      
+      console.log(data);
     
     if(data == undefined)
     {
       if(jsonData.count >0)
-        jsonData.data =  JSON.stringify(jsonData.obj[index-1]); 
+        jsonData.data =  replaceAll(JSON.stringify(jsonData.obj[index-1]),"\"","").replace("{","").replace("}",""); 
       else
-        jsonData.data =  JSON.stringify(jsonData.obj); 
+        jsonData.data =  replaceAll(JSON.stringify(jsonData.obj),"\"","").replace("{","").replace("}","");  
     }
     else
     {
       if(jsonData.count > 0)
-        jsonData.data = jsonData.obj[index-1][name];
+      {
+        if(data.$t != null)
+          jsonData.data = data.$t;
+        else
+          jsonData.data = jsonData.obj[index-1][name];
+      }
       else
         jsonData.data = jsonData.obj[name];
     }
     break;
   }
 
+}
+
+function getValueByKey(obj, fieldName)
+{
+  var keys = Object.keys(obj);
+  console.log(keys);
+  var values = Object.values(obj);
+  console.log(values);
+  for(var i=0;i<keys.length;i++)
+  {
+    if(keys[i] == fieldName)
+      return values[i];
+  }
+  
+  return replaceAll(JSON.stringify(jsonData.obj[index-1]),"\"","").replace("{","").replace("}",""); 
 }
 
 function getNewVersion() {
@@ -491,7 +533,7 @@ function doRESTful(url){
       showMessage('Scratch2 已連接');   
       WFduinoType = 0; 
       timeManager.millis = (new Date).getTime();
-      var readTimer = 100;
+      var readTimer = 200;
       if(isConnectedWF8266R)
         readTimer = 5000;
       if( (new Date).getTime() - timeManager.lastTime > readTimer)
@@ -642,6 +684,7 @@ function onOpen(openInfo) {
 
 function send(cmd) {
   console.log(cmd);
+  
   if(isConnectedWF8266R)
   {
     cmd = "wfduino,"+cmd.replace(",",":").replace("=","~");
@@ -704,14 +747,17 @@ console.log("UART Rx : " + backCMD);
     if(WFduinoType == 0) //Scratch2 HTTP
     {
       if(backCMD[0] != '{')
+      {
+        console.log("backCMD != {");
         return;
+      }
       var json;
       
       try{
         json = JSON.parse(backCMD);
         
         switch(json.Action){
-          case "readGPIO" : var gpios = json.Value.split(','); 
+          case "readGPIO" : arduinoCMD = ""; var gpios = json.Value.split(','); 
             for(var i=0;i<Object.keys(gpio).length;i++)
                 gpio[i] = gpios[i];
             break;

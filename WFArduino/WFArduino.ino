@@ -11,9 +11,9 @@
 #include <SoftwareSerial.h>
 SoftwareSerial wf8266r(2,4); // RX 2, TX 4
 
-const char* version = "2016.05.13";
+const char* version = "2016.05.19";
 Servo myservo;
-bool isRead = false;
+bool isRead = false, isGPIORead = false;
 const uint8_t maxLength = 20;
 uint8_t serialIndex = 0, serialIndexWF = 0;
 char serialBuffer[50], serialBufferWF[50];
@@ -112,6 +112,10 @@ void doCommand() {
   }
   else if (cmd == "readGPIO")
   {
+    if(isGPIORead)
+      return;
+    isGPIORead = true;
+      
     uint16_t gpios[22];
     for (uint8_t i = 0; i < 22; i++)
     {
@@ -141,6 +145,7 @@ void doCommand() {
       Serial.flush();
       Serial.println(rtn);
     }
+    isGPIORead = false;
   }
   else if (cmd == "digitalWrite")
   {
