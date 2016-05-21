@@ -20,6 +20,7 @@ char serialBuffer[50], serialBufferWF[50];
 uint8_t pinState[22] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //0:Read 1:Disable
 String cmd = "";
 bool isWF8266R = false;
+unsigned long int hartBit = 0;
 
 void setup() {
   reset();
@@ -33,6 +34,12 @@ void setup() {
 void loop() {
   listen();
   listenWF8266R();
+  if (millis() - hartBit > 500)
+  {
+    hartBit = millis();
+    cmd = "readGPIO";
+    doCommand();
+  }
 }
 
 void listen() {
@@ -52,6 +59,10 @@ void listen() {
     {
       //save to buffer
       serialBuffer[serialIndex++] = (char)val;
+      if (serialIndex > 49)
+        serialIndex = 0;
+      if (serialIndexWF > 49)
+        serialIndexWF = 0;
     }
   }
 }

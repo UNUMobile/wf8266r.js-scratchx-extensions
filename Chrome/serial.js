@@ -11,7 +11,7 @@ var newVersion,arduinVersion;
 var gpio = {0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0,10:0,11:0,12:0,13:0,14:0,15:0,16:0,17:0,18:0,19:0,20:0,21:0};
 var distance=0;
 var WFduinoType = 1; //0: scratch 1:scratchx
-var timeManager = { lastTime: 0, startTime: 0, millis: 0, lastTimeSend:0, 
+var timeManager = { lastTime: 0, startTime: 0, millis: 0, lastTimeSend:0, cmdTime:1000, lastCMD:"",
   startTimeWF8266R:0, lastTimeWF8266R:0, millisWF8266R:0 };
 var restfullGet="";
 var lassData = { C: 0, H: 0, PM25: 0 };
@@ -533,7 +533,7 @@ function doRESTful(url){
       showMessage('Scratch2 已連接');   
       WFduinoType = 0; 
       timeManager.millis = (new Date).getTime();
-      var readTimer = 200;
+      /*var readTimer = 200;
       if(isConnectedWF8266R)
         readTimer = 5000;
       if( (new Date).getTime() - timeManager.lastTime > readTimer)
@@ -544,6 +544,7 @@ function doRESTful(url){
         else
           send("readGPIO\r\n");
       }
+      */
       message = "digitalRead/0 "+gpio[0]
       +"\ndigitalRead/1 "+gpio[1]
       +"\ndigitalRead/2 "+gpio[2]
@@ -683,7 +684,16 @@ function onOpen(openInfo) {
 };
 
 function send(cmd) {
-  console.log(cmd);
+  if(!isConnectedWFduino)
+    return;
+  
+  if( ((new Date).getTime() - timeManager.cmdTime < 150) && timeManager.lastCMD == cmd)
+    return;
+  
+  timeManager.cmdTime = (new Date).getTime();  
+  timeManager.lastCMD = cmd;
+    
+  //console.log(cmd);
   
   if(isConnectedWF8266R)
   {
