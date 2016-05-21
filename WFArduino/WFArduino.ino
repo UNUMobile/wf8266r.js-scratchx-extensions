@@ -9,19 +9,20 @@
 */
 #include <Servo.h>
 #include <SoftwareSerial.h>
-SoftwareSerial wf8266r(2,4); // RX 2, TX 4
+SoftwareSerial wf8266r(2, 4); // RX 2, TX 4
 
-const char* version = "2016.05.19";
+const char* version = "2016.05.20";
 Servo myservo;
 bool isRead = false, isGPIORead = false;
 const uint8_t maxLength = 20;
 uint8_t serialIndex = 0, serialIndexWF = 0;
 char serialBuffer[50], serialBufferWF[50];
-uint8_t pinState[22] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+uint8_t pinState[22] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //0:Read 1:Disable
 String cmd = "";
 bool isWF8266R = false;
 
 void setup() {
+  reset();
   Serial.begin(115200);
   wf8266r.begin(9600);
   Serial.flush();
@@ -106,18 +107,24 @@ void doCommand() {
   if (cmd == "pinMode")
   {
     if (v1.toInt() == 0)
+    {
       pinMode(p1.toInt(), INPUT);
+      pinState[p1.toInt()] = 0;
+    }
     else
+    {
       pinMode(p1.toInt(), OUTPUT);
+      pinState[p1.toInt()] = 1;
+    }
   }
   else if (cmd == "readGPIO")
   {
-    if(isGPIORead)
+    if (isGPIORead)
       return;
     isGPIORead = true;
-      
+
     uint16_t gpios[22];
-    for (uint8_t i = 0; i < 22; i++)
+    for (uint8_t i = 2; i < 22; i++)
     {
       if (i < 14)
       {
@@ -256,7 +263,7 @@ String servo(uint8_t pin, uint8_t degree) {
 }
 
 String toneF(uint8_t pin, uint16_t f, long t) {
-  pinMode(pin,OUTPUT);
+  pinMode(pin, OUTPUT);
   tone(pin, f, t);
   return "\"f\":" + String(f);
 }
@@ -269,9 +276,16 @@ String noToneF(uint8_t pin)
 
 void reset()
 {
-  for (uint8_t i = 0; i < 14; i++)
+  for (uint8_t i = 2; i < 14; i++)
   {
+    pinMode(i, OUTPUT);
     digitalWrite(i, LOW);
+    pinState[i] = 0;
+  }
+
+  for (uint8_t i = 14; i < 22; i++)
+  {
+    pinMode(i, INPUT);
     pinState[i] = 0;
   }
 }
