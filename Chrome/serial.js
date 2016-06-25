@@ -57,7 +57,7 @@ var jsonData = { data : "", obj : "", count:0, isRequest:false};
             if ((timeManager.millisWF8266R - timeManager.lastTimeWF8266R) > 100) {
                 timeManager.lastTimeWF8266R = (new Date).getTime();
                 socketCounter++;
-                console.log(cmd);
+                //console.log(cmd);
                 connectionWF8266R.send(cmd);
             }
         }
@@ -97,7 +97,7 @@ var jsonData = { data : "", obj : "", count:0, isRequest:false};
                 socketCounter--;
                 package.recv++;
                 isConnectedWF8266R = true;
-                jsonObj = JSON.parse(e.data.substring(0, e.data.length - 1));
+                jsonObj = JSON.parse(e.data.substring(0, e.data.length - 1).replace("\r\n",""));
             }
 
             console.log(jsonObj);
@@ -613,7 +613,7 @@ function doRESTful(url){
       if(isConnectedWF8266R)
         sendWF8266R("servo,pin=" + p1 + "&degree=" + p2);
       else
-        send("wtsen,type=SERVO&"+p1+"="+p2);
+        send("wtsen,type=SERVO&"+p1+"="+p2+"\r\n");
       break;
     case "wfgpio" :
         if(decodeURI(p2)=="數位")
@@ -628,7 +628,7 @@ function doRESTful(url){
                 sendWF8266R("gpio/pwm," + p1 + "=" + p3);
         }
         else
-            send("wtgpio,type="+p2+"&"+p1+"="+p3);
+            send("wtgpio,type="+p2+"&"+p1+"="+p3+"\r\n");
         break;
     default : break;
   }

@@ -11,13 +11,13 @@
 #include <SoftwareSerial.h>
 SoftwareSerial wf8266r(2, 4); // RX 2, TX 4
 
-const char* version = "2016.05.20";
+const char* version = "2016.06.25";
 Servo myservo;
 bool isRead = false, isGPIORead = false;
 const uint8_t maxLength = 20;
 uint8_t serialIndex = 0, serialIndexWF = 0;
 char serialBuffer[50], serialBufferWF[50];
-uint8_t pinState[22] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //0:Read 1:Disable
+uint8_t pinState[22] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}; //0:Read 1:Disable
 String cmd = "";
 bool isWF8266R = false;
 unsigned long int heartbeat = 0;
@@ -27,6 +27,7 @@ void setup() {
   Serial.begin(115200);
   wf8266r.begin(9600);
   Serial.flush();
+  wf8266r.flush();
   Serial.print(version);
   Serial.println(".WFduino.Ready");
 }
@@ -141,16 +142,20 @@ void doCommand() {
       {
         if (pinState[i] == 0)
           gpios[i] = digitalRead(i);
+        else
+          gpios[i] = 0;
       }
       else
       {
         if (pinState[i] == 0)
           gpios[i] = analogRead(i);
+        else
+          gpios[i] = 0;
       }
     }
     char buf[100];
-    sprintf(buf, "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d",
-            gpios[0], gpios[1], gpios[2], gpios[3], gpios[4], gpios[5], gpios[6], gpios[7], gpios[8], gpios[9], gpios[10],
+    sprintf(buf, "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d",
+            gpios[2], gpios[3], gpios[4], gpios[5], gpios[6], gpios[7], gpios[8], gpios[9], gpios[10],
             gpios[11], gpios[12], gpios[13], gpios[14], gpios[15], gpios[16], gpios[17], gpios[18], gpios[19], gpios[20], gpios[21]);
     String rtn = "{\"Action\":\"" + cmd + "\",\"Value\":\"" + String(buf) + "\"}";
     if (isRead)
@@ -287,17 +292,17 @@ String noToneF(uint8_t pin)
 
 void reset()
 {
-  for (uint8_t i = 2; i < 14; i++)
+  for (uint8_t i = 3; i < 14; i++)
   {
     pinMode(i, OUTPUT);
     digitalWrite(i, LOW);
-    pinState[i] = 0;
+    pinState[i] = 1;
   }
 
   for (uint8_t i = 14; i < 22; i++)
   {
     pinMode(i, INPUT);
-    pinState[i] = 0;
+    pinState[i] = 1;
   }
 }
 
