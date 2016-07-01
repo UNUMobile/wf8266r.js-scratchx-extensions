@@ -11,7 +11,7 @@
 #include <SoftwareSerial.h>
 SoftwareSerial wf8266r(2, 4); // RX 2, TX 4
 
-const char* version = "2016.06.25";
+const char* version = "2016.07.01";
 Servo myservo;
 bool isRead = false, isGPIORead = false;
 const uint8_t maxLength = 20;
@@ -154,8 +154,8 @@ void doCommand() {
       }
     }
     char buf[100];
-    sprintf(buf, "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d",
-            gpios[2], gpios[3], gpios[4], gpios[5], gpios[6], gpios[7], gpios[8], gpios[9], gpios[10],
+    sprintf(buf, "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d",
+            0,0,gpios[2], gpios[3], gpios[4], gpios[5], gpios[6], gpios[7], gpios[8], gpios[9], gpios[10],
             gpios[11], gpios[12], gpios[13], gpios[14], gpios[15], gpios[16], gpios[17], gpios[18], gpios[19], gpios[20], gpios[21]);
     String rtn = "{\"Action\":\"" + cmd + "\",\"Value\":\"" + String(buf) + "\"}";
     if (isRead)
