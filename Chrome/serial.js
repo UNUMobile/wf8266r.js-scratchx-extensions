@@ -585,9 +585,9 @@ function doRESTful(url){
             p2 = 0;
         else
             p2 = 1;
- 
-        send(cmd+"," + p1 + "=" + p2+"\r\n");break;
-    case "digitalWrite" : send(cmd+"," + p1 + "=" + p2+"\r\n");break;
+
+        send(cmd+"," + parseAPin(p1) + "=" + p2+"\r\n");break;
+    case "digitalWrite" : send(cmd+"," + parseAPin(p1) + "=" + p2+"\r\n");break;
     case "analogWrite" : send(cmd+"," + p1 + "=" + p2+"\r\n");break;
     case "distance" : send(cmd+",echo=" + p1 + "&trig=" + p2+"\r\n");break;
     case "servo" : send(cmd+",pin=" + p1 + "&degree=" + p2+"\r\n");break;
@@ -634,6 +634,16 @@ function doRESTful(url){
   }
   
   return message;
+}
+
+function parseAPin(pin)
+{
+  if(pin[0] == "A")
+  {
+    return pin.substring(3,5);
+  }
+  else
+    return pin;
 }
 
 function setStatus(status) {
