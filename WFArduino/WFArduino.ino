@@ -11,7 +11,7 @@
 #include <SoftwareSerial.h>
 SoftwareSerial wf8266r(2, 4); // RX 2, TX 4
 
-const char* version = "2016.07.01";
+const char* version = "2016.07.08";
 Servo myservo;
 bool isRead = false, isGPIORead = false;
 const uint8_t maxLength = 20;
@@ -134,7 +134,7 @@ void doCommand() {
       pinState[p1.toInt()] = 1;
     }
   }
-  else if ( cmd = "heartMode")
+  else if ( cmd == "heartMode")
   {
     heartbeatEnabled = p1.toInt() == 0 ? false : true;
   }
