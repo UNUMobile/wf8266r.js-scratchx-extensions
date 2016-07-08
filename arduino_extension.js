@@ -39,10 +39,10 @@
             value = 0;
         else
             value = 1;
-        send("pinMode," + pin + "=" + value);
+        send("pinMode," + parseAPin(pin) + "=" + value);
     }
     ext.digitalWrite = function (pin, value) {
-        send("digitalWrite," + pin + "=" + value);
+        send("digitalWrite," + parseAPin(pin) + "=" + value);
     }
     ext.analogWrite = function (pin, value) {
         send("analogWrite," + pin + "=" + value);
@@ -192,6 +192,16 @@
         return distance;
     }
 
+    function parseAPin(pin)
+    {
+    if(pin[0] == "A")
+    {
+        return pin.substring(3,5);
+    }
+    else
+        return pin;
+    }
+
     function send(cmd) {
         if(isConnectedWF8266R)
         {
@@ -293,16 +303,16 @@
     var descriptor = {
         blocks: [
             [' ', '連接 WFduino', 'connect'],
-            [' ', '腳位 %d.gpio 模式設為 %m.mode', 'pinMode', 13, 'OUTPUT'],
-            [' ', '腳位 %d.gpio 數位輸出 %m.level', 'digitalWrite', 13, 1],
+            [' ', '腳位 %d.gpioPin 模式設為 %m.mode', 'pinMode', 13, 'OUTPUT'],
+            [' ', '腳位 %d.gpioPin 數位輸出 %m.level', 'digitalWrite', 13, 1],
             [' ', '腳位 %d.pwmGPIO 類比輸出 %n', 'analogWrite', 3, 255],
             ['r', '讀取數位腳位 %d.gpio ', 'digitalRead', 13],
             ['r', '讀取類比腳位 A%d.analogGPIO ', 'analogRead', '0'],
-            [' ', '腳位 %d.gpio 播放音調，頻率為 %d.tone 時間為 %n ms', 'tone', 5, 'C2,523', 500],
-            [' ', '關閉腳位 %d.gpio 的音調', 'noTone', 5],
+            [' ', '腳位 %d.pwmGPIO 播放音調，頻率為 %d.tone 時間為 %n ms', 'tone', 5, 'C2,523', 500],
+            [' ', '關閉腳位 %d.pwmGPIO 的音調', 'noTone', 5],
             [' ', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio', 'distance', 5, 4],
             ['r', '讀取超音波感測器回傳距離', 'readDistance'],
-            [' ', '伺服馬達為腳位 %d.gpio， 轉動角度為 %n 度', 'servo', 5, 90],
+            [' ', '伺服馬達為腳位 %d.pwmGPIO 轉動角度為 %n 度', 'servo', 5, 90],
             [' ', '%m.flushType 清空', 'flush', 'Voice'],
             ['w', '說 %s', 'speak_text', 'ScratchX 遇上 WFduino'], 
             [" ", "監聽語音", "speech_text"],
@@ -329,6 +339,7 @@
             'pwmGPIO': ['3', '5', '6', '9', '10', '11'],
             'analogGPIO': ['0', '1', '2', '3', '4', '5', '6', '7'],
             'restfulType': ['GET', 'POST'],
+            'gpioPin': ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', 'A0(14)', 'A1(15)', 'A2(16)', 'A3(17)', 'A4(18)', 'A5(19)', 'A6(20)', 'A7(21)'],
             'gpio': ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13'],
             'tone':['C1,262','C1#,277','D1,294','D1#,311','E1,330','F1,349','F1#,370','G1,392','G1#,415','A1,440','A1#,466','B1,494'
             ,'C2,523','C2#,554','D2,587','D2#,622','E2,659','F2,698','F2#,740','G2,784','G2#,831','A2,880','A2#,932','B2,988'
