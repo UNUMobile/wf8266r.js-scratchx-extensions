@@ -276,6 +276,7 @@
         connection = new WebSocket('ws://' + ip + ':' + port);
         connection.onopen = function (e) {
             isConnected = true;
+            send("heartMode,0=");
         };
         connection.onclose = function (e) {
             isConnected = false;
@@ -286,7 +287,7 @@
                 return;
 
             var jsonObj = JSON.parse(e.data.substring(0, e.data.length - 1));
-            console.log(jsonObj);
+
             switch (jsonObj.Action) {
                 case "digitalRead": eval('gpio.D' + jsonObj.Pin + '=' + jsonObj.Value); break;
                 case "analogRead": eval('gpio.A' + jsonObj.Pin + '=' + jsonObj.Value); break;

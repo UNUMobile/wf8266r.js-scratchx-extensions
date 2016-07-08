@@ -21,6 +21,7 @@ uint8_t pinState[22] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 String cmd = "";
 bool isWF8266R = false;
 unsigned long int heartbeat = 0;
+bool heartbeatEnabled = true;
 
 void setup() {
   reset();
@@ -35,11 +36,15 @@ void setup() {
 void loop() {
   listen();
   listenWF8266R();
-  if (millis() - heartbeat > 300)
+
+  if (heartbeatEnabled)
   {
-    heartbeat = millis();
-    cmd = "readGPIO";
-    doCommand();
+    if (millis() - heartbeat > 300)
+    {
+      heartbeat = millis();
+      cmd = "readGPIO";
+      doCommand();
+    }
   }
 }
 
@@ -129,6 +134,10 @@ void doCommand() {
       pinState[p1.toInt()] = 1;
     }
   }
+  else if ( cmd = "heartMode")
+  {
+    heartbeatEnabled = p1.toInt() == 0 ? false : true;
+  }
   else if (cmd == "readGPIO")
   {
     if (isGPIORead)
@@ -155,7 +164,7 @@ void doCommand() {
     }
     char buf[100];
     sprintf(buf, "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d",
-            0,0,gpios[2], gpios[3], gpios[4], gpios[5], gpios[6], gpios[7], gpios[8], gpios[9], gpios[10],
+            0, 0, gpios[2], gpios[3], gpios[4], gpios[5], gpios[6], gpios[7], gpios[8], gpios[9], gpios[10],
             gpios[11], gpios[12], gpios[13], gpios[14], gpios[15], gpios[16], gpios[17], gpios[18], gpios[19], gpios[20], gpios[21]);
     String rtn = "{\"Action\":\"" + cmd + "\",\"Value\":\"" + String(buf) + "\"}";
     if (isRead)
