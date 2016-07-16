@@ -11,13 +11,14 @@
 #include <SoftwareSerial.h>
 SoftwareSerial wf8266r(2, 4); // RX 2, TX 4
 
-const char* version = "2016.07.08";
-Servo myservo;
+const char* version = "2016.07.16";
+Servo myservo2,myservo3,myservo4,myservo5,myservo6,myservo7,myservo8,myservo9,myservo10,myservo11,myservo12,myservo13;
 bool isRead = false, isGPIORead = false;
 const uint8_t maxLength = 20;
 uint8_t serialIndex = 0, serialIndexWF = 0;
 char serialBuffer[50], serialBufferWF[50];
 uint8_t pinState[22] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}; //0:Read 1:Disable
+
 String cmd = "";
 bool isWF8266R = false;
 unsigned long int heartbeat = 0;
@@ -276,12 +277,25 @@ String readDistance(uint8_t echoPin, uint8_t trigPin)
   return "\"distance\":" + String(distance);
 }
 
-String servo(uint8_t pin, uint8_t degree) {
+String servo(uint8_t pin, uint16_t degree) {
   pinMode(pin, OUTPUT);
-
-  //myservo.attach(action.toInt());
-  myservo.attach(pin, 570, 2500);
-  myservo.write(degree);
+  uint16_t s=570,e=2500;
+  switch(pin)
+  {
+    case 2 : myservo2.attach(pin, s, e); myservo2.write(degree); break;
+    case 3 : myservo3.attach(pin, s, e); myservo3.write(degree); break;
+    case 4 : myservo4.attach(pin, s, e); myservo4.write(degree); break;
+    case 5 : myservo5.attach(pin, s, e); myservo5.write(degree); break;
+    case 6 : myservo6.attach(pin, s, e); myservo6.write(degree); break;
+    case 7 : myservo7.attach(pin, s, e); myservo7.write(degree); break;
+    case 8 : myservo8.attach(pin, s, e); myservo8.write(degree); break;
+    case 9 : myservo9.attach(pin, s, e); myservo9.write(degree); break;
+    case 10 : myservo10.attach(pin, s, e); myservo10.write(degree); break;
+    case 11 : myservo11.attach(pin, s, e); myservo11.write(degree); break;
+    case 12 : myservo12.attach(pin, s, e); myservo12.write(degree); break;
+    case 13 : myservo13.attach(pin, s, e); myservo13.write(degree); break;
+  }
+  
 
   delay(15);
   return "\"degree\":" + String(degree);
