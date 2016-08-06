@@ -11,7 +11,7 @@ var newVersion,arduinVersion;
 var gpio = {0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0,10:0,11:0,12:0,13:0,14:0,15:0,16:0,17:0,18:0,19:0,20:0,21:0};
 var distance=0;
 var WFduinoType = 1; //0: scratch 1:scratchx
-var timeManager = { lastTime: 0, startTime: 0, millis: 0, lastTimeSend:0, cmdTime:1000, lastCMD:"",
+var timeManager = { lastTime: 0, startTime: 0, millis: 0, lastTimeSend:0, cmdTime:1000, lastCMD:"", lastResponse: 0,
   startTimeWF8266R:0, lastTimeWF8266R:0, millisWF8266R:0 };
 var restfullGet="";
 var lassData = { C: 0, H: 0, PM25: 0 };
@@ -19,6 +19,7 @@ var page={url:"",count:0};
 var speakText = "";
 var rec;
 var isConnectedWFduino = false;
+var isCloud = false;
 var isFirst = true;
 var voiceData = { Text: '' };
 var jsonData = { data : "", obj : "", count:0, isRequest:false};
@@ -379,7 +380,8 @@ onload = function () {
   
   var onGetPorts = function (ports) {
     var eligiblePorts = ports.filter(function (port) {
-      return (!port.path.match(/[Bb]luetooth/) && port.path.match(/\/dev\/tty/)) || port.path.match(/COM/);
+      return (port.path.match(/\/dev\/tty/)) || port.path.match(/COM/);
+      //return (!port.path.match(/[Bb]luetooth/) && port.path.match(/\/dev\/tty/)) || port.path.match(/COM/);
     });
 
     for (var i = 0; i < eligiblePorts.length; i++) {
@@ -394,7 +396,7 @@ onload = function () {
   }
   
   btnVirtual.onchange = function () {
-    isConnectedWFduino = btnVirtual.checked;
+    isCloud = btnVirtual.checked;
   }
 
   btnClose.onclick = function () {
@@ -523,6 +525,16 @@ function doRESTful(url){
     
   if(cmd != "poll")  
     console.log(cmd + " " + p1 + " " + p2 + " " + p3);
+  else
+  {
+    if((new Date).getTime() - timeManager.lastResponse > 1000)
+    {
+      isConnectedWFduino = false;
+      if(isCloud)
+        isConnectedWFduino = true;
+    }
+  }
+
     
   switch(cmd)
   {
@@ -630,6 +642,12 @@ function doRESTful(url){
         else
             send("wtgpio,type="+p2+"&"+p1+"="+p3+"\r\n");
         break;
+      case "wfirsendCode" :
+      if(isConnectedWF8266R)
+        sendWF8266R("ir/sendCode,pin=" + p1 + "&code=" + p2);
+      else
+        send("wtirsc,type=IRSendCode&"+p1+"="+p2+"\r\n");
+      break;
     default : break;
   }
   
@@ -658,7 +676,7 @@ function openSelectedPort() {
   var deviceList = document.getElementById('deviceList');
   var selectedPort = deviceList.options[deviceList.selectedIndex].value;
   if(selectedPort != '')
-    chrome.serial.connect(selectedPort, { bitrate: 115200 }, onOpen);
+    chrome.serial.connect(selectedPort, { bitrate: 57600 }, onOpen);
   else
   {
     isFirst = false;
@@ -743,7 +761,8 @@ function getCMD(cmd) {
 
 function onRead(readInfo) {
   var backCMD = getCMD(readInfo.data);
-console.log("UART Rx : " + backCMD);
+  timeManager.lastResponse = (new Date).getTime();
+  console.log("UART Rx : " + backCMD);
   if (!isVerchecked) //version check
   {
     var index = backCMD.indexOf(".WFduino.Ready");

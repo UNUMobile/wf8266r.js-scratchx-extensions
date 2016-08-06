@@ -25,7 +25,7 @@
             ["r", "WF8266R 連線狀態", "wf8266rState"],
             [" ", "WF8266R 腳位 %d.wfgpio %m.wfgpioType 輸出 %n", "wfgpio", 5, "數位", 1],
             [" ", "WF8266R SERVO 伺服馬達腳位 %d.wfgpio 轉 %n 度", "wfcsenservo", 5, 90],
-            
+            [" ", "紅外線發射器，接在腳位 %d.wfgpio 發送 NEC 編碼 %s", "wfirsendCode", 15, ""],
             
             [" ", "HTTP %m.restfulType 到 %s", "http", "POST", "http://api.thingspeak.com/update?key=xxxxxx&field1=1&field2=2"],
             [" ", "HTTP %m.restfulType 從 %s", "http", "GET", "http://api.thingspeak.com/apps/thinghttp/send_request?api_key=EM18B52PSHXZB4DD"],

@@ -26,7 +26,7 @@ bool heartbeatEnabled = true;
 
 void setup() {
   reset();
-  Serial.begin(115200);
+  Serial.begin(57600);
   wf8266r.begin(9600);
   Serial.flush();
   wf8266r.flush();
@@ -223,9 +223,16 @@ void doCommand() {
   }
   else if (cmd == "wtsen")
   {
-    String rtn = "{\"Action\":\"" + cmd + "\",\"AT\":" + p1 + ",\"Degree\":" + v2 + "}";
+    String rtn = "{\"Action\":\"" + cmd + "\",\"Pin\":" + p2 + ",\"Degree\":" + v2 + "}";
     Serial.println(rtn);
     rtn = "WTSEN+" + v1 + ":" + p2 + ",VALUE:" + v2;
+    wf8266r.println(rtn);
+  }
+  else if (cmd == "wtirsc") //IR send NEC code
+  {
+    String rtn = "{\"Action\":\"" + cmd + "\",\"Pin\":" + p2 + ",\"Code\":\"" + v2 + "\"}";
+    Serial.println(rtn);
+    rtn = "WTSEN+" + v1 + ":" + p2 + ",DATA:" + v2;
     wf8266r.println(rtn);
   }
   else if (cmd == "distance")
