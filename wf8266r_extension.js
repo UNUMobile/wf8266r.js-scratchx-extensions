@@ -107,7 +107,7 @@
     };
 
     ext.irsendCode = function (pin, code) {
-        sendCommand("ir/send,pin=" + pin + "&code=" + code);
+        sendCommand("ir/sendCode,pin=" + pin + "&code=" + code);
     };
 
     ext.irstop = function () {
