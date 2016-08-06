@@ -106,6 +106,10 @@
         sendCommand("ir/send,pin=" + pin + "&index=" + index);
     };
 
+    ext.irsendCode = function (pin, code) {
+        sendCommand("ir/send,pin=" + pin + "&code=" + index);
+    };
+
     ext.irstop = function () {
         sendCommand("ir/stop");
     };
@@ -352,6 +356,7 @@
             ['r', '語音文字', 'voiceText'],
 
             [' ', '紅外線發射器，接在腳位 %d.gpio 發送位址 %n 的資料', 'irsend', 15, 0],
+            [' ', '紅外線發射器，接在腳位 %d.gpio 發送 NEC 編碼 %s', 'irsendCode', 15, ''],
             [' ', '停止紅外線接收', 'irstop'],
             ['r', '讀取紅外線接收器，接在腳位 %d.gpio', 'irrecv', 14],
             ['r', '讀取數位腳位 %d.gpio', 'read', 5],
