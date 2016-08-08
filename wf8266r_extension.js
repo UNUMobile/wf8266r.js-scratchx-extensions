@@ -49,7 +49,7 @@
 
     function getIRHttp(pin) {
         $.ajax({
-            url: 'http://'+ ip + '/ir/send?pin=' + pin +'&code='+code,
+            url: 'http://'+ ip + '/ir/code?pin=' + pin,
             success: function (data) {
                 irCode = data.code;
             },
