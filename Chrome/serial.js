@@ -23,6 +23,7 @@ var isCloud = false;
 var isFirst = true;
 var voiceData = { Text: '' };
 var jsonData = { data : "", obj : "", count:0, isRequest:false};
+var irCode = "";
 
    //WF8266R
     var package = { send: 0, recv: 0, millis: 0 };
@@ -363,6 +364,20 @@ function irSendHttp(pin, code) {
   xhr.send();
 }
 
+function irGetHttp(pin) {
+
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", 'http://'+ ip + '/ir/code?pin=' + pin, true);
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4) {
+      // JSON.parse does not evaluate the attacker's scripts.
+      var jsonObj = JSON.parse(xhr.responseText);
+      irCode = jsonObj.code;
+    }
+  }
+  xhr.send();
+}
+
 function lass(device) {
 
   var xhr = new XMLHttpRequest();
@@ -604,6 +619,7 @@ function doRESTful(url){
       +"\nwf8266rState "+ isConnectedWF8266R
       +"\njsonData "+encodeURI(jsonData.data)
       +"\njsonCount "+ jsonData.count
+      +"\nwfircode "+ irCode
       ; 
       break;
     case "pinMode" :
@@ -656,7 +672,7 @@ function doRESTful(url){
         else
             send("wtgpio,type="+p2+"&"+p1+"="+p3+"\r\n");
         break;
-      case "wfirsendCode" :
+    case "wfirsendCode" :
       if(isConnectedWF8266R)
       {
         if(p2.length > 8)
@@ -667,6 +683,12 @@ function doRESTful(url){
       else
         send("wtirsc,type=IRSendCode&"+p1+"="+p2+"\r\n");
       break;
+    case "wfirrecv" :
+      if(isConnectedWF8266R)
+      {
+          irGetHttp(p1);
+      }
+      break;  
     default : break;
   }
   
