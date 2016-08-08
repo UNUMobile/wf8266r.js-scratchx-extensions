@@ -349,6 +349,20 @@ function httpRequest(_type,uri) {
   }
   xhr.send();
 }
+
+function irSendHttp(pin, code) {
+
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", 'http://'+ ip + '/ir/send?pin=' + pin +'&code='+code, true);
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4) {
+      // JSON.parse does not evaluate the attacker's scripts.
+      
+    }
+  }
+  xhr.send();
+}
+
 function lass(device) {
 
   var xhr = new XMLHttpRequest();
@@ -644,7 +658,12 @@ function doRESTful(url){
         break;
       case "wfirsendCode" :
       if(isConnectedWF8266R)
-        sendWF8266R("ir/sendCode,pin=" + p1 + "&code=" + p2);
+      {
+        if(p2.length > 8)
+          irSendHttp(p1,p2);
+        else
+          sendWF8266R("ir/sendCode,pin=" + p1 + "&code=" + p2);
+      }
       else
         send("wtirsc,type=IRSendCode&"+p1+"="+p2+"\r\n");
       break;

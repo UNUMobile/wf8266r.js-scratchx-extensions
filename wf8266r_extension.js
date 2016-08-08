@@ -36,6 +36,17 @@
 
     }
 
+    function sendIRHttp(pin, code) {
+        $.ajax({
+            url: 'http://'+ ip + '/ir/send?pin=' + pin +'&code='+code,
+            success: function (data) {
+                
+            },
+            error: function (e) {
+            }
+        });
+    };
+
     // Cleanup function when the extension is unloaded
     ext._shutdown = function () {
         //console.log("shutdown");
@@ -107,7 +118,10 @@
     };
 
     ext.irsendCode = function (pin, code) {
-        sendCommand("ir/sendCode,pin=" + pin + "&code=" + code);
+        if(code.length > 8)
+            sendIRHttp(pin, code);
+        else
+            sendCommand("ir/sendCode,pin=" + pin + "&code=" + code);
     };
 
     ext.irstop = function () {
