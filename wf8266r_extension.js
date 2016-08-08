@@ -47,6 +47,17 @@
         });
     };
 
+    function getIRHttp(pin) {
+        $.ajax({
+            url: 'http://'+ ip + '/ir/send?pin=' + pin +'&code='+code,
+            success: function (data) {
+                irCode = data.code;
+            },
+            error: function (e) {
+            }
+        });
+    };
+
     // Cleanup function when the extension is unloaded
     ext._shutdown = function () {
         //console.log("shutdown");
@@ -109,7 +120,8 @@
     };
 
     ext.irrecv = function (pin) {
-        sendCommand("ir/code,pin=" + pin);
+        getIRHttp(pin);
+        //sendCommand("ir/code,pin=" + pin);
         return irCode;
     };
 
