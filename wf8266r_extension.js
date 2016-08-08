@@ -51,9 +51,11 @@
         $.ajax({
             url: 'http://'+ ip + '/ir/code?pin=' + pin,
             success: function (data) {
+                console.log(data);
                 irCode = data.code;
             },
             error: function (e) {
+                console.log(e);
             }
         });
     };
