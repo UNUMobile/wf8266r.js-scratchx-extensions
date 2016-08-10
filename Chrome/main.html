@@ -6,6 +6,7 @@
   <script src="sha1.js"></script>
   <script src="http.js"></script>
   <script src="serial.js"></script>
+  <script src="bluetooth.js"></script>
   
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -13,14 +14,14 @@
 <body>
   <div id="container">
     <label>
-      PORT :
-      <select id="deviceList"></select> <input type="checkbox" id="isVirtual">雲端積木</input>
+       <select id="deviceType"><option value="USB">USB</option><option value="Bluetooth">藍芽</option></select>
+      <select id="deviceList"></select><select id="blueList"></select> <input type="checkbox" id="isVirtual">雲端積木</input>
     </label>
 
     <label>
       狀態 :
       <span id="status">Loading</span><br/>
-      版本資訊 : <span id="version"></span>(4.0) | Arduino 韌體版本 : <span id="aversion">未連接</span>
+      版本資訊 : <span id="version"></span>(4.1) | Arduino 韌體版本 : <span id="aversion">未連接</span>
     </label>
     
     <label>

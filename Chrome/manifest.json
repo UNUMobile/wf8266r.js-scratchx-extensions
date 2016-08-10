@@ -1,6 +1,6 @@
 {
   "name": "WFduino",
-  "version": "4.0",
+  "version": "4.1",
   "manifest_version": 2,
   "minimum_chrome_version": "23",
   "description": "WF8266R.js + Arduino for Scratch ScratchX Extension",
@@ -22,6 +22,7 @@
       ]
     }
   },
+  "bluetooth": { "uuids":["00001101-0000-1000-8000-00805f9b34fb"],"socket": true},
   "icons": {
     "16": "assets/icon-16x16.jpg",
     "48": "assets/icon-48x48.jpg",

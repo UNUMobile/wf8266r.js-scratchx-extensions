@@ -24,6 +24,7 @@ var isFirst = true;
 var voiceData = { Text: '' };
 var jsonData = { data : "", obj : "", count:0, isRequest:false};
 var irCode = "";
+var isBluetooth = false;
 
    //WF8266R
     var package = { send: 0, recv: 0, millis: 0 };
@@ -396,8 +397,10 @@ function lass(device) {
 }
 
 onload = function () {
+  blueDevice();
   getNewVersion();
   showMessage('Init...')
+  var deviceType = document.getElementById('deviceType');
   var deviceList = document.getElementById('deviceList');
   var btnClose = ELE('btnClose');
   var btnScratchX = ELE('btnScratchX');
@@ -409,8 +412,8 @@ onload = function () {
   
   var onGetPorts = function (ports) {
     var eligiblePorts = ports.filter(function (port) {
-      return (port.path.match(/\/dev\/tty/)) || port.path.match(/COM/);
-      //return (!port.path.match(/[Bb]luetooth/) && port.path.match(/\/dev\/tty/)) || port.path.match(/COM/);
+      //return (port.path.match(/\/dev\/tty/)) || port.path.match(/COM/);
+      return (!port.path.match(/[Bb]luetooth/) && port.path.match(/\/dev\/tty/)) || port.path.match(/COM/);
     });
 
     for (var i = 0; i < eligiblePorts.length; i++) {
@@ -461,6 +464,20 @@ onload = function () {
   
   btnHex.onclick = function(){
     window.open('https://goo.gl/BTk0NP','WFduino','');
+  }
+
+  deviceType.onchange = function(){
+    var type = deviceType.options[deviceType.selectedIndex].value;
+    if(type == "Bluetooth")
+    {
+      deviceList.style.display = 'none';
+      blueList.style.display = '';
+    }
+    else
+    {
+      deviceList.style.display = '';
+      blueList.style.display = 'none';
+    }
   }
 
   deviceList.onchange = function () {
@@ -717,9 +734,10 @@ function openSelectedPort() {
   var deviceList = document.getElementById('deviceList');
   var selectedPort = deviceList.options[deviceList.selectedIndex].value;
   if(selectedPort != '')
-    chrome.serial.connect(selectedPort, { bitrate: 57600 }, onOpen);
+    chrome.serial.connect(selectedPort, { bitrate: 115200 }, onOpen);
   else
   {
+    document.getElementById('deviceType').disabled = false;
     isFirst = false;
     isConnectedWFduino = false;
     isVerchecked = false;
@@ -738,6 +756,7 @@ function openSelectedPort() {
 }
 
 function onOpen(openInfo) {
+  document.getElementById('deviceType').disabled = true;
   connectionId = openInfo.connectionId;
   console.log("connectionId: " + connectionId);
   if (connectionId == -1) {
@@ -752,7 +771,7 @@ function onOpen(openInfo) {
     chrome.serial.onReceive.addListener(onRead);
 };
 
-function send(cmd) {
+function send(cmd) { 
   if(!isConnectedWFduino)
     return;
   
@@ -762,7 +781,7 @@ function send(cmd) {
   timeManager.cmdTime = (new Date).getTime();  
   timeManager.lastCMD = cmd;
     
-  //console.log(cmd);
+  console.log(cmd);
   
   if(isConnectedWF8266R)
   {
@@ -777,7 +796,15 @@ function send(cmd) {
   var uint8View = new Uint8Array(buffer);
   for (var i = 0; i < cmd.length; i++)
     uint8View[i] = cmd.charCodeAt(i);
-    chrome.serial.send(connectionId, buffer, function () { });
+
+    if(!isBluetooth)
+    {
+      chrome.serial.send(connectionId, buffer, function () { });
+    }
+    else
+    {
+      chrome.bluetoothSocket.send(connectionId, buffer, function (){ });
+    }
   }
 };
 
