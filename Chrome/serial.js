@@ -440,9 +440,18 @@ onload = function () {
       connectedSockets[i].close();
     }
     if (connectionId != -1)
-      chrome.serial.disconnect(connectionId, function () {
-        showMessage(connectionId + ' closed.');
-      });
+    {
+      if(isBluetooth)
+      {
+        disconnectBluetooth();
+      }
+      else
+      {
+        chrome.serial.disconnect(connectionId, function () {
+          showMessage(connectionId + ' closed.');
+        });
+      }
+    }
     server.close();
     setTimeout(function () {
       window.open('', '_self', '');
@@ -467,13 +476,15 @@ onload = function () {
   }
   
   btnHex.onclick = function(){
-    window.open('https://goo.gl/BTk0NP','WFduino','');
+    //window.open('https://goo.gl/BTk0NP','WFduino','');
+    window.open('http://goo.gl/1CKraV','WFduino','');
   }
 
   deviceType.onchange = function(){
     var type = deviceType.options[deviceType.selectedIndex].value;
     if(type == "Bluetooth")
     {
+      ELE('aversion').innerText = "藍芽 baud 請調整為 115200";
       deviceList.style.display = 'none';
       blueList.style.display = '';
     }
@@ -577,7 +588,7 @@ function doRESTful(url){
     console.log(cmd + " " + p1 + " " + p2 + " " + p3);
   else
   {
-    if((new Date).getTime() - timeManager.lastResponse > 1000)
+    if((new Date).getTime() - timeManager.lastResponse > 3000)
     {
       isConnectedWFduino = false;
       if(isCloud)

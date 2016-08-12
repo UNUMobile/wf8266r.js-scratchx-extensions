@@ -9,6 +9,7 @@ function blueDevice()
     for(var i=0;i<deviceInfos.length;i++)
     {
       var device = document.createElement('option');
+     
       device.text = device.innerText = deviceInfos[i].name + "["+deviceInfos[i].address+"]";
       device.value = deviceInfos[i].address+","+deviceInfos[i].uuids[0];
       if (i == 0)
@@ -22,21 +23,18 @@ function blueDevice()
   blueList.onchange = function () {
     chrome.bluetoothSocket.create(function(createInfo) {
       var selectedBlue = blueList.options[blueList.selectedIndex].value;
+      var blueName = blueList.options[blueList.selectedIndex].text.split('[')[0];
       var param = selectedBlue.split(',');
 
       if(selectedBlue == "")
       {
-        chrome.bluetoothSocket.disconnect(connectionId, function(){
-          isBluetooth = false;
-          isConnectedWFduino = false;
-          console.log("Bluetooth disconnected");
-          document.getElementById('deviceType').disabled = false;
-        })
+        disconnectBluetooth();
 
         return;
       }
 
       connectionId = createInfo.socketId;
+      ELE('aversion').innerText = "連接 "+ blueName+" 中...";
       chrome.bluetoothSocket.connect(createInfo.socketId,
         param[0], param[1], onConnectedCallback);
     });
@@ -46,6 +44,7 @@ function blueDevice()
 var onConnectedCallback = function() {
   if (chrome.runtime.lastError) {
     console.log("Connection failed: " + chrome.runtime.lastError.message);
+    ELE('aversion').innerText = chrome.runtime.lastError.message;
   } else {
     // Profile implementation here.
     console.log("Bluetooth connected");
@@ -57,3 +56,14 @@ var onConnectedCallback = function() {
 };
 
 chrome.bluetoothSocket.onReceive.addListener(onRead);
+
+
+function disconnectBluetooth()
+{
+  chrome.bluetoothSocket.disconnect(connectionId, function(){
+          isBluetooth = false;
+          isConnectedWFduino = false;
+          console.log("Bluetooth disconnected");
+          document.getElementById('deviceType').disabled = false;
+        })
+}
