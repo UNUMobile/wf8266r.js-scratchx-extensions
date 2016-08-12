@@ -24,6 +24,7 @@ var isFirst = true;
 var voiceData = { Text: '' };
 var jsonData = { data : "", obj : "", count:0, isRequest:false};
 var irCode = "";
+var isIRControl = false;
 var isBluetooth = false;
 
    //WF8266R
@@ -353,13 +354,16 @@ function httpRequest(_type,uri) {
 }
 
 function irSendHttp(pin, code) {
+  if(isIRControl) return;
 
   var xhr = new XMLHttpRequest();
+  isIRControl = true;
+  irCode = "";
   xhr.open("GET", 'http://'+ ip + '/ir/send?pin=' + pin +'&code='+code, true);
   xhr.onreadystatechange = function () {
     if (xhr.readyState == 4) {
       // JSON.parse does not evaluate the attacker's scripts.
-      
+      isIRControl = false;
     }
   }
   xhr.send();

@@ -1,6 +1,6 @@
 {
   "name": "WFduino",
-  "version": "4.1",
+  "version": "4.1.1",
   "manifest_version": 2,
   "minimum_chrome_version": "23",
   "description": "WF8266R.js + Arduino for Scratch ScratchX Extension",
