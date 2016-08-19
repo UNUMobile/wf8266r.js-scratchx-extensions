@@ -21,17 +21,19 @@
     var isAutoOpen = false;
     var tft = {ip:"",relay:""};
 
-    function sendCommand(cmd) {
+    function sendCommand(cmd, checkTime) {
         timeManager.millis = (new Date).getTime();
 
         //console.log(cmd + " " + socketCounter);
         package.send++;
         if (isConnected && socketCounter == 0) {
-            if ((timeManager.millis - timeManager.lastTime) > 100) {
+            if ((timeManager.millis - timeManager.lastTime) > 100 && checkTime == null) {
                 timeManager.lastTime = (new Date).getTime();
                 socketCounter++;
                 connection.send(cmd);
             }
+            else
+                connection.send(cmd);
         }
 
     }
@@ -146,10 +148,10 @@
     };
 
     ext.car = function (leftF, leftFV, leftB, leftBV, rightF, rightFV, rightB, rightBV) {
-        sendCommand("gpio," + leftF + "=" + leftFV);
-        sendCommand("gpio," + leftB + "=" + leftBV);
-        sendCommand("gpio," + rightF + "=" + rightFV);
-        sendCommand("gpio," + rightB + "=" + rightBV);
+        sendCommand("gpio," + leftF + "=" + leftFV, false);
+        sendCommand("gpio," + leftB + "=" + leftBV, false);
+        sendCommand("gpio," + rightF + "=" + rightFV, false);
+        sendCommand("gpio," + rightB + "=" + rightBV, false);
     };
 
     ext.baud = function (rate) {
@@ -378,7 +380,7 @@
             [' ', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio', 'distance', 5, 4],
             [' ', 'PM25粉塵感測器 %m.pm25SensorParam 在腳位 %d.gpio', 'pm25', 'G3', 14],
             [' ', '伺服馬達在腳位 %d.gpio 轉動角度為 %n 度', 'servo', 5, 90],
-            [' ', '小車馬達 左前 %d.gpio 輸出 %m.level, 左後 %d.gpio 輸出 %m.level, 右前 %d.gpio 輸出 %m.level, 右後 %d.gpio 輸出 %m.level', 'car', 5, 0, 4, 0, 12, 0, 13, 0],
+            [' ', '小車馬達 左前 %d.gpio 輸出 %m.level 左後 %d.gpio 輸出 %m.level 右前 %d.gpio 輸出 %m.level 右後 %d.gpio 輸出 %m.level', 'car', 5, 0, 4, 0, 12, 0, 13, 0],
             ['h', '當UART有資料時', 'when_uart'],
             [' ', 'UART 速率 %m.uartBaud', 'baud', '115200'],
             [' ', 'UART to Socket %m.boolType', 'socketUART', 'true'],
