@@ -147,10 +147,8 @@
     };
 
     ext.car = function (leftF, leftFV, leftB, leftBV, rightF, rightFV, rightB, rightBV) {
-        sendCommand("gpio," + leftF + "=" + leftFV, false);
-        sendCommand("gpio," + leftB + "=" + leftBV, false);
-        sendCommand("gpio," + rightF + "=" + rightFV, false);
-        sendCommand("gpio," + rightB + "=" + rightBV, false);
+        var cmd = leftF + "." + leftB + "." + rightF + "." + rightB + ":" + leftFV + "." + leftBV + "." + rightFV + "." + rightBV;
+        sendCommand("selfcall," + 111 + "=" + cmd);
     };
 
     ext.baud = function (rate) {
