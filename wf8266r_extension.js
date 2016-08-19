@@ -24,20 +24,15 @@
     function sendCommand(cmd, checkTime) {
         timeManager.millis = (new Date).getTime();
 
-        console.log(cmd + " " + socketCounter);
+        //console.log(cmd + " " + socketCounter);
         package.send++;
-        if (isConnected && socketCounter == 0 && checkTime == null) {
+        if (isConnected && socketCounter == 0) {
             if ((timeManager.millis - timeManager.lastTime) > 100) {
                 timeManager.lastTime = (new Date).getTime();
                 socketCounter++;
                 connection.send(cmd);
             }
             
-        }
-        else
-        {
-            socketCounter = 1;
-            connection.send(cmd);
         }
 
     }
