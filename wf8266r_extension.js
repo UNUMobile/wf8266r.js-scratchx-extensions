@@ -33,7 +33,10 @@
                 connection.send(cmd);
             }
             else
+            {
+                socketCounter = 1;
                 connection.send(cmd);
+            }
         }
 
     }
