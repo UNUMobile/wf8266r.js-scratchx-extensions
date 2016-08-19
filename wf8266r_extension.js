@@ -145,6 +145,13 @@
         sendCommand("servo,pin=" + pin + "&degree=" + degree);
     };
 
+    ext.car = function (leftF, leftFV, leftB, leftBV, rightF, rightFV, rightB, rightBV) {
+        sendCommand("gpio," + leftF + "=" + leftFV);
+        sendCommand("gpio," + leftB + "=" + leftBV);
+        sendCommand("gpio," + rightF + "=" + rightFV);
+        sendCommand("gpio," + rightB + "=" + rightBV);
+    };
+
     ext.baud = function (rate) {
         sendCommand("baud," + rate + "=");
     };
@@ -371,6 +378,7 @@
             [' ', 'HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio', 'distance', 5, 4],
             [' ', 'PM25粉塵感測器 %m.pm25SensorParam 在腳位 %d.gpio', 'pm25', 'G3', 14],
             [' ', '伺服馬達在腳位 %d.gpio 轉動角度為 %n 度', 'servo', 5, 90],
+            [' ', '小車馬達 左前 %d.gpio 輸出 %d, 左後 %d.gpio 輸出 %d, 右前 %d.gpio 輸出 %d, 右後 %d.gpio 輸出 %d', 'car', 5, 0, 4, 0, 12, 0, 13, 0],
             ['h', '當UART有資料時', 'when_uart'],
             [' ', 'UART 速率 %m.uartBaud', 'baud', '115200'],
             [' ', 'UART to Socket %m.boolType', 'socketUART', 'true'],
