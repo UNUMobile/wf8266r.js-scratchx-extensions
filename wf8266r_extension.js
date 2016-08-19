@@ -26,7 +26,7 @@
 
         //console.log(cmd + " " + socketCounter);
         package.send++;
-        if (isConnected && socketCounter == 0) {
+        if ((isConnected && socketCounter == 0) || checkTime == null) {
             if ((timeManager.millis - timeManager.lastTime) > 100 && checkTime == null) {
                 timeManager.lastTime = (new Date).getTime();
                 socketCounter++;
