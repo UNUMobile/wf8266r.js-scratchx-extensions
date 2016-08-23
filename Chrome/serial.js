@@ -844,12 +844,14 @@ function getCMD(cmd) {
 
 function onRead(readInfo) {
   var backCMD = getCMD(readInfo.data);
+  var offset = 10;
   timeManager.lastResponse = (new Date).getTime();
   console.log("UART Rx : " + backCMD);
   if (!isVerchecked) //version check
   {
     var index = backCMD.indexOf(".WFduino.Ready");
     if (index > 0) {
+      backCMD = backCMD.substring(index-offset, backCMD.length);
       backCMD = backCMD.replace(".WFduino.Ready", "");
       ELE('aversion').innerText = backCMD;
       arduinVersion = backCMD.replace('.','');
