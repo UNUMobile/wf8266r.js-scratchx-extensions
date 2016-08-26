@@ -214,6 +214,10 @@ void doCommand() {
     else
       Serial.println(rtn);
   }
+  else if (cmd == "car")
+  {
+    
+  }
   else if (cmd == "wtgpio")
   {
     String rtn = "{\"Action\":\"" + cmd + "\",\"Pin\":" + p2 + ",\"Value\":" + v2 + "}";

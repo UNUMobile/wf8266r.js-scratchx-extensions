@@ -26,6 +26,7 @@ var jsonData = { data : "", obj : "", count:0, isRequest:false};
 var irCode = "";
 var isIRControl = false;
 var isBluetooth = false;
+var lang = "";
 
    //WF8266R
     var package = { send: 0, recv: 0, millis: 0 };
@@ -74,12 +75,12 @@ var isBluetooth = false;
         connectionWF8266R.onopen = function (e) {
             isConnectedWF8266R = true;
             speak('WF8266R connected');
-            showMessage('WF8266R 已連接');
+            showMessage(chrome.i18n.getMessage("wf8266rConnected"));
         };
         connectionWF8266R.onclose = function (e) {
             isConnectedWF8266R = false;
             speak('WF8266R disconnect');
-            showMessage('WF8266R 已斷線');
+            showMessage(chrome.i18n.getMessage("wf8266rClosed"));
         };
         connectionWF8266R.onmessage = function (e) {
             var jsonObj;
@@ -400,10 +401,29 @@ function lass(device) {
   xhr.send();
 }
 
+function bindLanguage(){
+  lang = chrome.i18n.getUILanguage();
+  console.log(lang);
+  ELE('cloudBlock').innerText = chrome.i18n.getMessage("cloudBlock");
+  ELE('statusName').innerText = chrome.i18n.getMessage("statusName");
+  ELE('status').innerText = chrome.i18n.getMessage("status");
+  ELE('versionName').innerText = chrome.i18n.getMessage("versionName");
+  ELE('arduinoVer').innerText = chrome.i18n.getMessage("arduinoVer");
+  ELE('aversion').innerText = chrome.i18n.getMessage("aversion");
+  ELE('btnClose').innerText = chrome.i18n.getMessage("btnClose");
+  ELE('btnScratchX').innerText = chrome.i18n.getMessage("btnScratchX");
+  ELE('btnScratch').innerText = chrome.i18n.getMessage("btnScratch");
+  ELE('btnScratchTemplate').innerText = chrome.i18n.getMessage("btnScratchTemplate");
+  ELE('btnFirmware').innerText = chrome.i18n.getMessage("btnFirmware");
+  ELE('btnHex').innerText = chrome.i18n.getMessage("btnHex");
+  
+}
+
 onload = function () {
+  bindLanguage();
   blueDevice();
   getNewVersion();
-  showMessage('Init...')
+  showMessage(chrome.i18n.getMessage("init"));
   var deviceType = document.getElementById('deviceType');
   var deviceList = document.getElementById('deviceList');
   var btnClose = ELE('btnClose');
@@ -428,7 +448,7 @@ onload = function () {
       deviceList.appendChild(device);
     }
 
-    setStatus("Ready");
+    setStatus(chrome.i18n.getMessage("ready"));
   }
   
   btnVirtual.onchange = function () {
@@ -484,7 +504,7 @@ onload = function () {
     var type = deviceType.options[deviceType.selectedIndex].value;
     if(type == "Bluetooth")
     {
-      ELE('aversion').innerText = "藍芽 baud 請調整為 115200";
+      ELE('aversion').innerText = chrome.i18n.getMessage("blueBaud");
       deviceList.style.display = 'none';
       blueList.style.display = '';
     }
@@ -528,8 +548,8 @@ function socketServer() {
     });
 
     wsServer.addEventListener('request', function (req) {
-      speak('ScratchX connected');
-      showMessage('ScratchX 已連接',true);
+      speak("Scratch X connected");
+      showMessage(chrome.i18n.getMessage("scratchXConnected"),true);
       var socket = req.accept();
       connectedSockets.push(socket);
 
@@ -542,8 +562,8 @@ function socketServer() {
 
       // When a socket is closed, remove it from the list of connected sockets.
       socket.addEventListener('close', function () {
-        speak('Disconnect from Scratch');
-        showMessage('已中斷 Scratch 連線',true);
+        speak("Scratch disconnect");
+        showMessage(chrome.i18n.getMessage("scratchDisconnect"),true);
         for (var i = 0; i < connectedSockets.length; i++) {
           if (connectedSockets[i] == socket) {
             connectedSockets.splice(i, 1);
@@ -562,7 +582,7 @@ function doRESTful(url){
 
   var message = "";
   var index=0;
-  var cmd = "",p1="",p2="",p3="",temp="";
+  var cmd = "",p1="",p2="",p3="",p4="",p5="",p6="",p7="",p8="",temp="";
   for(var i=0;i<url.length;i++)
   {
     if(url[i]=='/')
@@ -573,6 +593,11 @@ function doRESTful(url){
         case 1 : p1 = temp; index++; break;
         case 2 : p2 = temp; index++; break;
         case 3 : p3 = temp; index++; break;
+        case 4 : p4 = temp; index++; break;
+        case 5 : p5 = temp; index++; break;
+        case 6 : p6 = temp; index++; break;
+        case 7 : p7 = temp; index++; break;
+        case 8 : p8 = temp; index++; break;
       }
       temp = "";
 
@@ -603,7 +628,7 @@ function doRESTful(url){
     case "poll" : 
       if(!isConnectedWFduino)
         break;
-      showMessage('Scratch2 已連接');   
+      showMessage(chrome.i18n.getMessage("scratch2Connect"));   
       WFduinoType = 0; 
       timeManager.millis = (new Date).getTime();
       /*var readTimer = 200;
@@ -665,6 +690,8 @@ function doRESTful(url){
     case "analogWrite" : send(cmd+"," + p1 + "=" + p2+"\r\n");break;
     case "distance" : send(cmd+",echo=" + p1 + "&trig=" + p2+"\r\n");break;
     case "servo" : send(cmd+",pin=" + p1 + "&degree=" + p2+"\r\n");break;
+    case "car" :
+      send(cmd+",pin=" + p1+"."+p3+"."+p5+"."+p7 + "&value=" + p2+"."+p4+"."+p6+"."+p8+"\r\n");break;
     case "tone" : 
         p2 = p2.replace("%2C",",");
         var fre;
@@ -690,7 +717,7 @@ function doRESTful(url){
         send("wtsen,type=SERVO&"+p1+"="+p2+"\r\n");
       break;
     case "wfgpio" :
-        if(decodeURI(p2)=="數位")
+        if(decodeURI(p2)== chrome.i18n.getMessage("digital"))
             p2 = "D";
         else
             p2 = "A";
@@ -765,7 +792,7 @@ function openSelectedPort() {
     }
     
     speak('WFDuino closed');
-    setStatus('請選擇 USB 口連接 WFduino');
+    setStatus(chrome.i18n.getMessage("selectDevice"));
     connectionId = -1;
   }
 }
@@ -780,7 +807,7 @@ function onOpen(openInfo) {
     return;
   }
   speak('WFduino connected');
-  setStatus('WFduino 已連接');
+  setStatus(chrome.i18n.getMessage("wfduinoConnected"));
   
   if(isFirst)
     chrome.serial.onReceive.addListener(onRead);
@@ -861,7 +888,7 @@ function onRead(readInfo) {
       if(newVersion > arduinVersion)
       {
         speak('Please update new firmware');
-        setStatus('請更新最新版本的 Arduino 韌體');
+        setStatus(chrome.i18n.getMessage("updateFirmware"));
         window.open('https://goo.gl/3Lbm0Q','scratchX','');
       }
     }
@@ -914,11 +941,11 @@ document.addEventListener('DOMContentLoaded', function () {
     connection = new WebSocket(address);
     connection.addEventListener('open', function () {
       speak('WFduino ready');
-      showMessage('WFduino 服務器已就緒');
+      showMessage(chrome.i18n.getMessage("wfduinoReady"));
     });
     connection.addEventListener('close', function () {
       speak('WFduino closed');
-      showMessage('WFduino 服務器已關閉');
+      showMessage(chrome.i18n.getMessage("wfduinoClosed"));
     });
     connection.addEventListener('message', function (e) {
       var cmd = e.data;

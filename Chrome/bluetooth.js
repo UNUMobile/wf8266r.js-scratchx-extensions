@@ -34,7 +34,7 @@ function blueDevice()
       }
 
       connectionId = createInfo.socketId;
-      ELE('aversion').innerText = "連接 "+ blueName+" 中...";
+      ELE('aversion').innerText = chrome.i18n.getMessage("connect") + " "+ blueName;
       chrome.bluetoothSocket.connect(createInfo.socketId,
         param[0], param[1], onConnectedCallback);
     });
@@ -50,7 +50,7 @@ var onConnectedCallback = function() {
     console.log("Bluetooth connected");
     isBluetooth = true;
     isConnectedWFduino = true;
-    ELE('aversion').innerText = "藍芽連接,請重啟Arduino";
+    ELE('aversion').innerText = chrome.i18n.getMessage("blueReconnect");
     document.getElementById('deviceType').disabled = true;
   }
 };

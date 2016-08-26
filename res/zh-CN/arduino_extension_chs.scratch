@@ -1,0 +1,61 @@
+{
+   "host": "127.0.0.1",
+   "extensionName": "WFduino",
+   "extensionPort": 9999,
+   "useHTTP": true, 
+      "blockSpecs": [
+            [" ", "脚位 %d.gpioPin 设置为 %m.mode", "pinMode", 13, "OUTPUT"],
+            [" ", "脚位 %d.gpioPin 数字输出 %m.level", "digitalWrite", 13, 1],
+            [" ", "脚位 %d.pwmGPIO 模拟输出 %n", "analogWrite", 3, 255],
+            ["r", "读数字脚位 %d.gpio ", "digitalRead", 13],
+            ["r", "读模拟脚位 A%d.analogGPIO ", "analogRead", "0"],
+            [" ", "脚位 %d.gpio 播放音调，频率为 %d.tone 时间为 %n ms", "tone", 5, "C2,523", 500],
+            [" ", "关闭脚位 %d.gpio 的音调?", "noTone", 5],
+            [" ", "HCSR 超声波传感器，Echo 在脚位 %d.gpio Trig 在脚位 %d.gpio", "distance", 5, 4],
+            ["r", "读取超声波传感器回传距离", "readDistance"],
+            [" ", "小车马达左前转%d.gpio 输出%m.level 左后转%d.gpio 输出%m.level 右前转%d.gpio 输出%m.level 右后转%d.gpio 输出%m.level", "car", 5, 0, 6, 0, 9, 0, 10, 0],
+            [" ", "舵机脚位 %d.gpio 转动角度为 %n 度", "servo", 5, 90],
+            
+            [" ", "说 %s", "speak_text", "Scratch 遇上 WFduino"],
+            [" ", "监听语音", "speech_text"],
+            ["r", "语音文字", "voiceText"],
+            [" ", "清空语音文字", "flush"],
+            
+            [" ", "WF8266R 位址 %s", "set_ip", "mywfXXXX.local"],
+            [" ", "中断 WF8266R 连接", "stopWF8266R"],
+            ["r", "WF8266R 连接状态", "wf8266rState"],
+            [" ", "WF8266R 脚位 %d.wfgpio %m.wfgpioType 输出 %n", "wfgpio", 5, "数字", 1],
+            [" ", "WF8266R 舵机脚位 %d.wfgpio 转 %n 度", "wfcsenservo", 5, 90],
+            [" ", "红外线发射器，接在脚位 %d.wfgpio 发送码 %s", "wfirsendCode", 15, ""],
+            [" ", "要求红外线码，接在脚位 %d.wfgpio", "wfirrecv", 14],
+            ["r", "红外线码", "wfircode"],
+            
+            [" ", "HTTP %m.restfulType 到 %s", "http", "POST", "http://api.thingspeak.com/update?key=xxxxxx&field1=1&field2=2"],
+            [" ", "HTTP %m.restfulType 从 %s", "http", "GET", "http://api.thingspeak.com/apps/thinghttp/send_request?api_key=EM18B52PSHXZB4DD"],
+            [" ", "云数据 JSON 从 %s 取得", "json", "https://spreadsheets.google.com/feeds/list/1GS-3Xtr5W_Zxhm55lQLT8lyLLYrPEjF_v7aAShQ2Swc/1/public/values​​?alt=json"],
+            [" ", "读第 %n 笔栏位 %d.jsonField 的云端资料", "jsonRead", 1, "content"],
+            ["r", "云数据笔数", "jsonCount"],
+            ["r", "显示云数据", "jsonData"],
+            [" ", "LASS 设备编号 %s", "lass", ""],
+            ["r", "读取传感器 %m.sensor 参数 %m.sensorParam", "readSensor", "LASS", "Value"],
+   ],
+   "menus":{
+    "mode": ["INPUT", "OUTPUT"],
+            "bool": ["True", "False"],
+            "jsonField": ["title", "content","field1","field2"],
+            "sensor": ["HCSR", "RESTfulGET", "LASS", "Voice"],
+            "sensorParam": ["Value", "C", "F", "H", "PM25"],
+            "level": ["0", "1"],
+            "flushType": ["Voice"],
+            "pwmGPIO": ["3", "5", "6", "9", "10", "11"],
+            "analogGPIO": ["0", "1", "2", "3", "4", "5", "6", "7"],
+            "restfulType": ["GET", "POST"],
+            "gpioPin": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "A0(14)", "A1(15)", "A2(16)", "A3(17)", "A4(18)", "A5(19)", "A6(20)", "A7(21)"],
+            "gpio": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"],
+            "tone":["C1,262","C1#,277","D1,294","D1#,311","E1,330","F1,349","F1#,370","G1,392","G1#,415","A1,440","A1#,466","B1,494"
+            ,"C2,523","C2#,554","D2,587","D2#,622","E2,659","F2,698","F2#,740","G2,784","G2#,831","A2,880","A2#,932","B2,988"
+            ,"C3,1046","C3#,1109","D3,1175","D3#,1245","E3,1318","F3,1397","F3#,1480","G3,1568","G3#,1661","A3,1760","A3#,1865","B3,1976"],
+            "wfgpio": ["5", "4", "12", "13", "14", "15", "16", "0", "1", "2", "3"],
+            "wfgpioType":["数字","模拟"]
+   }
+}

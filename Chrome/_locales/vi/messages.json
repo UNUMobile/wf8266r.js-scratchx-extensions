@@ -1,0 +1,92 @@
+{
+  "appName": {
+    "message": "WFduino for Scratch"
+  },
+  "appDesc": {
+    "message": "WFduino là một helper cào (X) cho phép lập trình đơn giản của nền tảng phần cứng Arduino mã nguồn mở. Nó cung cấp các khối mới (Cloud / IOT) để quản lý các cảm biến và cơ cấu chấp hành kết nối với Arduino..  http://wf8266.com/wf8266r"
+  }, 
+  "cloudBlock": {
+    "message": "đám mây khối"
+  },
+  "statusName": {
+    "message": "Trạng thái"
+  },
+  "status": {
+    "message": "tải"
+  },
+  "versionName": {
+    "message": "Phiên bản"
+  },
+  "arduinoVer": {
+    "message": "Phiên bản firmware Arduino"
+  },
+  "aversion": {
+    "message": "không ai"
+  },
+  "btnClose": {
+    "message": "Gần"
+  },
+  "btnScratchX": {
+    "message": "ScratchX"
+  },
+  "btnScratch": {
+    "message": "Scratch2"
+  },
+  "btnScratchTemplate": {
+    "message": "Bản mẫu"
+  },
+  "btnFirmware": {
+    "message": "nguồn"
+  },
+  "btnHex": {
+    "message": "khác"
+  },
+  "init": {
+    "message": "Xây dựng WFduino ..."
+  },
+  "ready": {
+    "message": "Sẳn sàng"
+  },
+  "blueBaud": {
+    "message": "Kiểm tra tốc độ truyền bluetooth trong 115200"
+  },
+  "scratchXConnected": {
+    "message": "ScratchX kết nối"
+  },
+  "scratchDisconnect": {
+    "message": "Ngắt kết nối từ Scratch"
+  },
+  "scratch2Connect": {
+    "message": "Scratch 2 kết nối"
+  },
+  "selectDevice": {
+    "message": "Chọn thiết bị để kết nối WFduino"
+  },
+  "wfduinoConnected": {
+    "message": "WFduino kết nối"
+  },
+  "updateFirmware": {
+    "message": "Vui lòng cập nhật firmware"
+  },
+  "wfduinoReady": {
+    "message": "WFduino sẵn sàng"
+  },
+  "wfduinoClosed": {
+    "message": "WFduino đóng"
+  },
+  "wf8266rConnected": {
+    "message": "WF8266R kết nối"
+  },
+  "wf8266rClosed": {
+    "message": "WF8266R đóng"
+  },
+  "digital": {
+    "message": "kỹ thuật số"
+  },
+  "connect": {
+    "message": "Kết nối với"
+  },
+  "blueReconnect": {
+    "message": "Bluetooth kết nối, hãy khởi động lại Arduino"
+  }
+}

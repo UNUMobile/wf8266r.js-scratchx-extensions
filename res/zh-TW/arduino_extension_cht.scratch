@@ -13,7 +13,7 @@
             [" ", "關閉腳位 %d.gpio 的音調", "noTone", 5],
             [" ", "HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio", "distance", 5, 4],
             ["r", "讀取超音波感測器回傳距離", "readDistance"],
-            [" ", "小車馬達 正轉1 %d.gpio 輸出 %m.level 反轉1 %d.gpio 輸出 %m.level 正轉2 %d.gpio 輸出 %m.level 反轉2 %d.gpio 輸出 %m.level", "car", 5, 0, 6, 0, 9, 0, 10, 0],
+            [" ", "小車馬達 左前轉 %d.gpio 輸出 %m.level 左後轉 %d.gpio 輸出 %m.level 右前轉 %d.gpio 輸出 %m.level 右後轉 %d.gpio 輸出 %m.level", "car", 5, 0, 6, 0, 9, 0, 10, 0],
             [" ", "伺服馬達為腳位 %d.gpio 轉動角度為 %n 度", "servo", 5, 90],
             
             [" ", "說 %s", "speak_text", "Scratch 遇上 WFduino"], 

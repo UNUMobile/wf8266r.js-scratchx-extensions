@@ -1,0 +1,92 @@
+{
+  "appName": {
+    "message": "WFduino for Scratch"
+  },
+  "appDesc": {
+    "message": "WFduino 能够让 Arduino 支持 Scratch 和 ScratchX, 以及 WF8266R.js 平台。透过 串口 蓝芽 或 WI-FI 多样化的传输媒介, 让你轻松玩转物联网。 http://wf8266.com/wf8266r"
+  }, 
+  "cloudBlock": {
+    "message": "云积木"
+  },
+  "statusName": {
+    "message": "状态"
+  },
+  "status": {
+    "message": "加载中"
+  },
+  "versionName": {
+    "message": "版本信息"
+  },
+  "arduinoVer": {
+    "message": "Arduino 韧体版本"
+  },
+  "aversion": {
+    "message": "未连接"
+  },
+  "btnClose": {
+    "message": "关闭"
+  },
+  "btnScratchX": {
+    "message": "ScratchX"
+  },
+  "btnScratch": {
+    "message": "Scratch2"
+  },
+  "btnScratchTemplate": {
+    "message": "样板下载"
+  },
+  "btnFirmware": {
+    "message": "原代码"
+  },
+  "btnHex": {
+    "message": "其它"
+  },
+  "init": {
+    "message": "正在创建 WFduino..."
+  },
+  "ready": {
+    "message": "服务器已建置"
+  },
+  "blueBaud": {
+    "message": "蓝芽 鲍率 请调整为 115200"
+  },
+  "scratchXConnected": {
+    "message": "ScratchX 已连接"
+  },
+  "scratchDisconnect": {
+    "message": "已中断 Scratch 连线"
+  },
+  "scratch2Connect": {
+    "message": "Scratch2 已连接"
+  },
+  "selectDevice": {
+    "message": "请选择 连接 WFduino"
+  },
+  "wfduinoConnected": {
+    "message": "WFduino 已连接"
+  },
+  "updateFirmware": {
+    "message": "请更新最新版本的 Arduino 固件"
+  },
+  "wfduinoReady": {
+    "message": "WFduino 服务器已就绪"
+  },
+  "wfduinoClosed": {
+    "message": "WFduino 服务器已关闭"
+  },
+  "wf8266rConnected": {
+    "message": "WF8266R 已连接"
+  },
+  "wf8266rClosed": {
+    "message": "WF8266R 已断线"
+  },
+  "digital": {
+    "message": "数字"
+  },
+  "connect": {
+    "message": "正在连接"
+  },
+  "blueReconnect": {
+    "message": "蓝芽连接,请重启Arduino"
+  }
+}

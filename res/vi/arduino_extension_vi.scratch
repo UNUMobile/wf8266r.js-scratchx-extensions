@@ -1,0 +1,61 @@
+{
+   "host": "127.0.0.1",
+   "extensionName": "WFduino",
+   "extensionPort": 9999,
+   "useHTTP": true, 
+      "blockSpecs": [
+            [" ", "Pin %d.gpioPin chế độ thiết lập để %m.mode", "pinMode", 13, "OUTPUT"],
+            [" ", "Đặt pin %d.gpioPin đến đầu ra kỹ thuật số %m.level", "digitalWrite", 13, 1],
+            [" ", "pin ra tương tự tại %d.pwmGPIO %n", "analogWrite", 3, 255],
+            ["r", "đọc pin kỹ thuật số tại %d.gpio", "digitalRead", 13],
+            ["r", "đọc pin analog tại A%d.analogGPIO", "analogRead", "0"],
+            [" ", "Tone tại pin %d.gpio, frequency %d.tone time %n ms", "tone", 5, "C2,523", 500],
+            [" ", "Dừng giọng ở pin %d.gpio", "noTone", 5],
+            [" ", "cảm biến siêu âm HCSR, pin Echo tại pin %d.gpio Trig pin %d.gpio", "distance", 5, 4],
+            ["r", "đọc cảm biến siêu âm từ xa", "readDistance"],
+            [" ", "motor car left front turn %d.gpio %m.level left rear turn %d.gpio %m.level right front %d.gpio %m.level %d.gpio %m.level"," car", 5, 0, 6, 0, 9, 0, 10, 0],
+            [" ", "Servo pin động cơ ở mức %d.gpio và chuyển sang %n", "servo", 5, 90],
+            
+            [" ", "Nói %s", "speak_text", "Scratch and WFduino"],
+            [" ", "nghe giọng nói", "speech_text"],
+            ["r", "Voice Text", "voiceText"],
+            [" ", "Trong sáng Voice Text", "flush"],
+            
+            [" ", "WF8266R IP address %s", "set_ip", "mywfXXXX.local"],
+            [" ", "Disconnect WF8266R", "stopWF8266R"],
+            ["r", "WF8266R connection status", "wf8266rState"],
+            [" ", "WF8266R pin %d.wfgpio %m.wfgpioType output %n", "wfgpio", 5, "digital", 1],
+            [" ", "WF8266R servo motor at pin %d.wfgpio degree turn to %n", "wfcsenservo", 5, 90],
+            [" ", "Infrared emitter connected to pin %d.wfgpio send encoded %s", "wfirsendCode", 15, ""],
+            [" ", "Get IR code from pin %d.wfgpio", "wfirrecv", 14],
+            ["r", "IR code", "wfircode"],
+            
+            [" ", "%m.restfulType data to  to %s", "http", "POST", "http://api.thingspeak.com/update?key=xxxxxx&field1=1&field2=2"],
+            [" ", "%m.restfulType from %s", "http", "GET", "http://api.thingspeak.com/apps/thinghttp/send_request?api_key=EM18B52PSHXZB4DD"],
+            [" ", "Get JSON data from %s", "json", "https://spreadsheets.google.com/feeds/list/1GS-3Xtr5W_Zxhm55lQLT8lyLLYrPEjF_v7aAShQ2Swc/1/public/values?alt=json"],
+            [" ", "Read record %n and field name %d.jsonField", "jsonRead", 1, "content"],
+            ["r", "cloud data records", "jsonCount"],
+            ["r", "show cloud data", "jsonData"],
+            [" ", "LASS device number %s", "lass", ""],
+            ["r", "read %m.sensor parameter %m.sensorParam", "readSensor", "LASS", "Value"],
+   ],
+   "menus":{
+    "mode": ["INPUT", "OUTPUT"],
+            "bool": ["True", "False"],
+            "jsonField": ["title", "content","field1","field2"],
+            "sensor": ["HCSR", "RESTfulGET", "LASS", "Voice"],
+            "sensorParam": ["Value", "C", "F", "H", "PM25"],
+            "level": ["0", "1"],
+            "flushType": ["Voice"],
+            "pwmGPIO": ["3", "5", "6", "9", "10", "11"],
+            "analogGPIO": ["0", "1", "2", "3", "4", "5", "6", "7"],
+            "restfulType": ["GET", "POST"],
+            "gpioPin": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "A0(14)", "A1(15)", "A2(16)", "A3(17)", "A4(18)", "A5(19)", "A6(20)", "A7(21)"],
+            "gpio": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"],
+            "tone":["C1,262","C1#,277","D1,294","D1#,311","E1,330","F1,349","F1#,370","G1,392","G1#,415","A1,440","A1#,466","B1,494"
+            ,"C2,523","C2#,554","D2,587","D2#,622","E2,659","F2,698","F2#,740","G2,784","G2#,831","A2,880","A2#,932","B2,988"
+            ,"C3,1046","C3#,1109","D3,1175","D3#,1245","E3,1318","F3,1397","F3#,1480","G3,1568","G3#,1661","A3,1760","A3#,1865","B3,1976"],
+            "wfgpio": ["5", "4", "12", "13", "14", "15", "16", "0", "1", "2", "3"],
+            "wfgpioType":["kỹ thuật số","sự giống nhau"]
+   }
+}
