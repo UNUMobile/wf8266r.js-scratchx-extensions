@@ -488,7 +488,15 @@ onload = function () {
   }
   
   btnScratchTemplate.onclick = function(){
-    window.open('https://goo.gl/khTjBv','scratch','');
+    switch(lang)
+    {
+      case "zh-TW" : window.open('https://goo.gl/khTjBv','scratch',''); break;
+      case "zh-CN" : window.open('http://goo.gl/WT3iYW','scratch',''); break;
+      case "vi" : window.open('http://goo.gl/ScmW7V','scratch',''); break;
+      case "en" : window.open('http://goo.gl/HuJJHZ','scratch',''); break;
+      default : window.open('http://goo.gl/HuJJHZ','scratch',''); break;
+    }
+    
   }
   
   btnFirmware.onclick = function () {
