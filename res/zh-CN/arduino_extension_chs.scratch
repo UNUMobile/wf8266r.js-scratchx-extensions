@@ -13,7 +13,7 @@
             [" ", "关闭脚位 %d.gpio 的音调?", "noTone", 5],
             [" ", "HCSR 超声波传感器，Echo 在脚位 %d.gpio Trig 在脚位 %d.gpio", "distance", 5, 4],
             ["r", "读取超声波传感器回传距离", "readDistance"],
-            [" ", "小车马达左前转%d.gpio 输出%m.level 左后转%d.gpio 输出%m.level 右前转%d.gpio 输出%m.level 右后转%d.gpio 输出%m.level", "car", 5, 0, 6, 0, 9, 0, 10, 0],
+            [" ", "同时输出：脚位 %d.gpio 输出 %d.pwmValue 腳位 %d.gpio 输出 %d.pwmValue 腳位 %d.gpio 输出 %d.pwmValue 腳位 %d.gpio 输出%d.pwmValue", "car", 5, 0, 6, 0, 9, 0, 10, 0],
             [" ", "舵机脚位 %d.gpio 转动角度为 %n 度", "servo", 5, 90],
             
             [" ", "说 %s", "speak_text", "Scratch 遇上 WFduino"],
@@ -48,6 +48,7 @@
             "level": ["0", "1"],
             "flushType": ["Voice"],
             "pwmGPIO": ["3", "5", "6", "9", "10", "11"],
+            "pwmValue": ["0", "1", "50", "100", "150", "250"],
             "analogGPIO": ["0", "1", "2", "3", "4", "5", "6", "7"],
             "restfulType": ["GET", "POST"],
             "gpioPin": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "A0(14)", "A1(15)", "A2(16)", "A3(17)", "A4(18)", "A5(19)", "A6(20)", "A7(21)"],

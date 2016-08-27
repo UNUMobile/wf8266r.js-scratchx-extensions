@@ -11,8 +11,8 @@
 #include <SoftwareSerial.h>
 SoftwareSerial wf8266r(2, 4); // RX 2, TX 4
 
-const char* version = "2016.08.10";
-Servo myservo2,myservo3,myservo4,myservo5,myservo6,myservo7,myservo8,myservo9,myservo10,myservo11,myservo12,myservo13;
+const char* version = "2016.08.27";
+Servo myservo2, myservo3, myservo4, myservo5, myservo6, myservo7, myservo8, myservo9, myservo10, myservo11, myservo12, myservo13;
 bool isRead = false, isGPIORead = false;
 const uint8_t maxLength = 20;
 uint8_t serialIndex = 0, serialIndexWF = 0;
@@ -22,7 +22,7 @@ uint8_t pinState[22] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 String cmd = "";
 bool isWF8266R = false;
 unsigned long int heartbeat = 0;
-bool heartbeatEnabled = true;
+bool heartbeatEnabled = false;
 
 void setup() {
   reset();
@@ -216,7 +216,30 @@ void doCommand() {
   }
   else if (cmd == "car")
   {
-    
+    uint8_t pin = 0, value = 0;
+    v1=v1+".";
+    v2=v2+".";
+    while (v1.indexOf(".") > -1)
+    {
+      index = v1.indexOf(".");
+      pin = v1.substring(0, index).toInt();
+      v1 = v1.substring(index + 1, v1.length());
+      index = v2.indexOf(".");
+      value = v2.substring(0, index).toInt();
+      v2 = v2.substring(index + 1, v2.length());
+
+      if (value == 1)
+      {
+        digitalWrite(pin, value);
+      }
+      else
+      {
+        analogWrite(pin, value);
+      }
+    }
+
+    String rtn = "{\"Action\":\"" + cmd + "\",\"Pin\":" + p2 + ",\"Value\":" + v2 + "}";
+    Serial.println(rtn);
   }
   else if (cmd == "wtgpio")
   {
@@ -290,8 +313,8 @@ String readDistance(uint8_t echoPin, uint8_t trigPin)
 
 String servo(uint8_t pin, uint16_t degree) {
   pinMode(pin, OUTPUT);
-  uint16_t s=570,e=2500;
-  switch(pin)
+  uint16_t s = 570, e = 2500;
+  switch (pin)
   {
     case 2 : myservo2.attach(pin, s, e); myservo2.write(degree); break;
     case 3 : myservo3.attach(pin, s, e); myservo3.write(degree); break;
@@ -306,7 +329,7 @@ String servo(uint8_t pin, uint16_t degree) {
     case 12 : myservo12.attach(pin, s, e); myservo12.write(degree); break;
     case 13 : myservo13.attach(pin, s, e); myservo13.write(degree); break;
   }
-  
+
 
   delay(15);
   return "\"degree\":" + String(degree);
