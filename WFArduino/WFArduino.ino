@@ -11,7 +11,7 @@
 #include <SoftwareSerial.h>
 SoftwareSerial wf8266r(2, 4); // RX 2, TX 4
 
-const char* version = "2016.08.27";
+const char* version = "2016.08.28";
 Servo myservo2, myservo3, myservo4, myservo5, myservo6, myservo7, myservo8, myservo9, myservo10, myservo11, myservo12, myservo13;
 bool isRead = false, isGPIORead = false;
 const uint8_t maxLength = 20;
@@ -22,7 +22,7 @@ uint8_t pinState[22] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 String cmd = "";
 bool isWF8266R = false;
 unsigned long int heartbeat = 0;
-bool heartbeatEnabled = false;
+bool heartbeatEnabled = true;
 
 void setup() {
   reset();
