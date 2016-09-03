@@ -1,3 +1,4 @@
+var isDebug = false;
 var connectionId = -1;
 var readBuffer = "";
 var port = 9999;
@@ -105,7 +106,7 @@ var lang = "";
                 jsonObj = JSON.parse(e.data.substring(0, e.data.length - 1).replace("\r\n",""));
             }
 
-            console.log(jsonObj);
+            //console.log(jsonObj);
             switch (jsonObj.Action) {
                 case "digitalRead": eval('gpio.D' + jsonObj.Pin + '=' + jsonObj.Value); break;
                 case "analogRead": eval('gpio.A' + jsonObj.Pin + '=' + jsonObj.Value); break;
@@ -155,7 +156,7 @@ function speech_text() {
         var result = "";
 
         rec.onend = function () {
-            console.log("end");
+            //console.log("end");
             rec.start();
         }
 
@@ -168,7 +169,7 @@ function speech_text() {
         }
 
         rec.onresult = function (event) {
-            console.log(event.results);
+            //console.log(event.results);
             if (typeof (event.results) == 'undefined') {
                 rec.onend = null;
                 rec.stop();
@@ -179,7 +180,7 @@ function speech_text() {
                 {
                     voiceData.Text = event.results[event.results.length - 1][0].transcript;
                     voiceData.Text = replaceAll(voiceData.Text," ","");
-                    console.log(voiceData.Text);
+                    //console.log(voiceData.Text);
                     
                     for (var i = 0; i < connectedSockets.length; i++)
                       connectedSockets[i].send("{\"Action\":\"voiceText\",\"Text\":\""+voiceData.Text+"\"} ");
@@ -220,25 +221,25 @@ function parseJSON(responseText)
   var resp = JSON.parse(responseText);
       if(resp.feed!=null)
       {
-        console.log(resp.feed.entry);
+        //console.log(resp.feed.entry);
         jsonData.obj=resp.feed.entry;
         jsonData.count = resp.feed.entry.length;
       }
       else if(resp.feeds != null)
       {
-        console.log(resp.feeds);
+        //console.log(resp.feeds);
         jsonData.obj = resp.feeds;
         jsonData.count = resp.feeds.length;
       }
       else if(resp.result != null)
       {
-        console.log(resp.result.records);
+        //console.log(resp.result.records);
         jsonData.obj = resp.result.records;
         jsonData.count = resp.result.records.length;
       }
       else if(resp.observations != null)
       {
-        console.log(resp.observations.data);
+        //console.log(resp.observations.data);
         jsonData.obj = resp.observations.data;
         jsonData.count = resp.observations.data.length;
       }
@@ -255,7 +256,7 @@ function getJSONRead(index, name)
 {  
   name = parseURI(name);
   name = decodeURI(name);
-  console.log(name);
+  //console.log(name);
   switch(name)
   {
     case "title" : 
@@ -277,7 +278,7 @@ function getJSONRead(index, name)
     else
       data = jsonData.obj[name];
       
-      console.log(data);
+      //console.log(data);
     
     if(data == undefined)
     {
@@ -306,9 +307,9 @@ function getJSONRead(index, name)
 function getValueByKey(obj, fieldName)
 {
   var keys = Object.keys(obj);
-  console.log(keys);
+  //console.log(keys);
   var values = Object.values(obj);
-  console.log(values);
+  //console.log(values);
   for(var i=0;i<keys.length;i++)
   {
     if(keys[i] == fieldName)
@@ -403,7 +404,7 @@ function lass(device) {
 
 function bindLanguage(){
   lang = chrome.i18n.getUILanguage();
-  console.log(lang);
+  //console.log(lang);
   ELE('cloudBlock').innerText = chrome.i18n.getMessage("cloudBlock");
   ELE('statusName').innerText = chrome.i18n.getMessage("statusName");
   ELE('status').innerText = chrome.i18n.getMessage("status");
@@ -618,7 +619,9 @@ function doRESTful(url){
     cmd = url;
     
   if(cmd != "poll")  
-    console.log(cmd + " " + p1 + " " + p2 + " " + p3);
+  {
+    //console.log(cmd + " " + p1 + " " + p2 + " " + p3);
+  }
   else
   {
     if((new Date).getTime() - timeManager.lastResponse > 3000)
@@ -632,7 +635,7 @@ function doRESTful(url){
     
   switch(cmd)
   {
-    case "reset_all" : send("reset\r\n");break;
+    case "reset_all" : send("reset\r\n"); break;
     case "poll" : 
       if(!isConnectedWFduino)
         break;
@@ -808,7 +811,12 @@ function openSelectedPort() {
 function onOpen(openInfo) {
   document.getElementById('deviceType').disabled = true;
   connectionId = openInfo.connectionId;
-  console.log("connectionId: " + connectionId);
+  //console.log("connectionId: " + connectionId);
+
+  isConnectedWFduino = true;
+  send("init\r\n");
+  isConnectedWFduino = false;
+
   if (connectionId == -1) {
     setStatus('Could not open');
     isConnectedWFduino = false;
@@ -831,7 +839,7 @@ function send(cmd) {
   timeManager.cmdTime = (new Date).getTime();  
   timeManager.lastCMD = cmd;
     
-  console.log(cmd);
+  //console.log(cmd);
   
   if(isConnectedWF8266R)
   {
@@ -877,22 +885,29 @@ function getCMD(cmd) {
   }
 }
 
+function log(data)
+{
+  if(isDebug)
+    console.log(data);
+}
+
 function onRead(readInfo) {
   var backCMD = getCMD(readInfo.data);
   var offset = 10;
   timeManager.lastResponse = (new Date).getTime();
-  console.log("UART Rx : " + backCMD);
+  log("UART Rx : " + backCMD);
   if (!isVerchecked) //version check
   {
     var index = backCMD.indexOf(".WFduino.Ready");
     if (index > 0) {
       backCMD = backCMD.substring(index-offset, backCMD.length);
       backCMD = backCMD.replace(".WFduino.Ready", "");
-      ELE('aversion').innerText = backCMD;
+      ELE('aversion').innerText = backCMD.substring(0,10);
       arduinVersion = backCMD.replace('.','');
       backCMD = "";
       isVerchecked = true;
       isConnectedWFduino = true;
+      send("heartMode,1\r\n");
       if(newVersion > arduinVersion)
       {
         speak('Please update new firmware');
@@ -907,7 +922,7 @@ function onRead(readInfo) {
     {
       if(backCMD[0] != '{')
       {
-        console.log("backCMD != {");
+        //console.log("backCMD != {");
         return;
       }
       var json;
@@ -957,7 +972,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     connection.addEventListener('message', function (e) {
       var cmd = e.data;
-      console.log(cmd);
+      //console.log(cmd);
       if(cmd.replace("\r\n","")=='speech_text')
       {
         speech_text();
