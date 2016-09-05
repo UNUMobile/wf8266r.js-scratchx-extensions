@@ -20,6 +20,9 @@
   "arduinoVer": {
     "message": "Arduino 韌體版本"
   },
+  "espVer": {
+    "message": "Nodemcu 韌體版本"
+  },
   "aversion": {
     "message": "未連接"
   },
@@ -88,5 +91,23 @@
   },
   "blueReconnect": {
     "message": "藍芽連接,請重啟Arduino"
+  },
+  "ssidName": {
+    "message": "網路"
+  },
+  "passwordName": {
+    "message": "密碼"
+  },
+  "btnSetWiFi": {
+    "message": "連線"
+  },
+  "connecting": {
+    "message": "正在連線中..."
+  },
+  "searching": {
+    "message": "收集訊號中..."
+  },
+  "refresh": {
+    "message": "刷新"
   }
 }

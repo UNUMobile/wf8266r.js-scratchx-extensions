@@ -20,6 +20,9 @@
   "arduinoVer": {
     "message": "Arduino firmware version"
   },
+  "espVer": {
+    "message": "Nodemcu firmware version"
+  },  
   "aversion": {
     "message": "none"
   },
@@ -88,5 +91,23 @@
   },
   "blueReconnect": {
     "message": "Bluetooth connected, please reboot Arduino"
+  },
+  "ssidName": {
+    "message": "SSID"
+  },
+  "passwordName": {
+    "message": "Password"
+  },
+  "btnSetWiFi": {
+    "message": "SET"
+  },
+  "connecting": {
+    "message": "Connecting..."
+  },
+  "searching": {
+    "message": "Searching..."
+  },
+  "refresh": {
+    "message": "Refresh"
   }
 }

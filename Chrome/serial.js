@@ -28,6 +28,7 @@ var irCode = "";
 var isIRControl = false;
 var isBluetooth = false;
 var lang = "";
+var is8266 = false;
 
    //WF8266R
     var package = { send: 0, recv: 0, millis: 0 };
@@ -57,13 +58,15 @@ var lang = "";
     function sendWF8266R(cmd) {
         timeManager.millisWF8266R = (new Date).getTime();
 
-        //console.log(cmd + " " + socketCounter);
+        log(cmd + " socketCounter : " + socketCounter);
         package.send++;
+        if(is8266)
+          socketCounter = 0;
         if (isConnectedWF8266R && socketCounter == 0) {
             if ((timeManager.millisWF8266R - timeManager.lastTimeWF8266R) > 100) {
                 timeManager.lastTimeWF8266R = (new Date).getTime();
                 socketCounter++;
-                //console.log(cmd);
+                log(cmd);
                 connectionWF8266R.send(cmd);
             }
         }
@@ -84,6 +87,7 @@ var lang = "";
             showMessage(chrome.i18n.getMessage("wf8266rClosed"));
         };
         connectionWF8266R.onmessage = function (e) {
+
             var jsonObj;
             if(e.data.length == 1)
             {
@@ -103,20 +107,26 @@ var lang = "";
                 socketCounter--;
                 package.recv++;
                 isConnectedWF8266R = true;
+log("onmessage : " +e.data);
                 jsonObj = JSON.parse(e.data.substring(0, e.data.length - 1).replace("\r\n",""));
             }
 
             //console.log(jsonObj);
-            switch (jsonObj.Action) {
-                case "digitalRead": eval('gpio.D' + jsonObj.Pin + '=' + jsonObj.Value); break;
-                case "analogRead": eval('gpio.A' + jsonObj.Pin + '=' + jsonObj.Value); break;
-                case "readGPIO" : var gpios = jsonObj.Value.split(','); 
-                        for(var i=0;i<Object.keys(gpio).length;i++)
-                            gpio[i] = gpios[i];
-                        break;
-                default: break;
+            if(is8266)
+              checkUARTCMD(jsonObj);
+            else
+            {
+              switch (jsonObj.Action) {
+                  case "digitalRead": eval('gpio.D' + jsonObj.Pin + '=' + jsonObj.Value); break;
+                  case "analogRead": eval('gpio.A' + jsonObj.Pin + '=' + jsonObj.Value); break;
+                  case "readGPIO" : var gpios = jsonObj.Value.split(','); 
+                          for(var i=0;i<Object.keys(gpio).length;i++)
+                              gpio[i] = gpios[i];
+                          break;
+                  case "wifi" : is8266 = true; break;
+                  default: break;
+              }
             }
-
         };
         connectionWF8266R.onerror = function (e) {
             isConnectedWF8266R = false;
@@ -405,6 +415,8 @@ function lass(device) {
 function bindLanguage(){
   lang = chrome.i18n.getUILanguage();
   //console.log(lang);
+  ELE('iparea').style.display = 'none';
+  ELE('connarea').style.display = 'none';
   ELE('cloudBlock').innerText = chrome.i18n.getMessage("cloudBlock");
   ELE('statusName').innerText = chrome.i18n.getMessage("statusName");
   ELE('status').innerText = chrome.i18n.getMessage("status");
@@ -417,7 +429,9 @@ function bindLanguage(){
   ELE('btnScratchTemplate').innerText = chrome.i18n.getMessage("btnScratchTemplate");
   ELE('btnFirmware').innerText = chrome.i18n.getMessage("btnFirmware");
   ELE('btnHex').innerText = chrome.i18n.getMessage("btnHex");
-  
+  ELE('ssidName').innerText = chrome.i18n.getMessage("ssidName");
+  ELE('passwordName').innerText = chrome.i18n.getMessage("passwordName");
+  ELE('btnSetWiFi').innerText = chrome.i18n.getMessage("btnSetWiFi");
 }
 
 onload = function () {
@@ -434,6 +448,8 @@ onload = function () {
   var btnScratchTemplate = ELE('btnScratchTemplate');
   var btnHex = ELE('btnHex');
   var btnVirtual = ELE('isVirtual');
+  var btnSetwifi = ELE('setwifi');
+  var btnIP = ELE('ip');
   
   var onGetPorts = function (ports) {
     var eligiblePorts = ports.filter(function (port) {
@@ -454,6 +470,14 @@ onload = function () {
   
   btnVirtual.onchange = function () {
     isCloud = btnVirtual.checked;
+  }
+
+  btnIP.onclick = function(){
+    toggleWiFiConfig();
+  }
+
+  btnSetwifi.onclick = function(){
+    setWiFi();
   }
 
   btnClose.onclick = function () {
@@ -630,6 +654,10 @@ function doRESTful(url){
       if(isCloud)
         isConnectedWFduino = true;
     }
+    else
+    {
+      isConnectedWFduino = true;
+    }
   }
 
     
@@ -795,9 +823,11 @@ function openSelectedPort() {
     isConnectedWFduino = false;
     isVerchecked = false;
     ELE('aversion').innerText = "";
+    ELE('arduinoVer').innerText = chrome.i18n.getMessage("arduinoVer");
     newVersion="";
     arduinVersion="";
     arduinoCMD = "";
+    ELE('connarea').style.display = 'none';
     for (var i = 0; i < connectedSockets.length; i++) {
       connectedSockets[i].close();
     }
@@ -822,13 +852,17 @@ function onOpen(openInfo) {
     isConnectedWFduino = false;
     return;
   }
-  speak('WFduino connected');
+
+  if(is8266)
+    speak('WFduino Node MCU connected');
+  else
+    speak('WFduino connected');
   setStatus(chrome.i18n.getMessage("wfduinoConnected"));
   
   if(isFirst)
     chrome.serial.onReceive.addListener(onRead);
 };
-
+//------------------------------------------------------------- SEND
 function send(cmd) { 
   if(!isConnectedWFduino)
     return;
@@ -839,12 +873,19 @@ function send(cmd) {
   timeManager.cmdTime = (new Date).getTime();  
   timeManager.lastCMD = cmd;
     
-  //console.log(cmd);
+log("send cmd : " + cmd);
   
   if(isConnectedWF8266R)
   {
-    cmd = "wfduino,"+cmd.replace(",",":").replace("=","~");
-    sendWF8266R(cmd+"=");
+    if(is8266)
+    {
+      sendWF8266R(cmd.replace("\r\n",""));
+    }
+    else
+    {
+      cmd = "wfduino,"+cmd.replace(",",":").replace("=","~");
+      sendWF8266R(cmd+"=");
+    }
   }
   else
   {
@@ -894,20 +935,44 @@ function log(data)
 function onRead(readInfo) {
   var backCMD = getCMD(readInfo.data);
   var offset = 10;
+  var versonString = "";
   timeManager.lastResponse = (new Date).getTime();
   log("UART Rx : " + backCMD);
   if (!isVerchecked) //version check
   {
     var index = backCMD.indexOf(".WFduino.Ready");
+    if(index < 0)
+    {
+      index = backCMD.indexOf(".WFduino8266.Ready");
+      if(index > 0)
+      {
+        is8266 = true;
+        versonString = ".WFduino8266.Ready";
+        ELE('arduinoVer').innerText = chrome.i18n.getMessage("espVer");
+      }
+    }
+    else
+    {
+      is8266 = false;
+      versonString = ".WFduino.Ready";
+    }
+    
     if (index > 0) {
       backCMD = backCMD.substring(index-offset, backCMD.length);
-      backCMD = backCMD.replace(".WFduino.Ready", "");
-      ELE('aversion').innerText = backCMD.substring(0,10);
+      backCMD = backCMD.replace(versonString, "");
+      if(is8266)
+      {
+        ELE('aversion').innerText = backCMD.substring(0,10);
+      }
+      else
+        ELE('aversion').innerText = backCMD.substring(0,10);
       arduinVersion = backCMD.replace('.','');
       backCMD = "";
       isVerchecked = true;
       isConnectedWFduino = true;
       send("heartMode,1\r\n");
+      if(is8266)
+        send("scanWiFi\r\n");
       if(newVersion > arduinVersion)
       {
         speak('Please update new firmware');
@@ -915,10 +980,11 @@ function onRead(readInfo) {
         window.open('https://goo.gl/3Lbm0Q','scratchX','');
       }
     }
+    
   }
-  
+
   if (backCMD != "") {
-    if(WFduinoType == 0) //Scratch2 HTTP
+    if(WFduinoType == 0 || is8266) //Scratch2 HTTP
     {
       if(backCMD[0] != '{')
       {
@@ -928,16 +994,10 @@ function onRead(readInfo) {
       var json;
       
       try{
+        var index = backCMD.indexOf("\r\n");
+        backCMD = backCMD.substr(0,index);
         json = JSON.parse(backCMD);
-        
-        switch(json.Action){
-          case "readGPIO" : arduinoCMD = ""; var gpios = json.Value.split(','); 
-            for(var i=0;i<Object.keys(gpio).length;i++)
-                gpio[i] = gpios[i];
-            break;
-          case "distance" : distance = json.distance; break;
-          default : break;
-        }
+        checkUARTCMD(json);
       }
       catch(e)
       {
@@ -983,3 +1043,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
   }, 1e3);
 });
+
+function checkUARTCMD(json)
+{
+  switch(json.Action){
+          case "readGPIO" : arduinoCMD = ""; var gpios = json.Value.split(','); 
+            for(var i=0;i<Object.keys(gpio).length;i++)
+                gpio[i] = gpios[i];
+            break;
+          case "distance" : distance = json.distance; break;
+          case "scanWiFi" : bindAP(json.data); break;
+          case "connWiFi" : bindIP(json.data); break;
+          case "ap" : bindAPInfo(json.data); break;
+          default : break;
+        }
+}

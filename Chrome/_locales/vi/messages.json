@@ -20,6 +20,9 @@
   "arduinoVer": {
     "message": "Phiên bản firmware Arduino"
   },
+  "espVer": {
+    "message": "Phiên bản firmware Nodemcu"
+  },  
   "aversion": {
     "message": "không ai"
   },
@@ -88,5 +91,23 @@
   },
   "blueReconnect": {
     "message": "Bluetooth kết nối, hãy khởi động lại Arduino"
+  },
+  "ssidName": {
+    "message": "mạng"
+  },
+  "passwordName": {
+    "message": "mật khẩu"
+  },
+  "btnSetWiFi": {
+    "message": "Tuỳ chọn"
+  },
+  "connecting": {
+    "message": "Kết nối trong ..."
+  },
+  "searching": {
+    "message": "Thu thập các tín hiệu trong ..."
+  },
+  "refresh": {
+    "message": "Làm mới"
   }
 }

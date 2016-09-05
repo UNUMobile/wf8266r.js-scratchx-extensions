@@ -18,8 +18,11 @@
     "message": "版本信息"
   },
   "arduinoVer": {
-    "message": "Arduino 韧体版本"
+    "message": "Arduino 固件版本"
   },
+  "espVer": {
+    "message": "Nodemcu 固件版本"
+  },  
   "aversion": {
     "message": "未连接"
   },
@@ -88,5 +91,23 @@
   },
   "blueReconnect": {
     "message": "蓝芽连接,请重启Arduino"
+  },
+  "ssidName": {
+    "message": "路由器"
+  },
+  "passwordName": {
+    "message": "密码"
+  },
+  "btnSetWiFi": {
+    "message": "连接"
+  },
+  "connecting": {
+    "message": "正在连接中..."
+  },
+  "searching": {
+    "message": "收集讯号中..."
+  },
+  "refresh": {
+    "message": "刷新"
   }
 }

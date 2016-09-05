@@ -7,6 +7,7 @@
   <script src="http.js"></script>
   <script src="serial.js"></script>
   <script src="bluetooth.js"></script>
+  <script src="wifi.js"></script>
   
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -15,13 +16,16 @@
   <div id="container">
     <label>
        <select id="deviceType"><option value="USB">USB</option><option value="Bluetooth">藍芽</option></select>
-      <select id="deviceList"></select><select id="blueList"></select> <input type="checkbox" id="isVirtual"><span id="cloudBlock">雲端積木</span></input>
+      <select id="deviceList"></select><select id="blueList"></select> <input type="checkbox" id="isVirtual"><span id="cloudBlock">雲端積木</span></input> <span id="iparea"> | <span id="ipName">IP</span> : <span id="ip"></span></span>
+        <div id="connarea">
+          <span id="ssidName">網路</span> : <select id="wifiList"></select> <span id="passwordName">密碼</span> : <input type="password" id="wifiPassword"> <a href="#" id="setwifi"><span id="btnSetWiFi">設定連線</span></a>
+        </div>
     </label>
 
     <label>
       <span id="statusName">狀態</span> :
       <span id="status">Loading</span><br/>
-      <span id="versionName">版本資訊</span> : <span id="version"></span>(4.3) | <span id="arduinoVer">Arduino 韌體版本</span> : <span id="aversion">未連接</span>
+      <span id="versionName">版本資訊</span> : <span id="version"></span>(4.4) | <span id="arduinoVer">Arduino 韌體版本</span> : <span id="aversion">未連接</span>
     </label>
     
     <label>
