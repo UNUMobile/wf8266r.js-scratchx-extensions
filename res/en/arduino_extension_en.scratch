@@ -40,7 +40,7 @@
             ["r", "Read %m.sensor parameter %m.sensorParam", "readSensor", "LASS", "Value"],
    ],
    "menus":{
-    "mode": ["INPUT", "OUTPUT"],
+    "mode": ["INPUT", "OUTPUT", "INPUT_PULLUP", "INPUT_PULLDOWN"],
             "bool": ["True", "False"],
             "jsonField": ["title", "content","field1","field2"],
             "sensor": ["HCSR", "RESTfulGET", "LASS", "Voice"],

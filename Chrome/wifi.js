@@ -4,7 +4,7 @@ var nodeIP = "";
 
 function bindAP(wifiString)
 {
-  if(nodeIP == "0.0.0.0")
+  if(nodeIP == "0.0.0.0" || nodeIP == "")
     ELE('connarea').style.display = '';
 
   var wifiList = document.getElementById('wifiList');

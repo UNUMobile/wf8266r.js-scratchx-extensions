@@ -29,6 +29,7 @@ var isIRControl = false;
 var isBluetooth = false;
 var lang = "";
 var is8266 = false;
+var isHTTPRequest = false;
 
    //WF8266R
     var package = { send: 0, recv: 0, millis: 0 };
@@ -255,10 +256,20 @@ function parseJSON(responseText)
       }
       else
       {
-        jsonData.obj = resp;
-        jsonData.count = resp.length;
-        if(jsonData.count == undefined)
-          jsonData.count = 0;
+        var keys = Object.keys(resp);
+        if(keys.length==1)
+        {
+          jsonData.obj = resp[keys[0]];
+          jsonData.count = resp[keys[0]].length;
+          //console.log(jsonData.obj);
+        }
+        else
+        {
+          jsonData.obj = resp;
+          jsonData.count = resp.length;
+          if(jsonData.count == undefined)
+            jsonData.count = 0;
+        }
       }
 }
 
@@ -346,6 +357,8 @@ function replaceAll(str, find, replace) {
   return str.replace(new RegExp(find, 'g'), replace);
 }
 function httpRequest(_type,uri) {
+  if(isHTTPRequest)
+    return;
 
   uri = replaceAll(uri,"%3A",":")
   uri = replaceAll(uri, "%2F","/");
@@ -354,8 +367,10 @@ function httpRequest(_type,uri) {
   uri = replaceAll(uri, "%26","&");
  
   var xhr = new XMLHttpRequest();
+  isHTTPRequest =true;
   xhr.open(_type, uri, true);
   xhr.onreadystatechange = function () {
+    isHTTPRequest = false;
     if (xhr.readyState == 4) {
       // JSON.parse does not evaluate the attacker's scripts.
       restfullGet =  xhr.responseText;
@@ -530,7 +545,11 @@ onload = function () {
   
   btnHex.onclick = function(){
     //window.open('https://goo.gl/BTk0NP','WFduino','');
-    window.open('http://goo.gl/1CKraV','WFduino','');
+    //window.open('http://goo.gl/1CKraV','WFduino','');
+    var ap = "";
+    if(apName.length > 0)
+      ap = apName.split('_')[1];
+    window.open('http://wf8266.com/wf8266r/wfduino/help?d='+ap+'&p='+nodeIP,'WFduino','');
   }
 
   deviceType.onchange = function(){
@@ -721,6 +740,10 @@ function doRESTful(url){
     case "pinMode" :
         if (p2 == "INPUT")
             p2 = 0;
+        else if (p2 == "INPUT_PULLUP")
+          p2 = 2;
+        else if (p2 == "INPUT_PULLDOWN")
+          p2 = 3;
         else
             p2 = 1;
 
