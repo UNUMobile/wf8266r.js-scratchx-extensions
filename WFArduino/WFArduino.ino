@@ -1,17 +1,19 @@
 /*
- WFduino ＝ Scratch2.x + ScratchX + Arduino + WF8266R
- ----------------------------------------------------
- WFduino let you control Arduino by Scratch.
+  WFduino ＝ Scratch2.x + ScratchX + Arduino + WF8266R
+  ----------------------------------------------------
+  WFduino let you control Arduino by Scratch.
 
- ----------------------------------------------------
- 2016 @ Union U Inc. http://wf8266.com/wf8266r
- 竹林資訊站 : http://blog.ilc.edu.tw/blog/blog/868
+  ----------------------------------------------------
+  2016 @ Union U Inc. http://wf8266.com/wf8266r
+  竹林資訊站 : http://blog.ilc.edu.tw/blog/blog/868
 */
 #include <Servo.h>
 #include <SoftwareSerial.h>
 SoftwareSerial wf8266r(2, 4); // RX 2, TX 4
+#include "LiquidCrystal_I2C.h"
+#include "DHT.h"
 
-const char* version = "2016.09.08";
+const char* version = "2017.01.05";
 Servo myservo2, myservo3, myservo4, myservo5, myservo6, myservo7, myservo8, myservo9, myservo10, myservo11, myservo12, myservo13;
 bool isRead = false, isGPIORead = false;
 const uint8_t maxLength = 20;
@@ -22,7 +24,17 @@ uint8_t pinState[22] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 String cmd = "";
 bool isWF8266R = false;
 unsigned long int heartbeat = 0;
-bool heartbeatEnabled = true;
+bool heartbeatEnabled = false;
+bool isDHTRunning = false;
+
+//LCD
+LiquidCrystal_I2C lcd;
+bool isLCDOpen = false;
+String lcdText[] = {"", ""};
+int lcdCol[] = {0, 0};
+
+//DHT
+dht DHT;
 
 void setup() {
   reset();
@@ -222,8 +234,8 @@ void doCommand() {
   else if (cmd == "car")
   {
     uint8_t pin = 0, value = 0;
-    v1=v1+".";
-    v2=v2+".";
+    v1 = v1 + ".";
+    v2 = v2 + ".";
     while (v1.indexOf(".") > -1)
     {
       index = v1.indexOf(".");
@@ -296,6 +308,24 @@ void doCommand() {
     String rtn = "{\"Action\":\"" + cmd + "\"}";
     Serial.println(rtn);
   }
+  else if (cmd == "lcd")
+  {
+    lcdShow(p2.toInt(), p1.toInt(), v1.toInt(), v2);
+    String rtn = "{\"Action\":\"" + cmd + "\"}";
+    Serial.println(rtn);
+  }
+  else if (cmd == "lcdAct")
+  {
+    lcdAction(v1);
+    String rtn = "{\"Action\":\"" + cmd + "\"}";
+    Serial.println(rtn);
+  }
+  else if (cmd == "dht")
+  {
+    pinState[v1.toInt()] = 1;
+    String rtn = "{\"Action\":\"" + cmd + "\"," + dht(v1.toInt(), v2.toInt()) + "}";
+    Serial.println(rtn);
+  }
 
 }
 
@@ -366,5 +396,88 @@ void reset()
     pinMode(i, INPUT);
     pinState[i] = 1;
   }
+}
+
+void lcdShow(uint8_t addr, uint8_t col, uint8_t row, String text)
+{
+  if (!isLCDOpen) {
+    lcd.init(addr, 16, 2);
+    lcd.begin();
+    lcd.backlight();
+    isLCDOpen = true;
+  }
+  lcd.setCursor(col, row);
+  lcd.print(text);
+  lcdText[row] = text;
+  lcdCol[row] = col;
+}
+
+void lcdReshow(uint8_t row)
+{
+  String text = lcdText[row];
+  uint8_t col = 0;
+  if (lcdCol[row] < 0)
+  {
+    col = 0;
+    text = text.substring(0 - lcdCol[row], text.length() + 1);
+  }
+  else
+    col = lcdCol[row];
+
+  lcd.setCursor(col, row);
+  lcd.print(text);
+}
+
+void lcdAction(String act)
+{
+  if (!isLCDOpen) {
+    return;
+  }
+
+  if (act == "clear")
+    lcd.clear();
+  else if (act == "blink")
+    lcd.blink();
+  else if (act == "noBlink")
+    lcd.noBlink();
+  else if (act == "backlight")
+    lcd.backlight();
+  else if (act == "noBacklight")
+    lcd.noBacklight();
+  else if (act == "move_left")
+  {
+    lcdCol[0] -= 1;
+    lcd.clear();
+    lcdReshow(0);
+  }
+  else if (act == "move_right")
+  {
+    lcdCol[0] += 1;
+    lcd.clear();
+    lcdReshow(0);
+  }
+}
+
+String dht(uint8_t pin, uint8_t model) //model 11,22,21
+{
+  if (!isDHTRunning)
+  {
+    if (model == 11)
+      DHT.read11(pin);
+    else if (model == 22)
+      DHT.read22(pin);
+    isDHTRunning = true;
+  }
+
+  float h = DHT.humidity;
+  float c = DHT.temperature;
+  float f = (DHT.temperature * 1.8) + 32.0;
+  isDHTRunning = false;
+
+  return "\"H\":\"" + String(h)
+         + "\",\"C\":\""
+         + String(c)
+         + "\",\"F\":\""
+         + String(f) + "\"";
 }
 

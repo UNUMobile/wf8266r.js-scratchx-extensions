@@ -450,8 +450,8 @@ function bindLanguage(){
 }
 
 onload = function () {
+  document.getElementById('blueList').style.display = 'none';
   bindLanguage();
-  blueDevice();
   getNewVersion();
   showMessage(chrome.i18n.getMessage("init"));
   var deviceType = document.getElementById('deviceType');
@@ -556,6 +556,7 @@ onload = function () {
     var type = deviceType.options[deviceType.selectedIndex].value;
     if(type == "Bluetooth")
     {
+      blueDevice();
       ELE('aversion').innerText = chrome.i18n.getMessage("blueBaud");
       deviceList.style.display = 'none';
       blueList.style.display = '';

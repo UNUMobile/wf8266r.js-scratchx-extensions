@@ -16,8 +16,6 @@ function blueDevice()
         blueList.appendChild(document.createElement('option'));
       blueList.appendChild(device);
     }
-
-    blueList.style.display = 'none';
   });
 
   blueList.onchange = function () {
