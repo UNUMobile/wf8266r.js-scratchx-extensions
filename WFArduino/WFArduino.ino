@@ -12,6 +12,7 @@
 SoftwareSerial wf8266r(2, 4); // RX 2, TX 4
 #include "LiquidCrystal_I2C.h"
 #include "DHT.h"
+#include "BH1750.h"
 
 const char* version = "2017.01.05";
 Servo myservo2, myservo3, myservo4, myservo5, myservo6, myservo7, myservo8, myservo9, myservo10, myservo11, myservo12, myservo13;
@@ -35,6 +36,10 @@ int lcdCol[] = {0, 0};
 
 //DHT
 dht DHT;
+
+//BH1750
+bool isLUXRunning = false;
+BH1750 lightMeter;
 
 void setup() {
   reset();
@@ -326,6 +331,11 @@ void doCommand() {
     String rtn = "{\"Action\":\"" + cmd + "\"," + dht(v1.toInt(), v2.toInt()) + "}";
     Serial.println(rtn);
   }
+  else if(cmd == "lux")
+  {
+    String rtn = "{\"Action\":\"" + cmd + "\",\"lux\":" + String(lux()) + "}";
+    Serial.println(rtn);
+  }
 
 }
 
@@ -479,5 +489,16 @@ String dht(uint8_t pin, uint8_t model) //model 11,22,21
          + String(c)
          + "\",\"F\":\""
          + String(f) + "\"";
+}
+
+uint16_t lux()
+{
+  if(!isLUXRunning)
+  {
+    lightMeter.begin();
+    isLUXRunning = true;
+  }
+    
+  return lightMeter.readLightLevel();
 }
 
