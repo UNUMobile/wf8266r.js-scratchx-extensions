@@ -46,8 +46,7 @@ void setup(){
   Serial.begin(115200);
   Serial.flush();
   Serial.println();
-  Serial.println("ESP.Ready");
-
+  
   loadConfig();
 
   //web socket
@@ -60,5 +59,27 @@ void setup(){
 void loop(){
   server.handleClient();
   webSocket.loop();
+  listen();
+}
+
+void listen() {
+  while (Serial.available() > 0 )
+  {
+    uint8_t val = Serial.read();
+    if (val == 10)
+    {
+      serialBuffer[serialIndex - 1] = '\0';
+      cmd = String(serialBuffer);
+      serialIndex = 0;
+      socketBack(cmd);
+    }
+    else
+    {
+      //save to buffer
+      serialBuffer[serialIndex++] = (char)val;
+      if (serialIndex > bufferSize - 1)
+        serialIndex = 0;
+    }
+  }
 }
 

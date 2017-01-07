@@ -97,7 +97,7 @@ PSocket.prototype.close = function() {
     });
   });
 };
-  
+
 // Http response code strings.
 var responseMap = {
   200: 'OK',
@@ -342,7 +342,7 @@ HttpServer.prototype = {
         if (acceptInfo.socketId === socketInfo.socketId)
           t.readRequestFromSocket_(new PSocket(acceptInfo.clientSocketId));
       });
-      
+
       chrome.sockets.tcpServer.listen(
         socketInfo.socketId,
         opt_host || '0.0.0.0',
@@ -362,12 +362,12 @@ HttpServer.prototype = {
         });
     });
   },
-  
+
   close: function(){
     chrome.storage.local.get('socketId',function(result){
       var socketId = result.socketId;
       chrome.sockets.tcpServer.close(socketId, function(){
-        
+
       });
     });
   },

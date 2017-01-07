@@ -21,6 +21,7 @@
 #include <IRremoteESP8266.h>
 #include "LiquidCrystal_I2C.h"
 #include "DHT.h"
+#include "BH1750.h"
 #include "PubSubClient.h"
 #include "EEPROMAnything.h"
 
@@ -54,11 +55,14 @@ LiquidCrystal_I2C lcd;
 bool isLCDOpen = false;
 String lcdText[] = {"", ""};
 int lcdCol[] = {0, 0};
+//BH1750
+bool isLUXRunning = false;
+BH1750 lightMeter;
 
 const char serverIndex[] PROGMEM = "<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form>";
 
 const char* product = "WFduino"; //WF8266R WF8266T WF8266T-HUD WF8266T-TFT WF8266R30 WF8266KD
-const char* version = "2017.01.04";
+const char* version = "2017.01.05";
 Servo myservo1, myservo2, myservo3, myservo4, myservo5, myservo6, myservo7, myservo8, myservo9;
 bool isRead = false, isGPIORead = false;
 const uint8_t maxLength = 20;
@@ -455,6 +459,11 @@ void doCommand() {
     String rtn = "{\"Action\":\"" + cmd + "\"}";
     sendBack(rtn);
   }
+  else if(cmd == "lux")
+  {
+    String rtn = "{\"Action\":\"" + cmd + "\",\"lux\":" + String(lux()) + "}";
+    sendBack(rtn);
+  }
 }
 
 void sendBack(String data)
@@ -677,3 +686,13 @@ uint8_t queryI2C() {
   }
 }
 
+uint16_t lux()
+{
+  if(!isLUXRunning)
+  {
+    lightMeter.begin();
+    isLUXRunning = true;
+  }
+    
+  return lightMeter.read(0x23);
+}

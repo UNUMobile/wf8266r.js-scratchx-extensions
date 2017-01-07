@@ -10,12 +10,15 @@ var server;
 var isVerchecked = false;
 var newVersion,arduinVersion;
 var gpio = {0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0,10:0,11:0,12:0,13:0,14:0,15:0,16:0,17:0,18:0,19:0,20:0,21:0};
-var distance=0;
 var WFduinoType = 1; //0: scratch 1:scratchx
 var timeManager = { lastTime: 0, startTime: 0, millis: 0, lastTimeSend:0, cmdTime:1000, lastCMD:"", lastResponse: 0,
   startTimeWF8266R:0, lastTimeWF8266R:0, millisWF8266R:0 };
 var restfullGet="";
 var lassData = { C: 0, H: 0, PM25: 0 };
+var dhtData = { C: 0, H:0, F:0};
+var irData = { type:"", code:"" };
+var sensorData = { distance: 0, irCode: "", lux: 0 }
+var firebaseData = {obj:""};
 var page={url:"",count:0};
 var speakText = "";
 var rec;
@@ -38,24 +41,24 @@ var isHTTPRequest = false;
     var socketCounter = 0;
     var ip="";
     var socketBuffer="";
-    
-//WF8266R 
+
+//WF8266R
     function set_ip(_ip) {
         if (isConnectedWF8266R)
             return;
-            
+
         if(ip == _ip)
           return;
-          
+
         ip = _ip;
         socketConnectionWF8266R(_ip);
     };
-    
+
     function stopWF8266R(){
         if(connectionWF8266R != null)
             connectionWF8266R.close();
-    }    
-    
+    }
+
     function sendWF8266R(cmd) {
         timeManager.millisWF8266R = (new Date).getTime();
 
@@ -73,7 +76,7 @@ var isHTTPRequest = false;
         }
 
     }
-    
+
     function socketConnectionWF8266R(ip) {
         timeManager.startTimeWF8266R = (new Date).getTime();
         connectionWF8266R = new WebSocket('ws://' + ip + ':81/api', ['wf8266r']);
@@ -96,12 +99,12 @@ var isHTTPRequest = false;
                 if(e.data=='}')
                 {
                     jsonObj = JSON.parse(socketBuffer);
-                   
+
                     socketBuffer = "";
                 }
                 else
                     return;
-                    
+
             }
             else
             {
@@ -120,7 +123,7 @@ log("onmessage : " +e.data);
               switch (jsonObj.Action) {
                   case "digitalRead": eval('gpio.D' + jsonObj.Pin + '=' + jsonObj.Value); break;
                   case "analogRead": eval('gpio.A' + jsonObj.Pin + '=' + jsonObj.Value); break;
-                  case "readGPIO" : var gpios = jsonObj.Value.split(','); 
+                  case "readGPIO" : var gpios = jsonObj.Value.split(',');
                           for(var i=0;i<Object.keys(gpio).length;i++)
                               gpio[i] = gpios[i];
                           break;
@@ -133,7 +136,7 @@ log("onmessage : " +e.data);
             isConnectedWF8266R = false;
         };
     }
-//WF8266R Function end    
+//WF8266R Function end
 
 function ELE(id) {
   return document.getElementById(id);
@@ -142,18 +145,18 @@ function ELE(id) {
 function speak(text){
 if(speakText == text )
   return;
-  
+
   speakText = text;
   var u = new SpeechSynthesisUtterance(text.toString());
         u.onend = function (event) {
             speakText = "";
         };
-        
+
         speechSynthesis.speak(u);
 
 }
 
-function speech_text() {       
+function speech_text() {
 
         if (rec == null)
             rec = new webkitSpeechRecognition();
@@ -192,7 +195,7 @@ function speech_text() {
                     voiceData.Text = event.results[event.results.length - 1][0].transcript;
                     voiceData.Text = replaceAll(voiceData.Text," ","");
                     //console.log(voiceData.Text);
-                    
+
                     for (var i = 0; i < connectedSockets.length; i++)
                       connectedSockets[i].send("{\"Action\":\"voiceText\",\"Text\":\""+voiceData.Text+"\"} ");
                 }
@@ -200,31 +203,46 @@ function speech_text() {
         }
 }
 
-function parseURI(uri)
-{
-  uri = replaceAll(uri,"%3A",":")
-  uri = replaceAll(uri, "%2F","/");
-  uri = replaceAll(uri, "%3F","?");
-  uri = replaceAll(uri, "%3D","=");
-  uri = replaceAll(uri, "%24","$");
-  uri = replaceAll(uri, "%26","&");
-  return uri;
+function parseURI(uri) {
+    uri = replaceAll(uri, "%3A", ":");
+    uri = replaceAll(uri, "%2C", ",")
+    uri = replaceAll(uri, "%2F", "/");
+    uri = replaceAll(uri, "%3F", "?");
+    uri = replaceAll(uri, "%3D", "=");
+    uri = replaceAll(uri, "%24", "$");
+    uri = replaceAll(uri, "%26", "&");
+    uri = replaceAll(uri, "%20", " ");
+
+    return uri;
 }
 
 function getJSON(uri, index) {
   if(jsonData.isRequest)
     return;
-  jsonData.isRequest = true;  
+  jsonData.isRequest = true;
   var xhr = new XMLHttpRequest();
   xhr.open("POST", "http://wf8266.com/wf8266r/data/getJSON.aspx", true);
   xhr.onreadystatechange = function () {
     if (xhr.readyState == 4) {
-      parseJSON(xhr.responseText);  
+      parseJSON(xhr.responseText);
       jsonData.isRequest = false;
     }
   }
   xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
   xhr.send("url="+uri);
+}
+
+function httpPost(uri,data,tye) {
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", uri, true);
+  xhr.onreadystatechange = function () {
+    if(xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+      if(type=="firebase")
+        firebaseData.obj = JSON.parse(xhr.responseText);
+    }
+  }
+  xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhr.send(data);
 }
 
 function parseJSON(responseText)
@@ -274,39 +292,39 @@ function parseJSON(responseText)
 }
 
 function getJSONRead(index, name)
-{  
+{
   name = parseURI(name);
   name = decodeURI(name);
   //console.log(name);
   switch(name)
   {
-    case "title" : 
+    case "title" :
       if(jsonData.count > 0)
-        jsonData.data = jsonData.obj[index-1].title.$t; 
+        jsonData.data = jsonData.obj[index-1].title.$t;
       else
         jsonData.data = jsonData.obj.title;
     break;
-    case "content" : 
+    case "content" :
       if(jsonData.count>0)
-        jsonData.data = jsonData.obj[index-1].content.$t; 
+        jsonData.data = jsonData.obj[index-1].content.$t;
       else
         jsonData.data = jsonData.obj.content;
     break;
     default :
-    var data; 
+    var data;
     if(jsonData.count > 0)
       data = jsonData.obj[index-1][name];
     else
       data = jsonData.obj[name];
-      
+
       //console.log(data);
-    
+
     if(data == undefined)
     {
       if(jsonData.count >0)
-        jsonData.data =  replaceAll(JSON.stringify(jsonData.obj[index-1]),"\"","").replace("{","").replace("}",""); 
+        jsonData.data =  replaceAll(JSON.stringify(jsonData.obj[index-1]),"\"","").replace("{","").replace("}","");
       else
-        jsonData.data =  replaceAll(JSON.stringify(jsonData.obj),"\"","").replace("{","").replace("}","");  
+        jsonData.data =  replaceAll(JSON.stringify(jsonData.obj),"\"","").replace("{","").replace("}","");
     }
     else
     {
@@ -336,8 +354,8 @@ function getValueByKey(obj, fieldName)
     if(keys[i] == fieldName)
       return values[i];
   }
-  
-  return replaceAll(JSON.stringify(jsonData.obj[index-1]),"\"","").replace("{","").replace("}",""); 
+
+  return replaceAll(JSON.stringify(jsonData.obj[index-1]),"\"","").replace("{","").replace("}","");
 }
 
 function getNewVersion() {
@@ -365,7 +383,7 @@ function httpRequest(_type,uri) {
   uri = replaceAll(uri, "%3F","?");
   uri = replaceAll(uri, "%3D","=");
   uri = replaceAll(uri, "%26","&");
- 
+
   var xhr = new XMLHttpRequest();
   isHTTPRequest =true;
   xhr.open(_type, uri, true);
@@ -465,7 +483,7 @@ onload = function () {
   var btnVirtual = ELE('isVirtual');
   var btnSetwifi = ELE('setwifi');
   var btnIP = ELE('ip');
-  
+
   var onGetPorts = function (ports) {
     var eligiblePorts = ports.filter(function (port) {
       //return (port.path.match(/\/dev\/tty/)) || port.path.match(/COM/);
@@ -482,7 +500,7 @@ onload = function () {
 
     setStatus(chrome.i18n.getMessage("ready"));
   }
-  
+
   btnVirtual.onchange = function () {
     isCloud = btnVirtual.checked;
   }
@@ -518,15 +536,15 @@ onload = function () {
       window.close();
     }, 0);
   }
-  
+
   btnScratchX.onclick = function () {
     window.open('http://goo.gl/fnON4H','scratchX','');
   }
-  
+
   btnScratch.onclick = function () {
-    window.open('https://scratch.mit.edu/','scratch','');
+    window.open('https://scratch.mit.edu/projects/138530606/#editor','scratch','');
   }
-  
+
   btnScratchTemplate.onclick = function(){
     switch(lang)
     {
@@ -536,13 +554,13 @@ onload = function () {
       case "en" : window.open('http://goo.gl/HuJJHZ','scratch',''); break;
       default : window.open('http://goo.gl/HuJJHZ','scratch',''); break;
     }
-    
+
   }
-  
+
   btnFirmware.onclick = function () {
     window.open('https://goo.gl/3Lbm0Q','WFduino','');
   }
-  
+
   btnHex.onclick = function(){
     //window.open('https://goo.gl/BTk0NP','WFduino','');
     //window.open('http://goo.gl/1CKraV','WFduino','');
@@ -596,6 +614,7 @@ function socketServer() {
       {
           req.write(doRESTful(url));
           req.edn();
+          //req.end(doRESTful(url));
       }
       return true;
     });
@@ -658,11 +677,11 @@ function doRESTful(url){
     else
       temp+=url[i];
   }
-  
+
   if(cmd == "")
     cmd = url;
-    
-  if(cmd != "poll")  
+
+  if(cmd != "poll")
   {
     //console.log(cmd + " " + p1 + " " + p2 + " " + p3);
   }
@@ -680,15 +699,15 @@ function doRESTful(url){
     }
   }
 
-    
+
   switch(cmd)
   {
     case "reset_all" : send("reset\r\n"); break;
-    case "poll" : 
+    case "poll" :
       if(!isConnectedWFduino)
         break;
-      showMessage(chrome.i18n.getMessage("scratch2Connect"));   
-      WFduinoType = 0; 
+      showMessage(chrome.i18n.getMessage("scratch2Connect"));
+      WFduinoType = 0;
       timeManager.millis = (new Date).getTime();
       /*var readTimer = 200;
       if(isConnectedWF8266R)
@@ -724,19 +743,26 @@ function doRESTful(url){
       +"\nanalogRead/5 "+gpio[19]
       +"\nanalogRead/6 "+gpio[20]
       +"\nanalogRead/7 "+gpio[21]
-      +"\nreadDistance "+distance
+      +"\nreadDistance "+sensorData.distance
       +"\nreadSensor/RESTfulGET/Value "+encodeURI(restfullGet)
       +"\nreadSensor/LASS/Value "+lassData.PM25
       +"\nreadSensor/LASS/C "+lassData.C
       +"\nreadSensor/LASS/H "+lassData.H
       +"\nreadSensor/LASS/PM25 "+lassData.PM25
+      + "\nreadSensor/DHT/Value " + dhtData.C
+                + "\nreadSensor/DHT/°C " + dhtData.C
+                + "\nreadSensor/DHT/濕度 " + dhtData.H
+                + "\nreadSensor/DHT/°F " + dhtData.F
+                + "\nreadSensor/IR/Value " + irData.code
+                + "\nreadSensor/IR/Type " + irData.type
+                + "\nreadSensor/LUX/Value " + sensorData.lux
       +"\nreadSensor/Voice/Value "+encodeURI(voiceData.Text)
       +"\nvoiceText "+ encodeURI(voiceData.Text)
       +"\nwf8266rState "+ isConnectedWF8266R
       +"\njsonData "+encodeURI(jsonData.data)
       +"\njsonCount "+ jsonData.count
       +"\nwfircode "+ irCode
-      ; 
+      ;
       break;
     case "pinMode" :
         if (p2 == "INPUT")
@@ -755,7 +781,7 @@ function doRESTful(url){
     case "servo" : send(cmd+",pin=" + p1 + "&degree=" + p2+"\r\n");break;
     case "car" :
       send(cmd+",pin=" + p1+"."+p3+"."+p5+"."+p7 + "&value=" + p2+"."+p4+"."+p6+"."+p8+"\r\n");break;
-    case "tone" : 
+    case "tone" :
         p2 = p2.replace("%2C",",");
         var fre;
         if(p2.indexOf(",")>0)
@@ -763,13 +789,21 @@ function doRESTful(url){
         else
             fre = p2;
         send(cmd+",pin=" + p1 + "&" + parseInt(fre) + "=" + p3+"\r\n");break;
-    case "noTone" : send(cmd+",pin=" + p1+"\r\n");break;   
-    case "http" : httpRequest(p1,p2); break; 
+    case "noTone" : send(cmd+",pin=" + p1+"\r\n");break;
+    case "http" : httpRequest(p1,p2); break;
     case "json" : getJSON(p1,0); break;
     case "jsonRead" : getJSONRead(p1,p2); break;
     case "lass" : lass(p1); break;
     case "speak_text" : speak(decodeURI(p1)); break;
     case "speech_text" : speech_text(); break;
+    case "dht": send(cmd + ",pin=" + p2 + "&model=" + p1 +"\r\n"); break;
+    case "lcd":
+          var cmdString = cmd + ","+(parseInt(p2)-1)+"="+(parseInt(p1)-1)+"&"+parseInt(p4)+"="+parseURI(p3);
+          send(cmdString+"\r\n"); break;
+        case "lcdAct": send(cmd+",act="+p1+"\r\n"); break;
+        case "ifttt": maker(p1,p2,p3,p4,p5); break; // id, event, p1, p2, p3
+        case "firebase": firebase(p1,p2); break;
+        case "lux": send(cmd+"\r\n"); break;
     case "flush" : voiceData.Text = ""; break;
     case "set_ip" : set_ip(p1); break;
     case "stopWF8266R" : stopWF8266R(); break;
@@ -810,10 +844,10 @@ function doRESTful(url){
       {
           irGetHttp(p1);
       }
-      break;  
+      break;
     default : break;
   }
-  
+
   return message;
 }
 
@@ -855,7 +889,7 @@ function openSelectedPort() {
     for (var i = 0; i < connectedSockets.length; i++) {
       connectedSockets[i].close();
     }
-    
+
     speak('WFDuino closed');
     setStatus(chrome.i18n.getMessage("selectDevice"));
     connectionId = -1;
@@ -882,23 +916,23 @@ function onOpen(openInfo) {
   else
     speak('WFduino connected');
   setStatus(chrome.i18n.getMessage("wfduinoConnected"));
-  
+
   if(isFirst)
     chrome.serial.onReceive.addListener(onRead);
 };
 //------------------------------------------------------------- SEND
-function send(cmd) { 
+function send(cmd) {
   if(!isConnectedWFduino)
     return;
-  
+
   if( ((new Date).getTime() - timeManager.cmdTime < 150) && timeManager.lastCMD == cmd)
     return;
-  
-  timeManager.cmdTime = (new Date).getTime();  
+
+  timeManager.cmdTime = (new Date).getTime();
   timeManager.lastCMD = cmd;
-    
+
 log("send cmd : " + cmd);
-  
+
   if(isConnectedWF8266R)
   {
     if(is8266)
@@ -935,7 +969,7 @@ function getCMD(cmd) {
   var uint8View = new Uint8Array(cmd);
   var str = "";
   var isFinish = false;
-  
+
   for (var i = 0; i < uint8View.length; i++) {
       str += String.fromCharCode(uint8View[i]);
   }
@@ -980,7 +1014,7 @@ function onRead(readInfo) {
       is8266 = false;
       versonString = ".WFduino.Ready";
     }
-    
+
     if (index > 0) {
       backCMD = backCMD.substring(index-offset, backCMD.length);
       backCMD = backCMD.replace(versonString, "");
@@ -1004,7 +1038,7 @@ function onRead(readInfo) {
         window.open('https://goo.gl/3Lbm0Q','scratchX','');
       }
     }
-    
+
   }
 
   if (backCMD != "") {
@@ -1016,7 +1050,7 @@ function onRead(readInfo) {
         return;
       }
       var json;
-      
+
       try{
         var index = backCMD.indexOf("\r\n");
         backCMD = backCMD.substr(0,index);
@@ -1071,14 +1105,25 @@ document.addEventListener('DOMContentLoaded', function () {
 function checkUARTCMD(json)
 {
   switch(json.Action){
-          case "readGPIO" : arduinoCMD = ""; var gpios = json.Value.split(','); 
+          case "readGPIO" : arduinoCMD = ""; var gpios = json.Value.split(',');
             for(var i=0;i<Object.keys(gpio).length;i++)
                 gpio[i] = gpios[i];
             break;
           case "distance" : distance = json.distance; break;
+          case "dht": dhtData.C = json.C; dhtData.F = json.F; dhtData.H = json.H; break;
+          case "ircode": irData.type = json.type; irData.code = json.code; break;
+          case "lux": sensorData.lux = json.lux; break;
           case "scanWiFi" : bindAP(json.data); break;
           case "connWiFi" : bindIP(json.data); break;
           case "ap" : bindAPInfo(json.data); break;
           default : break;
         }
+}
+
+function maker(id, eventName, p1, p2, p3) {
+  httpPost('https://maker.ifttt.com/trigger/'+eventName+'/with/key/'+id,'value1='+p1+"&value2="+p2+"&value3="+p3,'maker');
+}
+
+function firebase(name, path){
+  httpPost('https://'+name+'.firebaseio.com/'+path+'.json', '','firebase');
 }

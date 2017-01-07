@@ -2,7 +2,7 @@
    "host": "127.0.0.1",
    "extensionName": "WFduino",
    "extensionPort": 9999,
-   "useHTTP": true, 
+   "useHTTP": true,
       "blockSpecs": [
             [" ", "腳位 %d.gpioPin 模式設為 %m.mode", "pinMode", 13, "OUTPUT"],
             [" ", "腳位 %d.gpioPin 數位輸出 %m.level", "digitalWrite", 13, 1],
@@ -13,14 +13,18 @@
             [" ", "關閉腳位 %d.gpio 的音調", "noTone", 5],
             [" ", "HCSR 超音波感測器，Echo 在腳位 %d.gpio Trig 在腳位 %d.gpio", "distance", 5, 4],
             ["r", "讀取超音波感測器回傳距離", "readDistance"],
-            [" ", "同時輸出：腳位 %d.gpio 輸出 %d.pwmValue 腳位 %d.gpio 輸出 %d.pwmValue 腳位 %d.gpio 輸出 %d.pwmValue 腳位 %d.gpio 輸出 %d.pwmValue", "car", 5, 0, 6, 0, 9, 0, 10, 0],
+            [" ", "同時輸出：腳位%d.gpio輸出%m.pwmValue 腳位%d.gpio輸出%m.pwmValue 腳位%d.gpio輸出%m.pwmValue 腳位%d.gpio輸出%m.pwmValue", "car", 5, 0, 6, 0, 9, 0, 10, 0],
             [" ", "伺服馬達為腳位 %d.gpio 轉動角度為 %n 度", "servo", 5, 90],
-            
-            [" ", "說 %s", "speak_text", "Scratch 遇上 WFduino"], 
+            [" ", "溫濕度感測器 %d.dhtType 在腳位 %d.gpio", "dht", 11, "5"],
+            [" ", "LCD 在 列 %n 格 %n 顯示 %s 位址 %m.lcdi2c", "lcd", 1, 1, "Hi WFduino!" ,"0x3F"],
+            [" ", "LCD %m.lcdAction", "lcdAct", "clear"],
+            [" ", "讀取光照度 BH1750", "lux"],
+
+            [" ", "說 %s", "speak_text", "Scratch 遇上 WFduino"],
             [" ", "監聽語音", "speech_text"],
             ["r", "語音文字", "voiceText"],
             [" ", "清空語音文字", "flush"],
-            
+
             [" ", "WF8266R 位址 %s", "set_ip", "mywfXXXX.local"],
             [" ", "中斷 WF8266R 連線", "stopWF8266R"],
             ["r", "WF8266R 連線狀態", "wf8266rState"],
@@ -29,7 +33,7 @@
             [" ", "紅外線發射器，接在腳位 %d.wfgpio 發送編碼 %s", "wfirsendCode", 15, ""],
             [" ", "要求紅外線碼，接在腳位 %d.wfgpio", "wfirrecv", 14],
             ["r", "紅外線碼", "wfircode"],
-            
+
             [" ", "HTTP %m.restfulType 到 %s", "http", "POST", "http://api.thingspeak.com/update?key=xxxxxx&field1=1&field2=2"],
             [" ", "HTTP %m.restfulType 從 %s", "http", "GET", "http://api.thingspeak.com/apps/thinghttp/send_request?api_key=EM18B52PSHXZB4DD"],
             [" ", "雲端資料 JSON 從 %s 取得", "json", "https://spreadsheets.google.com/feeds/list/1GS-3Xtr5W_Zxhm55lQLT8lyLLYrPEjF_v7aAShQ2Swc/1/public/values?alt=json"],
@@ -40,15 +44,16 @@
             ["r", "讀取感測器 %m.sensor 參數 %m.sensorParam", "readSensor", "LASS", "Value"],
    ],
    "menus":{
-    "mode": ["INPUT", "OUTPUT", "INPUT_PULLUP", "INPUT_PULLDOWN"],
+    "mode": ["INPUT", "OUTPUT"],
             "bool": ["True", "False"],
             "jsonField": ["title", "content","field1","field2"],
             "sensor": ["HCSR", "RESTfulGET", "LASS", "Voice"],
             "sensorParam": ["Value", "C", "F", "H", "PM25"],
             "level": ["0", "1"],
+            "dhtType": ["11", "21","22"],
             "flushType": ["Voice"],
             "pwmGPIO": ["3", "5", "6", "9", "10", "11"],
-            "pwmValue": ["0", "1", "50", "100", "150", "255"],
+            "pwmValue": ["0", "1", "50", "100", "150", "250"],
             "analogGPIO": ["0", "1", "2", "3", "4", "5", "6", "7"],
             "restfulType": ["GET", "POST"],
             "gpioPin": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "A0(14)", "A1(15)", "A2(16)", "A3(17)", "A4(18)", "A5(19)", "A6(20)", "A7(21)"],
@@ -57,6 +62,8 @@
             ,"C2,523","C2#,554","D2,587","D2#,622","E2,659","F2,698","F2#,740","G2,784","G2#,831","A2,880","A2#,932","B2,988"
             ,"C3,1046","C3#,1109","D3,1175","D3#,1245","E3,1318","F3,1397","F3#,1480","G3,1568","G3#,1661","A3,1760","A3#,1865","B3,1976"],
             "wfgpio": ["5", "4", "12", "13", "14", "15", "16", "0", "1", "2", "3"],
-            "wfgpioType":["數位","類比"]
+            "wfgpioType":["數位","類比"],
+            "lcdi2c": ["0x20","0x27","0x3F"],
+            "lcdAction": ["clear","blink","noBlink","backlight","noBacklight","move_left","move_right"]
    }
 }

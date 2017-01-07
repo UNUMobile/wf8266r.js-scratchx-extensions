@@ -20,10 +20,10 @@ String loadConfig() {
   nameAPS.toCharArray(nameAP, nameAPS.length() + 1);
   MDNS.begin(nameAP);
 
-  return getLocalIp();
+  return getLocalIp(true);
 }
 
-String getLocalIp()
+String getLocalIp(bool closeAP)
 {
   char ipString[15];
   IPAddress wifiIP =  WiFi.localIP();
@@ -33,13 +33,14 @@ String getLocalIp()
   {
     openAP();
     isConnected = false;
-    digitalWrite(16, 0);
   }
   else
   {
     isConnected = true;
-    WiFi.mode(WIFI_STA);
-    digitalWrite(16, 1);
+    if(closeAP)
+      WiFi.mode(WIFI_STA);
+    else
+      WiFi.mode(WIFI_AP_STA);
   }
   return ipString;
 }
@@ -75,17 +76,13 @@ String connWiFi(String ssid, String password)
 String connectTo()
 {
   uint8_t tryCount = 0;
-  Serial.print("Connect to ");
-  Serial.print(storage.ssid);
   WiFi.begin(storage.ssid, storage.password);
-  digitalWrite(16, 0);
   while ((WiFi.status() != WL_CONNECTED && tryCount < 30)) {
-    digitalWrite(16, 1);
     delay(500);
     tryCount++;
   }
 
-  return getLocalIp();
+  return getLocalIp(false);
 }
 
 void openAP() {

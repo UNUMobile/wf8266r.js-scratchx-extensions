@@ -7,7 +7,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t lenght
       break;
     case WStype_CONNECTED:
       {
-        
+        Serial.println("heartMode,1");
         //IPAddress ip = webSocket.remoteIP(num);
         //Serial.printf("[%u] Connected from %d.%d.%d.%d url: %s\n", num, ip[0], ip[1], ip[2], ip[3], payload);
       }
