@@ -186,7 +186,7 @@ void configServerEvent() {
 
     lcdShow(addr, col, row, text);
     if (act != "")
-      lcdAction(act);
+      lcdAction(act, row);
 
     server.sendHeader("Connection", "close");
 

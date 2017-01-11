@@ -17,7 +17,7 @@
             [" ", "伺服馬達為腳位 %d.gpio 轉動角度為 %n 度", "servo", 5, 90],
             [" ", "溫濕度感測器 %d.dhtType 在腳位 %d.gpio", "dht", 11, "5"],
             [" ", "LCD 在 列 %n 格 %n 顯示 %s 位址 %m.lcdi2c", "lcd", 1, 1, "Hi WFduino!" ,"0x3F"],
-            [" ", "LCD %m.lcdAction", "lcdAct", "clear"],
+            [" ", "LCD %m.lcdAction 列 %s", "lcdAct", "clear", ""],
             [" ", "讀取光照度 BH1750", "lux"],
 
             [" ", "說 %s", "speak_text", "Scratch 遇上 WFduino"],

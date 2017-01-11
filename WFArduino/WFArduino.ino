@@ -14,7 +14,7 @@ SoftwareSerial wf8266r(2, 4); // RX 2, TX 4
 #include "DHT.h"
 #include "BH1750.h"
 
-const char* version = "2017.01.05";
+const char* version = "2016.01.09";
 Servo myservo2, myservo3, myservo4, myservo5, myservo6, myservo7, myservo8, myservo9, myservo10, myservo11, myservo12, myservo13;
 bool isRead = false, isGPIORead = false;
 const uint8_t maxLength = 20;
@@ -321,7 +321,20 @@ void doCommand() {
   }
   else if (cmd == "lcdAct")
   {
-    lcdAction(v1);
+    uint8_t act = 0;
+    if (v2 == "")
+      act = 9;
+    else
+      act = v2.toInt() - 1;
+
+    if (act == 9 && (v1 == "move_left" || v1 == "move_right"))
+    {
+      lcdAction(v1, 0);
+      lcdAction(v1, 1);
+    }
+    else
+      lcdAction(v1, act);
+
     String rtn = "{\"Action\":\"" + cmd + "\"}";
     Serial.println(rtn);
   }
@@ -331,7 +344,7 @@ void doCommand() {
     String rtn = "{\"Action\":\"" + cmd + "\"," + dht(v1.toInt(), v2.toInt()) + "}";
     Serial.println(rtn);
   }
-  else if(cmd == "lux")
+  else if (cmd == "lux")
   {
     String rtn = "{\"Action\":\"" + cmd + "\",\"lux\":" + String(lux()) + "}";
     Serial.println(rtn);
@@ -411,7 +424,7 @@ void reset()
 void lcdShow(uint8_t addr, uint8_t col, uint8_t row, String text)
 {
   if (!isLCDOpen) {
-    lcd.init(addr, 16, 2);
+    lcd.init(addr, 16, 4);
     lcd.begin();
     lcd.backlight();
     isLCDOpen = true;
@@ -438,14 +451,28 @@ void lcdReshow(uint8_t row)
   lcd.print(text);
 }
 
-void lcdAction(String act)
+//row==9 all
+void lcdAction(String act, uint8_t row)
 {
   if (!isLCDOpen) {
     return;
   }
 
   if (act == "clear")
-    lcd.clear();
+  {
+    if (row == 9)
+    {
+      lcd.clear();
+      lcdCol[0] = 0;
+      lcdCol[1] = 0;
+    }
+    else
+    {
+      lcd.setCursor(0, row);
+      lcd.print("                ");
+      lcdCol[row] = 0;
+    }
+  }
   else if (act == "blink")
     lcd.blink();
   else if (act == "noBlink")
@@ -456,15 +483,17 @@ void lcdAction(String act)
     lcd.noBacklight();
   else if (act == "move_left")
   {
-    lcdCol[0] -= 1;
-    lcd.clear();
-    lcdReshow(0);
+    lcdCol[row] -= 1;
+    lcd.setCursor(0, row);
+    lcd.print("                ");
+    lcdReshow(row);
   }
   else if (act == "move_right")
   {
-    lcdCol[0] += 1;
-    lcd.clear();
-    lcdReshow(0);
+    lcdCol[row] += 1;
+    lcd.setCursor(0, row);
+    lcd.print("                ");
+    lcdReshow(row);
   }
 }
 
@@ -493,12 +522,12 @@ String dht(uint8_t pin, uint8_t model) //model 11,22,21
 
 uint16_t lux()
 {
-  if(!isLUXRunning)
+  if (!isLUXRunning)
   {
     lightMeter.begin();
     isLUXRunning = true;
   }
-    
+
   return lightMeter.readLightLevel();
 }
 

@@ -800,7 +800,7 @@ function doRESTful(url){
     case "lcd":
           var cmdString = cmd + ","+(parseInt(p2)-1)+"="+(parseInt(p1)-1)+"&"+parseInt(p4)+"="+parseURI(p3);
           send(cmdString+"\r\n"); break;
-        case "lcdAct": send(cmd+",act="+p1+"\r\n"); break;
+        case "lcdAct": send(cmd+",act="+p1+"&row="+p2+"\r\n"); break;
         case "ifttt": maker(p1,p2,p3,p4,p5); break; // id, event, p1, p2, p3
         case "firebase": firebase(p1,p2); break;
         case "lux": send(cmd+"\r\n"); break;
